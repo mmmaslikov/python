@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Практика · Глава 5 — Python‑тренажер</title>
+<style>
+:root{
+  --bg:#f5f5f7;
+  --surface:#ffffff;
+  --text:#1d1d1f;
+  --muted:#6e6e73;
+  --accent:#0071e3;
+  --accent-dark:#005bb9;
+  --danger:#c22a1e;
+  --ok:#1c7c3c;
+  --radius:18px;
+  --radius-sm:12px;
+  --shadow:0 8px 24px rgba(0,0,0,.06);
+  --shadow-lift:0 14px 34px rgba(0,0,0,.10);
+  --border:rgba(0,0,0,.07);
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  line-height:1.5;-webkit-font-smoothing:antialiased;
+  overflow-x:clip;
+}
+.container{width:100%;max-width:960px;margin:0 auto;padding-left:20px;padding-right:20px;min-width:0}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:8px}
+.skip{position:absolute;left:-9999px;top:0;z-index:200;background:#fff;color:var(--accent);padding:12px 18px;border-radius:0 0 12px 0;font-weight:600;text-decoration:none}
+.skip:focus{left:0}
+b{font-weight:700}
+.fatal{padding:40px 20px;font-family:var(--mono);font-size:14px;color:var(--danger);white-space:pre-wrap}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 24px;border-radius:999px;border:none;font-size:16px;font-weight:600;cursor:pointer;text-decoration:none;transition:background .15s ease,transform .15s ease}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:var(--accent-dark)}
+.btn-small{min-height:44px;padding:0 18px;border-radius:999px;font-size:14px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--text)}
+.btn-small:hover{background:#f5f5f7}
+
+.start-card{max-width:560px;margin:44px auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px}
+.eyebrow{color:var(--accent);font-weight:700;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase}
+.start-card h1{font-size:clamp(28px,5vw,40px);font-weight:800;letter-spacing:-.02em;margin:10px 0 6px}
+.author{color:var(--muted);margin:0 0 18px;font-size:15px}
+.start-list{margin:0 0 22px;padding-left:20px;color:var(--muted);font-size:14.5px;display:grid;gap:6px}
+.field{display:grid;gap:6px;margin-bottom:14px}
+.field label{font-size:14px;font-weight:600}
+.field input{min-height:48px;border:1px solid var(--border);border-radius:12px;padding:0 14px;font-size:16px;background:#fff;color:var(--text);width:100%}
+.field input:focus{outline:3px solid rgba(0,113,227,.35);border-color:var(--accent)}
+.field input.bad{border-color:var(--danger);box-shadow:0 0 0 3px rgba(194,42,30,.12)}
+.err{color:var(--danger);font-size:13px;margin:0}
+
+.lesson-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:16px 0 10px}
+.lesson-head h1{font-size:20px;margin:0;letter-spacing:-.01em;flex:1 1 auto;min-width:160px}
+.chip-student{min-height:44px;display:inline-flex;align-items:center;gap:8px;border:1px solid var(--border);background:#fff;border-radius:999px;padding:0 16px;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer}
+.chip-student:hover{background:#f5f5f7}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{min-height:44px;padding:0 18px;border-radius:999px;border:1px solid var(--border);background:#fff;font-size:15px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap}
+.tab:hover{background:#f5f5f7}
+.tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.section-note{color:var(--muted);font-size:14.5px;margin:14px 0 18px;max-width:760px}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin:0 0 14px;min-width:0}
+.card h3{margin:0 0 8px;font-size:17px}
+.card p{margin:0 0 10px;font-size:14.5px;line-height:1.6}
+.call{display:flex;gap:12px;align-items:flex-start;border-radius:14px;padding:12px 14px;margin:0 0 12px;border:1px solid}
+.call p{margin:0;font-size:14px;line-height:1.6;min-width:0}
+.call>div{min-width:0}
+.call-ic{font-size:20px;line-height:1.4;flex:none}
+.call.info{background:rgba(0,113,227,.07);border-color:rgba(0,113,227,.25)}
+.call.warn{background:rgba(255,159,10,.1);border-color:rgba(255,159,10,.35)}
+.call.ok{background:rgba(52,199,89,.1);border-color:rgba(52,199,89,.35)}
+.code-window{background:#161617;border-radius:14px;overflow:hidden;margin:0 0 12px;box-shadow:var(--shadow);min-width:0}
+.code-bar{display:flex;align-items:center;gap:7px;padding:10px 14px;background:#1d1d1f}
+.dot{width:11px;height:11px;border-radius:50%;flex:none}
+.dot.r{background:#ff5f57}.dot.y{background:#febc2e}.dot.g{background:#28c840}
+.code-bar .file{margin-left:6px;color:#98989d;font-family:var(--mono);font-size:12px}
+pre.code{margin:0;padding:14px 16px;color:#f5f5f7;font-family:var(--mono);font-size:13px;line-height:1.65;overflow-x:auto;white-space:pre;max-width:100%}
+.tk-c{color:#83838a}.tk-k{color:#ff7ab2}.tk-s{color:#ffa740}.tk-n{color:#d9bf69}.tk-f{color:#6bdfff}
+.screen{background:rgba(52,199,89,.08);border:1px solid rgba(52,199,89,.35);border-radius:12px;padding:10px 14px;margin:0 0 12px;min-width:0}
+.screen-label{display:block;font-size:11.5px;font-weight:700;color:var(--ok);margin-bottom:4px;text-transform:uppercase;letter-spacing:.08em}
+.screen pre{margin:0;font-family:var(--mono);font-size:13px;line-height:1.55;white-space:pre-wrap;color:var(--text)}
+.tbl-wrap{overflow-x:auto;margin:0 0 12px;border:1px solid var(--border);border-radius:12px}
+table{border-collapse:collapse;width:100%;font-size:14px;background:#fff}
+th,td{padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);vertical-align:top}
+th{background:#f5f5f7;font-weight:700}
+tr:last-child td{border-bottom:none}
+
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:0 0 6px}
+.search{min-height:44px;border:1px solid var(--border);border-radius:999px;padding:0 18px;font-size:14.5px;background:#fff;color:var(--text);flex:1 1 200px;min-width:0}
+.search:focus{outline:3px solid rgba(0,113,227,.35);border-color:var(--accent)}
+.fchip{min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--border);background:#fff;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap}
+.fchip[aria-pressed="true"]{background:rgba(0,113,227,.1);border-color:var(--accent);color:var(--accent-dark)}
+.progline{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:14px;color:var(--muted);margin:10px 0 6px}
+.progline b{color:var(--text)}
+.sum-bar{height:8px;background:#e8e8ed;border-radius:999px;overflow:hidden;margin:0 0 16px}
+.sum-bar i{display:block;height:100%;background:linear-gradient(90deg,#37a0ff,var(--accent));border-radius:999px;transition:width .3s ease}
+
+.task-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin:0 0 12px;min-width:0;overflow:hidden}
+.task-head-btn{display:flex;width:100%;background:none;border:none;cursor:pointer;gap:10px;align-items:center;padding:16px 18px;text-align:left;min-height:56px}
+.task-head-btn:hover{background:rgba(0,0,0,.03)}
+.task-num{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--accent);background:rgba(0,113,227,.1);border-radius:8px;padding:4px 9px;flex:none}
+.task-title{font-size:15.5px;font-weight:600;flex:1 1 auto;min-width:0;overflow-wrap:break-word}
+.task-tags{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.tag{font-size:12px;color:#48484a;background:#e8e8ed;border-radius:999px;padding:4px 10px;white-space:nowrap}
+.tag.easy{background:rgba(52,199,89,.16);color:#1c7c3c}
+.tag.mid{background:rgba(255,159,10,.16);color:#8a5a00}
+.tag.hard{background:rgba(255,69,58,.14);color:#b3261e}
+.tag.solved{background:rgba(52,199,89,.16);color:#1c7c3c;font-weight:700}
+.chev{color:var(--muted);font-size:14px;flex:none}
+.task-body{padding:4px 18px 18px;border-top:1px solid var(--border)}
+.task-text{margin:0 0 10px;font-size:14.5px;line-height:1.65}
+.formula{background:#f5f5f7;border:1px solid var(--border);border-radius:12px;padding:10px 14px;margin:0 0 12px;font-family:var(--mono);font-size:13.5px;text-align:center;overflow-x:auto;white-space:pre-wrap}
+.task-list{margin:0 0 12px;padding-left:20px;display:grid;gap:4px;font-size:14.5px}
+.task-steps{margin:0 0 12px;padding-left:22px;display:grid;gap:4px;font-size:14px;line-height:1.55}
+.task-steps li::marker{color:var(--accent);font-weight:700}
+.label-sm{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:0 0 6px}
+textarea.code-input{width:100%;min-height:150px;resize:vertical;border:1px solid var(--border);border-radius:12px;padding:12px 14px;font-family:var(--mono);font-size:13px;line-height:1.6;background:#fff;color:var(--text)}
+textarea.code-input:focus{outline:3px solid rgba(0,113,227,.35);border-color:var(--accent)}
+.task-actions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 4px}
+.btn-small.on{background:rgba(52,199,89,.14);border-color:rgba(52,199,89,.5);color:#1c7c3c}
+.btn-small.warnbtn{color:#8a5a00;border-color:rgba(255,159,10,.5)}
+.hint{display:flex;gap:12px;background:rgba(255,159,10,.09);border:1px solid rgba(255,159,10,.35);border-radius:14px;padding:12px 14px;margin:10px 0 4px}
+.hint>div{min-width:0;flex:1}
+.hint-ic{font-size:20px;flex:none;line-height:1.4}
+.hint p{margin:0;font-size:14px;line-height:1.6}
+.hint .code-window{margin:10px 0 0}
+.hint .code-bar{padding:8px 12px}
+.hint pre.code{padding:12px 14px;font-size:12.5px}
+.etalon{margin:10px 0 4px}
+.etalon .code-window{margin:0}
+.confirm{background:rgba(194,42,30,.07);border:1px solid rgba(194,42,30,.35);border-radius:14px;padding:12px 14px;margin:10px 0 4px;font-size:14px}
+.confirm p{margin:0 0 10px}
+.empty-list{color:var(--muted);font-size:14.5px;padding:18px;border:1px dashed var(--border);border-radius:var(--radius);text-align:center}
+
+.sum-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px;margin-top:16px;display:grid;gap:18px}
+.sum-row{display:flex;gap:14px;align-items:flex-start}
+.sum-ic{flex:none;width:44px;height:44px;border-radius:12px;background:rgba(0,113,227,.1);display:grid;place-items:center;font-size:20px}
+.sum-body{flex:1;min-width:0}
+.sum-top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:14.5px;margin-bottom:6px}
+.sum-top b{font-size:15px}
+.sum-note{color:var(--muted);font-size:13px;margin:6px 0 0}
+.sum-actions{display:flex;justify-content:center;margin:22px 0 6px}
+
+.report{background:#fff;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px;max-width:820px;margin:16px auto 0;min-width:0}
+.report h2{margin:0 0 4px;font-size:24px}
+.report .meta{display:grid;gap:4px;font-size:14.5px;margin:12px 0 6px}
+.report h3{font-size:16px;margin:18px 0 6px}
+.report pre{background:#f5f5f7;border:1px solid var(--border);border-radius:10px;padding:12px;font-family:var(--mono);font-size:12.5px;line-height:1.55;white-space:pre-wrap;word-break:break-word;margin:0 0 10px}
+.report .rep-note{color:var(--muted);font-size:13px;margin:6px 0}
+.report-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:18px 0 4px}
+.hint-print{color:var(--muted);font-size:13.5px;text-align:center;margin:0 0 40px}
+
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(16px);background:#1d1d1f;color:#fff;padding:12px 20px;border-radius:999px;font-size:14.5px;opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease;z-index:100;box-shadow:var(--shadow-lift);max-width:calc(100vw - 40px);text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media print{
+  body{background:#fff}
+  .no-print{display:none !important}
+  .container{padding:0;max-width:100%}
+  .report{border:none;box-shadow:none;margin:0;padding:0;max-width:100%}
+  .report pre{white-space:pre-wrap;word-break:break-word}
+}
+@media (max-width:640px){
+  .card{padding:16px}
+  .task-head-btn{padding:14px}
+  .task-body{padding:4px 14px 14px}
+  pre.code{font-size:12px;padding:12px}
+  .sum-card{padding:16px}
+  .task-tags{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{transition:none !important}
+}
+</style>
+</head>
+<body>
+<a class="skip no-print" href="#main">Перейти к содержимому</a>
+<div id="app"></div>
+<script>
+/* аварийный экран: если основной скрипт упадёт, покажем текст ошибки вместо пустоты */
+window.addEventListener("error", function(ev){
+  var a = document.getElementById("app");
+  if(a && !a.innerHTML.trim()){
+    a.innerHTML = '<div class="fatal">Ошибка скрипта: ' + (ev.message || "неизвестная") + '</div>';
+  }
+});
+</script>
+<script>
+"use strict";
+/* ================= CONSTANTS ================= */
+var META = { num:5, topic:"Списки", author:"Масликов М.М." };
+var DONE_SHARE = 0.6;
+
+/* Краткая справка по главе 5 */
+var REF_CARDS = [
+  { t:"Создание списка и доступ к элементам",
+    p:"Список создаётся присваиванием: значения справа от знака равенства заключаются в квадратные скобки и разделяются запятыми. Элементы нумеруются с нуля; обращение — имя[индекс], присваивание по индексу меняет элемент.",
+    code:'data = [2.71, 3.14, 1.41, 1.62]\nprint(data[1])   # 3.14\ndata[2] = 2.30\nprint(data)      # [2.71, 3.14, 2.30, 1.62]' },
+  { t:"Циклы и списки",
+    p:"Цикл for проходит по элементам списка напрямую. Если нужны индексы, используют range(len(data)): от 0 до длины списка минус один. Цикл while удобен, когда индекс двигается по условию.",
+    code:'total = 0\nfor value in data:\n    total = total + value\nprint("Сумма значений элементов списка:", total)' },
+  { t:"Добавление и удаление элементов",
+    p:"Методы изменяют список на месте: append(x) добавляет в конец, insert(i, x) вставляет по индексу, pop(i) удаляет и возвращает элемент (без аргумента — последний), remove(x) удаляет первое вхождение значения.",
+    code:'data.append(2.30)\ndata.insert(2, 2.30)\nlast = data.pop()     # удалили и вернули последний\ndata.remove(1.62)     # удалили первое вхождение значения' },
+  { t:"Порядок элементов и поиск",
+    p:"Элементы меняют местами через временную переменную; reverse() разворачивает список, sort() сортирует по возрастанию. Оператор in проверяет вхождение, метод index возвращает позицию первого вхождения.",
+    code:'values.sort()\nvalues.reverse()\nif x in data:\n    print("Первое вхождение по индексу:", data.index(x))' },
+  { t:"Списки и функции",
+    p:"Список можно вернуть из функции через return и передать аргументом. Изменения элементов внутри функции (append, pop, sort, присваивание по индексу) влияют на исходный список; присваивание нового значения самому параметру — нет.",
+    code:'def removeOutliers(data, n):\n    retval = sorted(data)   # копия, исходный список цел\n    return retval' }
+];
+
+/* Задачи главы 5 (упражнения 110–135): условия дословно из сборника,
+   bookHint — подсказки книги, hint — наша подсказка, solution — эталон */
+var TASKS = [
+  { id:110, title:"Порядок сортировки", diff:"mid",
+    text:"Напишите программу, которая будет запрашивать у пользователя целочисленные значения и сохранять их в виде списка. Индикатором окончания ввода значений должен служить ноль. Затем программа должна вывести на экран все введенные пользователем числа (кроме нуля) в порядке возрастания – по одному значению в строке. Используйте для сортировки либо метод sort, либо функцию sorted.",
+    hint:"Собирайте числа через append до нуля; затем data.sort() и выводите в цикле по одному.",
+    solution:'# Выводим числа, введенные пользователем, в порядке возрастания\n\n# Начинаем с пустого списка\ndata = []\n\n# Считываем значения и добавляем их в список, пока пользователь не введет ноль\nnum = int(input("Введите целое число (0 для окончания ввода): "))\nwhile num != 0:\n    data.append(num)\n    num = int(input("Введите целое число (0 для окончания ввода): "))\n\n# Сортируем значения\ndata.sort()\n\n# Выводим числа в порядке возрастания\nprint("Введенные числа в порядке возрастания:")\nfor num in data:\n    print(num)' },
+  { id:111, title:"Обратный порядок", diff:"mid",
+    text:"Напишите программу, которая, как и в предыдущем случае, будет запрашивать у пользователя целые числа и сохранять их в виде списка. Индикатором окончания ввода значений также должен служить ноль. На этот раз необходимо вывести на экран введенные значения в порядке убывания.",
+    hint:"То же, что в задаче 110, но сортировка по убыванию: data.sort(reverse=True) или sorted(data, reverse=True).",
+    solution:'# Выводим числа, введенные пользователем, в порядке убывания\ndata = []\nnum = int(input("Введите целое число (0 для окончания ввода): "))\nwhile num != 0:\n    data.append(num)\n    num = int(input("Введите целое число (0 для окончания ввода): "))\n\n# Сортируем значения по убыванию\ndata.sort(reverse=True)\n\n# Выводим числа в порядке убывания\nprint("Введенные числа в порядке убывания:")\nfor num in data:\n    print(num)' },
+  { id:112, title:"Удаляем выбросы", diff:"hard",
+    text:"При анализе собранных по результатам научных экспериментов данных зачастую возникает необходимость избавиться от экстремальных значений, прежде чем продолжать двигаться дальше. Напишите функцию, создающую копию списка с исключенными из него n наибольшими и наименьшими значениями и возвращающую ее в качестве результата. Порядок следования элементов в измененном списке не обязательно должен в точности совпадать с источником.\n\nВ основной программе должна быть продемонстрирована работа вашей функции. Для начала попросите пользователя ввести целые числа, затем соберите их в список и вызовите написанную вами ранее функцию. Выведите на экран измененную версию списка вместе с оригинальной. Если пользователь введет менее четырех чисел, должно быть отображено соответствующее сообщение об ошибке.",
+    hint:"sorted(data) даёт отсортированную копию; удалите n наибольших через pop() и n наименьших через pop(0).",
+    solution:'# Удаляем выбросы из набора данных\n\n## Удаляем выбросы из списка значений\n# @param data - список значений для обработки\n# @param num_outliers - количество наименьших и наибольших элементов для удаления\n# @return копия исходного списка с удаленными наименьшими и наибольшими элементами\ndef removeOutliers(data, num_outliers):\n    # Создаем копию списка с отсортированными значениями\n    retval = sorted(data)\n    # Удаляем num_outliers наибольших значений\n    for i in range(num_outliers):\n        retval.pop()\n    # Удаляем num_outliers наименьших значений\n    for i in range(num_outliers):\n        retval.pop(0)\n    return retval\n\n# Запрашиваем данные у пользователя и удаляем по два наибольших и наименьших значения\ndef main():\n    values = []\n    s = input("Введите значение (Enter для окончания ввода): ")\n    while s != "":\n        num = float(s)\n        values.append(num)\n        s = input("Введите значение (Enter для окончания ввода): ")\n    if len(values) < 4:\n        print("Вы ввели недостаточное количество чисел.")\n    else:\n        print("Список с удаленными выбросами:", removeOutliers(values, 2))\n        print("Исходный список:", values)\n\nmain()' },
+  { id:113, title:"Избавляемся от дубликатов", diff:"mid",
+    text:"В данном упражнении вам предстоит разработать программу, в которой у пользователя будет запрошен список слов, пока он не оставит строку ввода пустой. После этого на экране должны быть показаны слова, введенные пользователем, но без повторов, – каждое по одному разу. При этом слова должны быть отображены в том же порядке, в каком их вводили с клавиатуры. Например, если пользователь на запрос программы введет следующий список слов: first, second, first, third, second — программа должна вывести: first, second, third.",
+    example:"first\nsecond\nfirst\nthird\nsecond\n--- вывод ---\nfirst\nsecond\nthird",
+    hint:"Перед добавлением проверяйте if word not in words — так порядок ввода сохранится, а повторы не попадут в список.",
+    solution:'# Считываем ряд слов, введенных пользователем, и выводим их без дубликатов\n# в том же порядке, в котором они были введены\n\n# Запрашиваем слова у пользователя и сохраняем их в список\nwords = []\nword = input("Введите слово (Enter для окончания ввода): ")\nwhile word != "":\n    # Добавляем слово в список, только если оно уже не присутствует в нем\n    if word not in words:\n        words.append(word)\n    # Запрашиваем следующее слово у пользователя\n    word = input("Введите слово (Enter для окончания ввода): ")\n\n# Отображаем уникальные слова\nfor word in words:\n    print(word)' },
+  { id:114, title:"Отрицательные, положительные и нули", diff:"hard",
+    text:"Напишите программу, запрашивающую у пользователя целые числа, пока он не оставит строку ввода пустой. После окончания ввода на экран должны быть выведены сначала все отрицательные числа, которые были введены, затем нулевые и только после этого положительные. Внутри каждой группы числа должны отображаться в той последовательности, в которой были введены пользователем. Например, если он ввел следующие числа: 3, -4, 1, 0, -1, 0 и -2, вывод должен оказаться таким: -4, -1, -2, 0, 0, 3 и 1. Каждое значение должно отображаться на новой строке.",
+    hint:"Три списка: negatives, zeros, positives; распределяйте числа в одном цикле ввода, затем выводите списки по очереди.",
+    solution:'# Запрашиваем коллекцию целых чисел у пользователя. Отображаем сначала отрицательные,\n# затем нули и после этого положительные\n\n# Создаем три списка для хранения отрицательных, нулевых и положительных значений\nnegatives = []\nzeros = []\npositives = []\n\n# Запрашиваем числа у пользователя, помещая их в соответствующие списки\nline = input("Введите целое число (Enter для окончания ввода): ")\nwhile line != "":\n    num = int(line)\n    if num < 0:\n        negatives.append(num)\n    elif num > 0:\n        positives.append(num)\n    else:\n        zeros.append(num)\n    line = input("Введите целое число (Enter для окончания ввода): ")\n\n# Выводим сначала отрицательные числа, затем нули и после этого положительные\nprint("Введенные числа:")\nfor n in negatives:\n    print(n)\nfor n in zeros:\n    print(n)\nfor n in positives:\n    print(n)' },
+  { id:115, title:"Список собственных делителей", diff:"hard",
+    text:"Собственным делителем числа называется всякий его делитель, отличный от самого числа. Напишите функцию, которая будет возвращать список всех собственных делителей заданного числа. Само это число должно передаваться в функцию в виде единственного аргумента. Результатом функции будет перечень собственных делителей числа, собранных в список. Основная программа должна демонстрировать работу функции, запрашивая у пользователя число и выводя на экран список его собственных делителей. Программа должна запускаться только в том случае, если она не импортирована в виде модуля в другой файл.",
+    hint:"Перебирайте i от 1 до n-1 (достаточно до n // 2): если n % i == 0, добавляйте i в список делителей.",
+    solution:'# Список собственных делителей числа\n\n## Возвращаем список всех собственных делителей числа\n# @param n - число, для которого ищем делители\n# @return список собственных делителей\ndef properDivisors(n):\n    divisors = []\n    for i in range(1, n):\n        if n % i == 0:\n            divisors.append(i)\n    return divisors\n\ndef main():\n    n = int(input("Введите число: "))\n    print("Собственные делители числа", n, ":", properDivisors(n))\n\nif __name__ == "__main__":\n    main()' },
+  { id:116, title:"Совершенные числа", diff:"hard",
+    text:"Целое число n называется совершенным, если сумма всех его собственных делителей равна самому числу n. Например, 28 – это совершенное число, поскольку его собственными делителями являются 1, 2, 4, 7 и 14, а 1 + 2 + 4 + 7 + 14 = 28.\n\nНапишите функцию для определения того, является ли заданное число совершенным. Функция будет принимать на вход единственный параметр и возвращать True, если он представляет собой совершенное число, и False – если нет. Разработайте небольшую программу, которая будет использовать функцию для идентификации и вывода на экран всех совершенных чисел в диапазоне от 1 до 10 000. При решении этой задачи импортируйте функцию, написанную в упражнении 115.",
+    hint:"Сложите список собственных делителей и сравните сумму с самим числом; в main переберите диапазон от 1 до 10000.",
+    solution:'# Целое число n называется совершенным, если сумма всех его собственных делителей\n# равна самому числу n. Покажем все совершенные числа от 1 до LIMIT.\nfrom proper_divisors import properDivisors   # функция из упражнения 115\n\nLIMIT = 10000\n\n## Определяем, является ли число совершенным\n# @param n - число, которое необходимо проверить на совершенство\n# @return True, если число совершенно, иначе False\ndef isPerfect(n):\n    # Получим список собственных делителей числа\n    divisors = properDivisors(n)\n    # Рассчитываем их сумму\n    total = 0\n    for d in divisors:\n        total = total + d\n    # Определяем, является ли число совершенным, и возвращаем результат\n    if total == n:\n        return True\n    return False\n\n# Отображаем все совершенные числа от 1 до LIMIT\ndef main():\n    print("Совершенные числа от 1 до", LIMIT, ":")\n    for i in range(1, LIMIT + 1):\n        if isPerfect(i):\n            print(" ", i)\n\nmain()' },
+  { id:117, title:"Только слова", diff:"hard",
+    text:"В данном упражнении вы напишете программу, которая будет выделять слова из строки, введенной пользователем. Начните с создания функции, принимающей на вход единственный строковый параметр. В качестве результата она должна возвращать список слов из строки с удаленными знаками препинания, в число которых должны входить точки, запятые, восклицательный и вопросительный знаки, дефисы, апострофы, двоеточия и точки с запятыми. При этом не нужно избавляться от знаков препинания, стоящих внутри слова, таких как апостроф, служащий в английском языке для обозначения сокращений. Например, если на вход функции дать строку \"Contractions include: don't, isn't, and wouldn't.\", функция должна вернуть следующий список: [\"Contractions\", \"include\", \"don't\", \"isn't\", \"and\", \"wouldn't\"].\n\nВ основной программе, как обычно, должна происходить демонстрация вашей функции. Запросите у пользователя строку и выведите на экран все составляющие ее слова с удаленными знаками препинания.",
+    hint:"Проходите по символам: внешнюю пунктуацию заменяйте пробелом, апостроф сохраняйте только если он стоит между двумя буквами; в конце примените split().",
+    solution:'# Выделяем слова из строки с удалением знаков препинания\n\n## Возвращаем список слов из строки с удаленными знаками препинания\n# @param s - исходная строка\n# @return список слов\ndef onlyTheWords(s):\n    apostrophe = chr(39)\n    out = ""\n    for i in range(len(s)):\n        ch = s[i]\n        if ch in ".,!?:;-":\n            out = out + " "\n        elif ch == apostrophe:\n            # Сохраняем апостроф только внутри слова (между буквами)\n            if i > 0 and i < len(s) - 1 and s[i - 1].isalpha() and s[i + 1].isalpha():\n                out = out + ch\n            else:\n                out = out + " "\n        else:\n            out = out + ch\n    return out.split()\n\ndef main():\n    s = input("Введите строку: ")\n    print("Слова из строки:", onlyTheWords(s))\n\nif __name__ == "__main__":\n    main()' },
+  { id:118, title:"Словесные палиндромы", diff:"hard",
+    text:"В упражнениях 75 и 76 мы уже имели дело со словами, являющимися палиндромами. Тогда мы анализировали буквы в слове с начала и конца, игнорируя пробелы и знаки препинания, чтобы понять, совпадает ли его написание в прямом и обратном направлениях. И хотя палиндромами обычно называют слова, это понятие вполне можно расширить. Например, английская фраза «Is it crazy how saying sentences backwards creates backwards sentences saying how crazy it is?» является словесным палиндромом, поскольку если читать ее по словам, игнорируя при этом знаки препинания и заглавные буквы, в обоих направлениях она будет звучать одинаково.\n\nНапишите программу, которая будет запрашивать строку у пользователя и оповещать его о том, является ли она словесным палиндромом. Не забывайте игнорировать знаки препинания при выявлении результата.",
+    hint:"Разбейте строку на слова (поможет функция из задачи 117), приведите к нижнему регистру и сравните список слов с его перевернутой копией.",
+    solution:'# Словесные палиндромы\nfrom only_words import onlyTheWords   # функция из упражнения 117\n\n## Определяем, является ли строка словесным палиндромом\n# @param s - исходная строка\n# @return True, если строка - словесный палиндром\ndef isWordPalindrome(s):\n    words = onlyTheWords(s.lower())\n    rev = []\n    for w in words:\n        rev = [w] + rev\n    return words == rev\n\ndef main():\n    s = input("Введите строку: ")\n    if isWordPalindrome(s):\n        print("Это словесный палиндром.")\n    else:\n        print("Это не словесный палиндром.")\n\nif __name__ == "__main__":\n    main()' },
+  { id:119, title:"Ниже и выше среднего", diff:"hard",
+    text:"Напишите программу, которая будет запрашивать у пользователя числа, пока он не пропустит ввод. Сначала на экран должно быть выведено среднее значение введенного ряда чисел, после этого друг за другом необходимо вывести список чисел ниже среднего, равных ему (если такие найдутся) и выше среднего. Каждый список должен предваряться соответствующим заголовком.",
+    hint:"Соберите числа в список; среднее = сумма / количество; одним проходом разложите по трём спискам below / equal / above и выведите каждый с заголовком.",
+    solution:'# Числа ниже, равные и выше среднего\nnums = []\nline = input("Введите число (пустая строка для окончания): ")\nwhile line != "":\n    nums.append(float(line))\n    line = input("Введите число (пустая строка для окончания): ")\n\nif len(nums) == 0:\n    print("Числа не были введены.")\nelse:\n    total = 0\n    for x in nums:\n        total = total + x\n    average = total / len(nums)\n    below = []\n    equal = []\n    above = []\n    for x in nums:\n        if x < average:\n            below.append(x)\n        elif x == average:\n            equal.append(x)\n        else:\n            above.append(x)\n    print("Среднее значение введенных чисел:", average)\n    print("Числа ниже среднего:")\n    for x in below:\n        print(" ", x)\n    print("Числа, равные среднему:")\n    for x in equal:\n        print(" ", x)\n    print("Числа выше среднего:")\n    for x in above:\n        print(" ", x)' },
+  { id:120, title:"Форматирование списка", diff:"hard",
+    text:"Обычно при написании перечислений и списков мы разделяем их элементы запятыми, а перед последним ставим союз «и», как показано ниже:",
+    example:"яблоки\nяблоки и апельсины\nяблоки, апельсины и бананы\nяблоки, апельсины, бананы и лимоны",
+    text2:"Напишите функцию, которая будет принимать на вход список из строк и возвращать собранную строку из его элементов в описанной выше манере. Хотя в представленном примере количество элементов списка ограничивается четырьмя, ваша функция должна уметь обрабатывать списки любой длины. В основной программе запросите у пользователя несколько элементов списка, отформатируйте их должным образом при помощи функции и выведите на экран.",
+    hint:"Разберите случаи: пустой список, один элемент, два элемента (только «и»), иначе — запятые между всеми и «и» перед последним.",
+    solution:'# Отображаем перечень введенных слов через запятую и с союзом "и" между\n# последними двумя словами\n\n## Форматируем список с запятыми и союзом "и"\n# @param items - список элементов для форматирования\n# @return строка с установленными правилами форматирования\ndef formatList(items):\n    # Отдельно рассматриваем пустой список и список из одного элемента\n    if len(items) == 0:\n        return "<пусто>"\n    if len(items) == 1:\n        return str(items[0])\n    # Идем по всем элементам списка, за исключением двух последних\n    result = ""\n    for i in range(0, len(items) - 2):\n        result = result + str(items[i]) + ", "\n    # Добавляем к строке два последних элемента, разделенных союзом "и"\n    result = result + str(items[len(items) - 2]) + " и "\n    result = result + str(items[len(items) - 1])\n    return result\n\n# Запрашиваем у пользователя слова и форматируем их\ndef main():\n    items = []\n    line = input("Введите слово (Enter для окончания ввода): ")\n    while line != "":\n        items.append(line)\n        line = input("Введите слово (Enter для окончания ввода): ")\n    print("Введенные элементы: %s." % formatList(items))\n\nmain()' },
+  { id:121, title:"Случайные лотерейные номера", diff:"mid",
+    text:"Для выигрыша главного приза необходимо, чтобы шесть номеров на лотерейном билете совпали с шестью числами, выпавшими случайным образом в диапазоне от 1 до 49 во время очередного тиража. Напишите программу, которая будет случайным образом подбирать шесть номеров для вашего билета. Убедитесь в том, что среди этих чисел не будет дубликатов. Выведите номера билетов на экран по возрастанию.",
+    hint:"Генерируйте randrange(1, 50) и повторяйте, пока число уже есть в списке (while rand in ticket_nums); в конце sort().",
+    solution:'# Собираем уникальные случайные номера для лотерейного билета\nfrom random import randrange\nMIN_NUM = 1\nMAX_NUM = 49\nNUM_NUMS = 6\n\n# Используем список для хранения номеров лотерейного билета\nticket_nums = []\n\n# Генерируем NUM_NUMS случайных, но уникальных значений\nfor i in range(NUM_NUMS):\n    # Генерируем номер, которого еще нет в списке\n    rand = randrange(MIN_NUM, MAX_NUM + 1)\n    while rand in ticket_nums:\n        rand = randrange(MIN_NUM, MAX_NUM + 1)\n    # Добавляем номер к билету\n    ticket_nums.append(rand)\n\n# Сортируем номера по возрастанию и отображаем их\nticket_nums.sort()\nprint("Номера вашего билета:", end="")\nfor n in ticket_nums:\n    print(n, end=" ")\nprint()' },
+  { id:122, title:"«Поросячья латынь»", diff:"hard",
+    text:"«Поросячьей латынью» называют молодежный жаргонный язык, производный от английского. И хотя корни этого новообразованного языка неизвестны, упоминание о нем есть как минимум в двух документах, датированных XIX веком, а это значит, что ему уже больше сотни лет.\n\nДля перевода слова с английского на «поросячью латынь» нужно сделать следующее: если слово начинается с согласной буквы (включая y), то все буквы с начала слова и до первой гласной (за исключением y) переносятся в конец слова и дополняются сочетанием букв ay. Например, слово computer будет преобразовано в omputercay, а слово think – в inkthay; если слово начинается с гласной буквы (не включая y), к концу слова просто добавляется way. К примеру, слово algorithm превратится в algorithmway, а office – в officeway.\n\nНапишите программу, которая будет запрашивать у пользователя строку. После этого она должна переводить введенный текст на «поросячью латынь» и выводить его на экран. Вы можете сделать допуск о том, что все слова пользователь будет вводить в нижнем регистре и разделять их пробелами.",
+    hint:"Гласные — aeiou: найдите первую гласную; слово = хвост + начало + \"ay\", а если слово начинается с гласной — слово + \"way\".",
+    solution:'# Переводим английский текст на "поросячью латынь"\nVOWELS = "aeiou"\n\n## Переводим одно слово на поросячью латынь\n# @param word - слово в нижнем регистре\n# @return перевод слова\ndef pigLatinWord(word):\n    if word[0] in VOWELS:\n        return word + "way"\n    i = 0\n    while i < len(word) and word[i] not in VOWELS:\n        i = i + 1\n    return word[i:] + word[:i] + "ay"\n\ndef main():\n    text = input("Введите строку: ")\n    result = ""\n    for word in text.split():\n        result = result + pigLatinWord(word) + " "\n    print("Перевод на поросячью латынь:", result)\n\nif __name__ == "__main__":\n    main()' },
+  { id:123, title:"«Поросячья латынь» (продолжение)", diff:"hard",
+    text:"Расширьте свое решение упражнения 122, чтобы ваш анализатор корректно обрабатывал символы в верхнем регистре и знаки препинания, такие как запятая, точка, а также восклицательный и вопросительный знаки. Если в оригинале слово начинается с заглавной буквы, то в переводе на «поросячью латынь» оно также должно начинаться с заглавной буквы, тогда как буквы, перенесенные в конец слов, должны стать строчными. Например, слово Computer должно быть преобразовано в Omputercay. Если в конце слова стоит знак препинания, он там же и должен остаться после выполнения перевода. То есть слово в конце предложения Science! необходимо трансформировать в Iencescay!.",
+    hint:"Для каждого слова отделите хвостовую пунктуацию и запомните заглавность первой буквы, переведите основу и соберите слово обратно: заглавная + перевод + пунктуация.",
+    solution:'# "Поросячья латынь" с учетом регистра и знаков препинания\nVOWELS = "aeiou"\nPUNCT = ".,!?"\n\n## Переводим одно слово, сохраняя регистр и хвостовую пунктуацию\n# @param word - слово в любом регистре, возможно со знаками препинания\n# @return перевод слова\ndef pigLatinWord(word):\n    # Отделяем знаки препинания в конце слова\n    tail = ""\n    while len(word) > 0 and word[len(word) - 1] in PUNCT:\n        tail = word[len(word) - 1] + tail\n        word = word[:len(word) - 1]\n    if word == "":\n        return tail\n    # Запоминаем заглавную первую букву и работаем в нижнем регистре\n    capital = word[0].isupper()\n    word = word.lower()\n    # Переводим слово\n    if word[0] in VOWELS:\n        translated = word + "way"\n    else:\n        i = 0\n        while i < len(word) and word[i] not in VOWELS:\n            i = i + 1\n        translated = word[i:] + word[:i] + "ay"\n    # Возвращаем заглавную букву, если она была в оригинале\n    if capital:\n        translated = translated[0].upper() + translated[1:]\n    return translated + tail\n\ndef main():\n    text = input("Введите строку: ")\n    result = ""\n    for word in text.split():\n        result = result + pigLatinWord(word) + " "\n    print("Перевод на поросячью латынь:", result)\n\nif __name__ == "__main__":\n    main()' },
+  { id:124, title:"Линия наилучшего соответствия", diff:"hard",
+    text:"Линией наилучшего соответствия называется прямая, проходящая на наименьшем удалении от набора из n точек. В данном упражнении мы предположим, что каждая точка в коллекции обладает координатами x и y. Линия наилучшего соответствия представлена формулой y = mx + b, где m и b вычисляются по следующим формулам:",
+    formula:["m = (Σ(x·y) − n·x̄·ȳ) / (Σ(x²) − n·x̄²)", "b = ȳ − m·x̄"],
+    text2:"Напишите программу, которая будет запрашивать у пользователя координаты коллекции точек. При этом пользователь должен вводить сначала координату x, а затем y. Ввод координат может продолжаться до тех пор, пока пользователь не оставит пустым ввод координаты x. Отобразите формулу, характеризующую линию наилучшего соответствия, вида y = mx + b путем замены переменных m и b на значения, вычисленные по предыдущим формулам. Например, если пользователь введет три точки (1, 1), (2, 2.1) и (3, 2.9), итоговая формула должна приобрести вид y = 0,95x + 0,1.",
+    hint:"Накапливайте суммы sx, sy, sxy, sxx и счётчик n; средние x̄ = sx / n и ȳ = sy / n; затем подставьте в формулы для m и b.",
+    solution:'# Линия наилучшего соответствия для набора точек\nsx = 0.0\nsy = 0.0\nsxy = 0.0\nsxx = 0.0\nn = 0\nline = input("Введите координату x (пустая строка для окончания): ")\nwhile line != "":\n    x = float(line)\n    y = float(input("Введите координату y: "))\n    sx = sx + x\n    sy = sy + y\n    sxy = sxy + x * y\n    sxx = sxx + x * x\n    n = n + 1\n    line = input("Введите координату x (пустая строка для окончания): ")\n\nif n < 2:\n    print("Для построения линии нужно не менее двух точек.")\nelse:\n    mx = sx / n\n    my = sy / n\n    m = (sxy - n * mx * my) / (sxx - n * mx * mx)\n    b = my - m * mx\n    print("Линия наилучшего соответствия: y = %.2fx + %.2f" % (m, b))' },
+  { id:125, title:"Тасуем колоду карт", diff:"hard",
+    text:"Стандартная игральная колода состоит из 52 карт. Каждая карта соответствует одной из четырех мастей (пики, червы, бубны и трефы) и одному из 13 номиналов (от 2 до 10, валет (J), дама (Q), король (K) и туз (A)). Таким образом, каждая игральная карта может быть представлена при помощи двух символов. Первый из них указывает на номинал карты (от 2 до 9, T (десятка), J, Q, K или A), а второй – на масть (s = пики (spades), h = червы (hearts), d = бубны (diamonds) и c = трефы (clubs)). В таблице представлены некоторые из возможных обозначений игральных карт.",
+    table:{ head:["Карта","Обозначение"], rows:[
+      ["Валет пик","Js"],
+      ["Двойка треф","2c"],
+      ["Десятка бубен","Td"],
+      ["Туз червей","Ah"],
+      ["Девятка пик","9s"]]},
+    text2:"Начните с написания функции createDeck. В ней должны использоваться циклы для создания полной колоды карт путем сохранения в список двухсимвольных аббревиатур всех 52 карт. Именно этот список и будет возвращаемым из данной функции значением. На вход функция createDeck принимать параметры не будет.\n\nНапишите вторую функцию с именем shuffle, которая будет случайным образом перетасовывать карты в списке. Одна из техник тасования колоды заключается в проходе по элементам и перестановке их с любым другим случайным элементом в этом списке. Вы должны создать свой собственный цикл для тасования карт в колоде, а не пользоваться стандартной функцией shuffle языка Python.\n\nИспользуйте обе созданные функции в основной программе, в которой должна отображаться колода карт до и после тасования. Убедитесь, что основная программа выполняется только в случае, если файл не импортирован в качестве модуля.",
+    note:"Хороший алгоритм тасования игральной колоды должен быть беспристрастным, что означает равную вероятность расположения каждой из карт в колоде после тасования. Однако алгоритм, предложенный в этом упражнении и предполагающий обмен позициями между каждой из карт в колоде с любой другой случайной картой, не является таковым. Беспристрастной будет версия алгоритма, в которой при последовательном проходе по элементам каждый из них меняется позициями со случайным элементом в диапазоне от позиции текущей карты и до конца колоды.",
+    hint:"createDeck: вложенные циклы по мастям [\"s\",\"h\",\"d\",\"c\"] и номиналам [\"2\"..\"9\",\"T\",\"J\",\"Q\",\"K\",\"A\"]; shuffle: для каждого i меняйте cards[i] с cards[randrange(i, len(cards))].",
+    solution:'# Создаем колоду карт и перетасовываем ее\nfrom random import randrange\n\n## Генерируем стандартную колоду карт с четырьмя мастями и 13 номиналами в каждой\n# @return список карт с каждой картой, представленной двумя символами\ndef createDeck():\n    cards = []\n    # Проходим по всем мастям и номиналам\n    for suit in ["s", "h", "d", "c"]:\n        for value in ["2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"]:\n            # Генерируем карту и добавляем ее в колоду\n            cards.append(value + suit)\n    # Возвращаем целую колоду\n    return cards\n\n## Тасуем колоду, переданную в функцию в качестве параметра\n# @param cards - список карт для тасования\ndef shuffle(cards):\n    # Проходим по картам\n    for i in range(0, len(cards)):\n        # Выбираем случайный индекс между текущим индексом и концом списка\n        other_pos = randrange(i, len(cards))\n        # Меняем местами текущую карту со случайно выбранной\n        temp = cards[i]\n        cards[i] = cards[other_pos]\n        cards[other_pos] = temp\n\n# Отображаем колоду до и после тасования\ndef main():\n    cards = createDeck()\n    print("Исходная колода карт:")\n    print(cards)\n    print()\n    shuffle(cards)\n    print("Перетасованная колода карт:")\n    print(cards)\n\nif __name__ == "__main__":\n    main()' },
+  { id:126, title:"Раздача карманных карт", diff:"hard",
+    text:"Во многих карточных играх после процедуры тасования колоды каждый игрок получает на руки определенное количество карт. Напишите функцию deal, принимающую на вход три параметра: количество игроков, количество раздаваемых каждому из них карт и саму колоду. Функция должна возвращать список рук, которые были розданы игрокам. При этом каждая рука, в свою очередь, тоже является списком из входящих в нее карт.\n\nВо время раздачи карт игрокам функция параллельно должна удалять розданные карты из переданной ей третьим параметром колоды. Также принято раздавать карты каждому игроку по одной строго по очереди.\n\nПридерживайтесь этих принципов и при написании своей функции.\n\nВоспользуйтесь своими наработками из упражнения 125 при построении структуры основной программы. Вам необходимо создать колоду карт, перетасовать ее и раздать четырем игрокам по пять карт. Выведите на экран карманные карты всех игроков, находящихся в раздаче, а также оставшиеся в колоде карты.",
+    hint:"Руки — список пустых списков по числу игроков; раздавайте по одной карте за круг: hands[p].append(cards.pop(0)).",
+    solution:'# Раздача карманных карт игрокам\nfrom cards import createDeck, shuffle   # функции из упражнения 125\n\n## Раздаем карты игрокам\n# @param num_players - количество игроков\n# @param num_cards - количество карт каждому игроку\n# @param cards - колода (изменяется в процессе раздачи)\n# @return список рук игроков\ndef deal(num_players, num_cards, cards):\n    hands = []\n    for i in range(num_players):\n        hands.append([])\n    # Раздаем карты по одной строго по очереди\n    for c in range(num_cards):\n        for p in range(num_players):\n            hands[p].append(cards.pop(0))\n    return hands\n\ndef main():\n    cards = createDeck()\n    shuffle(cards)\n    hands = deal(4, 5, cards)\n    for i in range(len(hands)):\n        print("Игрок", i + 1, ":", hands[i])\n    print("Оставшиеся карты в колоде:", cards)\n\nif __name__ == "__main__":\n    main()' },
+  { id:127, title:"Список уже отсортирован?", diff:"hard",
+    text:"Напишите функцию, показывающую, отсортирован ли переданный ей в качестве параметра список (по возрастанию или убыванию). Функция должна возвращать True, если список отсортирован, и False в противном случае. В основной программе запросите у пользователя последовательность чисел для списка, после чего выведите сообщение о том, является ли этот список отсортированным изначально.",
+    note:"Убедитесь в том, что вы правильно обрабатываете пустые списки, а также списки, состоящие из единственного элемента.",
+    hint:"Сравните список с sorted(data) и с sorted(data, reverse=True): совпал с любым из них — отсортирован; пустой и одиночный список считайте отсортированным.",
+    solution:'# Отсортирован ли список?\n\n## Определяем, отсортирован ли список по возрастанию или убыванию\n# @param data - список для проверки\n# @return True, если список отсортирован, иначе False\ndef isSorted(data):\n    if len(data) == 0 or len(data) == 1:\n        return True\n    ascending = sorted(data)\n    descending = sorted(data, reverse=True)\n    return data == ascending or data == descending\n\ndef main():\n    data = []\n    line = input("Введите число (пустая строка для окончания): ")\n    while line != "":\n        data.append(float(line))\n        line = input("Введите число (пустая строка для окончания): ")\n    if isSorted(data):\n        print("Список отсортирован изначально.")\n    else:\n        print("Список не отсортирован.")\n\nif __name__ == "__main__":\n    main()' },
+  { id:128, title:"Подсчитать элементы в списке", diff:"hard",
+    text:"В стандартной библиотеке языка Python присутствует функция count, позволяющая подсчитать, сколько раз определенное значение встречается в списке. В данном упражнении вы создадите новую функцию countRange, которая будет подсчитывать количество элементов в списке, значения которых больше или равны заданному минимальному порогу и меньше максимального. Функция должна принимать три параметра: список, минимальную границу и максимальную границу. Возвращать она будет целочисленное значение, большее или равное нулю. В основной программе реализуйте демонстрацию вашей функции для нескольких списков с разными минимальными и максимальными границами. Удостоверьтесь, что программа будет корректно работать со списками, содержащими как целочисленные значения, так и числа с плавающей запятой.",
+    hint:"Один проход по списку: если mn <= e and e < mx — увеличивайте счётчик.",
+    solution:'# Подсчитываем количество элементов в списке, больших или равных\n# заданному минимуму и меньших заданного максимума\n\n## Определяем, сколько элементов в списке больше или равны\n# заданному минимуму и меньше заданного максимума\n# @param data - список значений для обработки\n# @param mn - минимальная граница\n# @param mx - максимальная граница\n# @return количество элементов e, отвечающее условию mn <= e < mx\ndef countRange(data, mn, mx):\n    count = 0\n    for e in data:\n        if mn <= e and e < mx:\n            count = count + 1\n    return count\n\n# Демонстрируем работу функции countRange\ndef main():\n    data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\n    print("Список [1..10], границы 5 и 7:")\n    print("Результат: %d, ожидание: 2" % countRange(data, 5, 7))\n    print("Список [1..10], границы -5 и 77:")\n    print("Результат: %d, ожидание: 10" % countRange(data, -5, 77))\n    print("Список [1..10], границы 12 и 17:")\n    print("Результат: %d, ожидание: 0" % countRange(data, 12, 17))\n    print("Пустой список, границы 0 и 100:")\n    print("Результат: %d, ожидание: 0" % countRange([], 0, 100))\n    data = [1.5, 2.5, 3.5, 4.5]\n    print("Список с плавающей запятой, границы 2 и 4:")\n    print("Результат: %d, ожидание: 2" % countRange(data, 2, 4))\n\nmain()' },
+  { id:129, title:"Разбиение строки на лексемы", diff:"hard",
+    text:"Разбиение строки на лексемы (Tokenizing) представляет собой процесс преобразования исходной строки в список из подстрок, называемых лексемами (token). Зачастую со списком лексем работать бывает проще, чем со всей исходной строкой, поскольку в ней могут присутствовать неравномерные разрывы.\n\nВ математических выражениях лексемами являются, например, операторы, числа и скобки. Здесь и далее мы будем причислять к списку операторов следующие: *, /, ˆ, - и +. Операторы и скобки легко идентифицировать, поскольку эти лексемы всегда состоят ровно из одного символа и никогда не являются составной частью других лексем. Числа выделить бывает сложнее, поскольку эти лексемы могут состоять из нескольких символов. Любая непрерывная последовательность цифр должна восприниматься как одна числовая лексема.\n\nНапишите функцию, принимающую в качестве единственного входного параметра строку, содержащую математическое выражение, и преобразующую ее в список лексем. Каждая лексема должна быть либо оператором, либо числом, либо скобкой. Для простоты реализации в данном упражнении мы будем оперировать только целочисленными значениями. Функция должна возвращать созданный список лексем.\n\nПри решении поставленной задачи вы можете принять допущение о том, что входная строка всегда будет содержать математическое выражение, состоящее из скобок, чисел и операторов. При этом в вашей функции должно быть предусмотрено, что лексемы могут отделяться друг от друга разным количеством пробелов, а могут и не отделяться вовсе. В основной программе продемонстрируйте работу функции, запросив у пользователя исходную строку и выведя на экран список составляющих ее лексем. Убедитесь, что основная программа выполняется только в случае, если файл не импортирован в качестве модуля.",
+    hint:"Удалите пробелы через replace; идите по символам: односимвольный оператор или скобка — отдельная лексема, цифра — накапливайте число до первого нецифрового символа.",
+    solution:'# Разбиение строки, содержащей математическое выражение, на лексемы\n\n## Преобразуем математическое выражение в список лексем\n# @param s - строка для разбора\n# @return список лексем строки s\ndef tokenList(s):\n    # Удаляем все пробелы из строки\n    s = s.replace(" ", "")\n    # Проходим по символам в строке, определяя лексемы и добавляя их к списку\n    tokens = []\n    i = 0\n    while i < len(s):\n        # Обрабатываем односимвольные лексемы: *, /, ^, (, ), +, -\n        if s[i] == "*" or s[i] == "/" or s[i] == "^" or s[i] == "(" or s[i] == ")" or s[i] == "+" or s[i] == "-":\n            tokens.append(s[i])\n            i = i + 1\n        # Обрабатываем числа без лидирующих + или -\n        elif s[i] >= "0" and s[i] <= "9":\n            num = ""\n            while i < len(s) and s[i] >= "0" and s[i] <= "9":\n                num = num + s[i]\n                i = i + 1\n            tokens.append(num)\n        else:\n            return []\n    return tokens\n\ndef main():\n    exp = input("Введите математическое выражение: ")\n    tokens = tokenList(exp)\n    print("Лексемы:", tokens)\n\nif __name__ == "__main__":\n    main()' },
+  { id:130, title:"Унарные и бинарные операторы", diff:"hard",
+    text:"Математические операторы бывают унарными (unary) и бинарными (binary). Унарные операторы взаимодействуют с одним значением, тогда как бинарные – с двумя. Например, в выражении 2 * –3 оператор * является бинарным, поскольку взаимодействует с двумя числами: 2 и -3. При этом сам оператор – здесь унарный, ведь он применяется только к одному числу 3.\n\nОдного лишь символа оператора недостаточно, чтобы определить, является ли он унарным или бинарным. Например, хотя в предыдущем случае оператор – был унарным, в выражении 2 – 3 он приобретет роль бинарного. Подобная неоднозначность, также характерная для оператора сложения, должна быть устранена до применения других операций к элементам списка лексем математического выражения.\n\nНапишите функцию для поиска унарных операторов + и – в списке лексем и их замены на сочетание символов u+ и u– соответственно. Функция должна принимать в качестве единственного параметра список лексем математического выражения и возвращать его копию с произведенной заменой унарных операторов. Оператор + или – можно идентифицировать как унарный в одном из двух случаев: если он идет первым в списке или если ему предшествует другой оператор либо открывающая скобка. Во всех остальных случаях оператор может считаться бинарным.\n\nВ основной программе продемонстрируйте работу функции. Запросите у пользователя строку с математическим выражением, разбейте ее на лексемы, выделите в отдельный список унарные операторы и выведите их на экран.",
+    hint:"Идите по индексам: токен + или - унарный, если i == 0 или предыдущий токен — оператор либо открывающая скобка; заменяйте на \"u\" + токен.",
+    solution:'# Устанавливаем разницу между унарными и бинарными операторами + и -\nfrom token_list import tokenList   # функция из упражнения 129\n\n## Определяем появление унарных операторов + и - в списке лексем и\n# меняем их на u+ и u- соответственно\n# @param tokens - список лексем, который может содержать унарные операторы + и -\n# @return список лексем с заменой унарных операторов + и - на u+ и u-\ndef identifyUnary(tokens):\n    retval = []\n    for i in range(len(tokens)):\n        # Если первая лексема - это + или -, то это унарный оператор\n        if i == 0 and (tokens[i] == "+" or tokens[i] == "-"):\n            retval.append("u" + tokens[i])\n        # Если это лексема + или -, а предыдущая лексема являлась\n        # оператором или открывающей скобкой, то это унарный оператор\n        elif i > 0 and (tokens[i] == "+" or tokens[i] == "-") and (tokens[i - 1] == "+" or tokens[i - 1] == "-" or tokens[i - 1] == "*" or tokens[i - 1] == "/" or tokens[i - 1] == "^" or tokens[i - 1] == "("):\n            retval.append("u" + tokens[i])\n        # Любая другая лексема свидетельствует о том, что это бинарный оператор\n        else:\n            retval.append(tokens[i])\n    return retval\n\ndef main():\n    exp = input("Введите математическое выражение: ")\n    tokens = tokenList(exp)\n    print("Лексемы:", tokens)\n    marked = identifyUnary(tokens)\n    print("С помеченными унарными операторами:", marked)\n\nif __name__ == "__main__":\n    main()' },
+  { id:131, title:"Инфиксная запись – в постфиксную", diff:"hard",
+    text:"Математические выражения часто записываются в инфиксной форме (infix form), когда оператор ставится между операндами, с которыми взаимодействует. И хотя такая форма записи наиболее распространена, существует и другая, именуемая постфиксной (postfix form), в которой оператор ставится после операндов. Например, инфиксной форме записи выражения 3 + 4 будет соответствовать постфиксный вариант 3 4 +. Чтобы преобразовать инфиксную форму записи в постфиксную, необходимо выполнить следующий алгоритм действий.",
+    steps:[
+      "создаем новый пустой список operators;",
+      "создаем новый пустой список postfix;",
+      "для каждой лексемы в инфиксном выражении:",
+      "если лексема представляет собой целое число, добавляем лексему к списку postfix;",
+      "если лексема представляет собой оператор, то, пока список operators не пустой и последний элемент в operators не открывающая скобка и precedence(лексема) < precedence(последний элемент в operators), удаляем последний элемент из списка operators и добавляем его к postfix; затем добавляем лексему к списку operators;",
+      "если лексема представляет собой открывающую скобку, добавляем лексему к списку operators;",
+      "если лексема представляет собой закрывающую скобку, то, пока последний элемент в operators не является открывающей скобкой, удаляем последний элемент из списка operators и добавляем его к postfix; затем удаляем открывающую скобку из operators;",
+      "пока список operators не пустой, удаляем последний элемент из списка operators и добавляем его к postfix;",
+      "возвращаем postfix в качестве результата алгоритма."
+    ],
+    after:"Используйте свои наработки из упражнений 129 и 130 для разделения математических выражений на лексемы и поиска в них унарных операторов. После этого используйте алгоритм, приведенный выше, для преобразования выражения из инфиксной формы в постфиксную. Код, реализующий этот алгоритм, должен быть заключен в функцию, принимающую на вход список лексем инфиксного выражения (с помеченными унарными операторами). Возвращать функция будет список лексем в постфиксном выражении. В основной программе продемонстрируйте работу функции: запросите у пользователя выражение инфиксного типа и выведите на экран его постфиксный аналог. Решение задания 97 необходимо немного расширить, чтобы возвращался правильный приоритет для унарных операторов: унарные операторы должны обладать более высоким приоритетом по сравнению с операциями умножения и деления, но более низким, если сравнивать с операцией возведения в степень.",
+    hint:"Стек operators реализуйте обычным списком: вершина — последний элемент; числа сразу идут в postfix, операторы выталкивают из стека всё с большим приоритетом.",
+    solution:'# Преобразование инфиксного выражения в постфиксное\nfrom token_list import tokenList           # упражнение 129\nfrom identify_unary import identifyUnary   # упражнение 130\n\n## Приоритет оператора с учетом унарных + и -\n# @param op - лексема оператора\n# @return приоритет оператора\ndef precedence(op):\n    if op == "u+" or op == "u-":\n        return 3\n    if op == "+" or op == "-":\n        return 1\n    if op == "*" or op == "/":\n        return 2\n    if op == "^":\n        return 4\n    return -1\n\n## Преобразуем список инфиксных лексем в постфиксную форму\n# @param tokens - список инфиксных лексем с помеченными унарными операторами\n# @return список лексем постфиксного выражения\ndef infixToPostfix(tokens):\n    operators = []\n    postfix = []\n    for token in tokens:\n        if token.isdigit():\n            postfix.append(token)\n        elif token == "(":\n            operators.append(token)\n        elif token == ")":\n            while operators[len(operators) - 1] != "(":\n                postfix.append(operators.pop())\n            operators.pop()\n        else:\n            while len(operators) > 0 and operators[len(operators) - 1] != "(" and precedence(token) < precedence(operators[len(operators) - 1]):\n                postfix.append(operators.pop())\n            operators.append(token)\n    while len(operators) > 0:\n        postfix.append(operators.pop())\n    return postfix\n\ndef main():\n    exp = input("Введите инфиксное выражение: ")\n    tokens = identifyUnary(tokenList(exp))\n    print("Постфиксная форма:", infixToPostfix(tokens))\n\nif __name__ == "__main__":\n    main()' },
+  { id:132, title:"Выполнение постфиксных выражений", diff:"hard",
+    text:"Математические выражения, записанные в постфиксной форме, выполнять легче, чем те же выражения в инфиксной, поскольку в них нет скобок и не нужно учитывать старшинство операторов. Выражения в постфиксной форме могут быть выполнены при помощи реализации следующего алгоритма.",
+    steps:[
+      "создаем новый пустой список values;",
+      "для каждой лексемы в постфиксном выражении:",
+      "если лексема представляет собой целое число, преобразуем лексему в целочисленный тип и добавляем к списку values;",
+      "если лексема представляет собой унарный оператор -, удаляем последний элемент из списка values, меняем ему знак и добавляем результат к списку values;",
+      "если лексема представляет собой бинарный оператор, удаляем последний элемент из списка values и называем его right, удаляем последний элемент из списка values и называем его left, вычисляем результат применения оператора к операндам left и right и добавляем результат к списку values;",
+      "возвращаем первый элемент списка values в качестве значения выражения."
+    ],
+    after:"Напишите программу, запрашивающую у пользователя математическое выражение в инфиксном виде, преобразующую его в постфиксную форму, выполняющую полученное выражение и выводящую на экран результат. Используйте при решении задачи свои наработки из упражнений 129, 130 и 131, а также алгоритм, приведенный выше.",
+    note:"В алгоритмах, предложенных для решения упражнений 131 и 132, не предусмотрена обработка возможных ошибок. В результате ваши программы могут выдавать ошибки или выполняться неправильно, если пользователь введет что-то неожиданное. Эти алгоритмы могут быть расширены и дополнены по желанию во избежание возникновения ошибок.",
+    hint:"Стек values: число — кладём сверху; u- — меняем знак вершины; бинарный оператор — снимаем right и left, применяем оператор и кладём результат.",
+    solution:'# Выполнение постфиксного выражения\nfrom infix_to_postfix import infixToPostfix   # упражнение 131\nfrom token_list import tokenList              # упражнение 129\nfrom identify_unary import identifyUnary      # упражнение 130\n\n## Вычисляем значение постфиксного выражения\n# @param tokens - список лексем постфиксного выражения\n# @return значение выражения\ndef evaluatePostfix(tokens):\n    values = []\n    for token in tokens:\n        if token.isdigit():\n            values.append(int(token))\n        elif token == "u-":\n            v = values.pop()\n            values.append(-v)\n        elif token == "u+":\n            pass\n        else:\n            right = values.pop()\n            left = values.pop()\n            if token == "+":\n                values.append(left + right)\n            elif token == "-":\n                values.append(left - right)\n            elif token == "*":\n                values.append(left * right)\n            elif token == "/":\n                values.append(left / right)\n            elif token == "^":\n                values.append(left ** right)\n    return values[0]\n\ndef main():\n    exp = input("Введите инфиксное выражение: ")\n    tokens = identifyUnary(tokenList(exp))\n    postfix = infixToPostfix(tokens)\n    print("Постфиксная форма:", postfix)\n    print("Значение выражения:", evaluatePostfix(postfix))\n\nif __name__ == "__main__":\n    main()' },
+  { id:133, title:"Содержит ли список подмножество элементов?", diff:"hard",
+    text:"Подмножеством элементов, или подсписком (sublist), мы будем называть список, являющийся составной частью большего списка. Подсписок может содержать один элемент, множество элементов, а также быть пустым. Например, [1], [2], [3] и [4] являются подсписками списка [1, 2, 3, 4]. Список [2, 3] также входит в состав [1, 2, 3, 4], но при этом список [2, 4] не является подсписком [1, 2, 3, 4], поскольку в исходном списке числа 2 и 4 не соседствуют друг с другом. Пустой список может быть рассмотрен как подсписок для любого списка. Таким образом, список [] является подсписком [1, 2, 3, 4]. Также список является подсписком самого себя, то есть [1, 2, 3, 4] – это подсписок для [1, 2, 3, 4].\n\nВ рамках данного упражнения вам необходимо написать функцию isSublist, определяющую, является ли один список подсписком другого. На вход функции должны поступать два списка – larger и smaller. Функция должна возвращать значение True только в том случае, если список smaller является подсписком списка larger. Напишите также основную программу для демонстрации работы функции.",
+    hint:"Пустой smaller — сразу True; иначе сдвигайте окно длины len(smaller) по larger и сравнивайте срезы larger[i:i+len(smaller)].",
+    solution:'# Является ли один список подсписком другого?\n\n## Определяем, является ли список smaller подсписком списка larger\n# @param larger - список, в котором ищем\n# @param smaller - список, который ищем\n# @return True только если smaller - подсписок larger\ndef isSublist(larger, smaller):\n    if len(smaller) == 0:\n        return True\n    if len(smaller) > len(larger):\n        return False\n    for i in range(0, len(larger) - len(smaller) + 1):\n        if larger[i:i + len(smaller)] == smaller:\n            return True\n    return False\n\ndef main():\n    print(isSublist([1, 2, 3, 4], [2, 3]))          # True\n    print(isSublist([1, 2, 3, 4], [2, 4]))          # False\n    print(isSublist([1, 2, 3, 4], []))              # True\n    print(isSublist([1, 2, 3, 4], [1, 2, 3, 4]))    # True\n\nif __name__ == "__main__":\n    main()' },
+  { id:134, title:"Все подсписки заданного списка", diff:"hard",
+    text:"Используя определение подсписка из упражнения 133, напишите функцию, возвращающую список, содержащий все возможные подсписки заданного. Например, в число подсписков списка [1, 2, 3] входят следующие: [], [1], [2], [3], [1, 2], [2, 3] и [1, 2, 3]. Заметьте, что ваша функция должна вернуть как минимум один пустой список, гарантированно являющийся подсписком для любого списка. Напишите основную программу, демонстрирующую работу функции применительно к нескольким исходным спискам.",
+    hint:"Начните со списка [[]]; затем для каждой длины от 1 до len(data) берите срезы data[i:i+length] при всех допустимых i.",
+    solution:'# Находим все подсписки в заданном списке\n\n## Создаем список из всех подсписков заданного списка\n# @param data - список, в котором выполняется поиск подсписков\n# @return список из всех подсписков исходного списка\ndef allSublists(data):\n    # Начинаем с добавления пустого списка\n    sublists = [[]]\n    # Генерируем подсписки длиной от 1 до len(data)\n    for length in range(1, len(data) + 1):\n        # Генерируем подсписки начиная с каждого индекса\n        for i in range(0, len(data) - length + 1):\n            # Добавляем найденный подсписок к общему списку\n            sublists.append(data[i: i + length])\n    return sublists\n\n# Демонстрируем работу функции allSublists\ndef main():\n    print("Подсписки []:")\n    print(allSublists([]))\n    print("Подсписки [1]:")\n    print(allSublists([1]))\n    print("Подсписки [1, 2]:")\n    print(allSublists([1, 2]))\n    print("Подсписки [1, 2, 3]:")\n    print(allSublists([1, 2, 3]))\n    print("Подсписки [1, 2, 3, 4]:")\n    print(allSublists([1, 2, 3, 4]))\n\nmain()' },
+  { id:135, title:"Решето Эратосфена", diff:"hard",
+    text:"Решето Эратосфена – алгоритм, изобретенный более 2000 лет назад и служащий для нахождения всех простых чисел от 2 до некоторого целого числа n. Описание этого алгоритма приведено ниже.",
+    steps:[
+      "выписываем все целые числа от 0 до заданной границы;",
+      "вычеркиваем 0 и 1 как непростые числа;",
+      "устанавливаем значение переменной p, равное 2;",
+      "пока p меньше указанного числа, делать:",
+      "вычеркиваем все числа, кратные p, но не его само;",
+      "устанавливаем значение p, равное следующему невычеркнутому числу;",
+      "выводим все числа, оставшиеся незачеркнутыми."
+    ],
+    after:"Ценность этого алгоритма заключается в том, что на бумаге очень легко вычеркнуть все числа, кратные определенному. Для компьютера это также не самая сложная задача – с этим может прекрасно справиться инструкция for с третьим параметром, переданным функции range. Мы знаем, что вычеркнутые числа на листочке не являются простыми, но физически они никуда с листа не деваются и должны участвовать в дальнейшем алгоритме. Так что и в компьютерной симуляции не стоит «вычеркивать» элемент путем его удаления из списка – вместо этого лучше будет присвоить ему значение 0. После завершения алгоритма все ненулевые числа в списке и будут простыми.\n\nНапишите программу на Python, реализующую указанный выше алгоритм для отображения простых чисел в интервале от двух до значения, введенного пользователем. Если алгоритм будет реализован правильно, ваша программа справится с выводом всех простых чисел от двух до миллиона всего за пару секунд.",
+    note:"Приведенный в данном упражнении алгоритм поиска простых чисел, названный в честь Эратосфена, был далеко не единственным вкладом греческого математика в науку. Ему также приписывают вычисление длины окружности Земли и градус наклона ее оси. Кроме того, с 235 г. до н. э. он служил хранителем знаменитой Александрийской библиотеки.",
+    hint:"Список nums = [0..limit]; nums[1] = 0; p = 2; пока p < limit: обнуляйте кратные p через range(p*2, limit+1, p), затем сдвигайте p на следующее ненулевое.",
+    solution:'# Определяем все простые числа от 2 до значения, введенного пользователем,\n# при помощи алгоритма "Решето Эратосфена"\n\n# Запрашиваем у пользователя конечное значение\nlimit = int(input("Вывести простые числа вплоть до какого значения? "))\n\n# Создаем список для чисел от 0 до limit\nnums = []\nfor i in range(0, limit + 1):\n    nums.append(i)\n\n# "Вычеркиваем" единицу, заменяя ее на ноль\nnums[1] = 0\n\n# Вычеркиваем числа, кратные всем найденным простым числам\np = 2\nwhile p < limit:\n    # Вычеркиваем все числа, кратные p, но не его само\n    for i in range(p * 2, limit + 1, p):\n        nums[i] = 0\n    # Находим следующее "невычеркнутое" число\n    p = p + 1\n    while p < limit and nums[p] == 0:\n        p = p + 1\n\n# Отображаем результат\nprint("Простые числа вплоть до", limit, ":")\nfor i in nums:\n    if nums[i] != 0:\n        print(i)' }
+];
+var DIFF_LABEL = { easy:"легкая", mid:"средняя", hard:"сложная" };
+
+var LS_STATE = "python-task5-state-v1";
+var LS_PROGRESS = "python-trainer-progress-v1";
+
+/* ================= STATE ================= */
+var state = {
+  screen:"start",
+  tab:"ref",               // ref | tasks | report
+  student:{last:"", first:"", cls:""},
+  startErrors:null,
+  codes:{},
+  hintShown:{}, hintUsed:{},
+  etalonShown:{}, etalonViewed:{}, etalonNoAttempt:{}, etalonConfirm:{},
+  solved:{},
+  open:{},
+  filter:"all",            // all | todo | done
+  query:"",
+  reportOpen:false
+};
+function loadSaved(){
+  try{
+    var raw = localStorage.getItem(LS_STATE);
+    if(!raw) return;
+    var s = JSON.parse(raw);
+    if(s.student) state.student = s.student;
+    if(s.codes) state.codes = Object.assign(state.codes, s.codes);
+    if(s.hintUsed) state.hintUsed = Object.assign(state.hintUsed, s.hintUsed);
+    if(s.etalonViewed) state.etalonViewed = Object.assign(state.etalonViewed, s.etalonViewed);
+    if(s.etalonNoAttempt) state.etalonNoAttempt = Object.assign(state.etalonNoAttempt, s.etalonNoAttempt);
+    if(s.solved) state.solved = Object.assign(state.solved, s.solved);
+    if(s.reportOpen) state.reportOpen = true;
+  }catch(e){}
+}
+function persist(){
+  try{
+    localStorage.setItem(LS_STATE, JSON.stringify({
+      student:state.student, codes:state.codes,
+      hintUsed:state.hintUsed, etalonViewed:state.etalonViewed,
+      etalonNoAttempt:state.etalonNoAttempt, solved:state.solved,
+      reportOpen:state.reportOpen
+    }));
+  }catch(e){}
+}
+function setProgress(status){
+  try{
+    var raw = localStorage.getItem(LS_PROGRESS);
+    var p = raw ? JSON.parse(raw) : {topic:{}, task:{}};
+    p.task = p.task || {};
+    p.task[String(META.num)] = status;
+    localStorage.setItem(LS_PROGRESS, JSON.stringify(p));
+  }catch(e){}
+}
+function esc(s){
+  return String(s).replace(/[&<>"']/g, function(ch){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch];
+  });
+}
+function hlPy(src){
+  return esc(src).replace(
+    /(#.*$)|(&quot;(?:[^&\\]|\\.)*?&quot;|&#39;(?:[^&\\]|\\.)*?&#39;)|\b(from|import|def|return|if|elif|else|for|while|in|and|or|not|True|False|pass|break|continue|try|except|with|as|lambda|global|None)\b|\b(\d+(?:\.\d+)?)\b|([A-Za-z_][A-Za-z0-9_]*)(?=\s*\()/gm,
+    function(m, com, str, kw, num, fn){
+      if(com) return '<span class="tk-c">' + com + '</span>';
+      if(str) return '<span class="tk-s">' + str + '</span>';
+      if(kw)  return '<span class="tk-k">' + kw + '</span>';
+      if(num) return '<span class="tk-n">' + num + '</span>';
+      if(fn)  return '<span class="tk-f">' + fn + '</span>';
+      return m;
+    });
+}
+function codeWindow(src, file){
+  return '<div class="code-window"><div class="code-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="file">' + (file || "program.py") + '</span></div><pre class="code">' + hlPy(src) + '</pre></div>';
+}
+/* счётчики */
+function solvedCount(){ return TASKS.filter(function(t){ return state.solved[t.id]; }).length; }
+function codeCount(){ return TASKS.filter(function(t){ return (state.codes[t.id] || "").trim(); }).length; }
+function hintCount(){ return TASKS.filter(function(t){ return state.hintUsed[t.id]; }).length; }
+function etalonCount(){ return TASKS.filter(function(t){ return state.etalonViewed[t.id]; }).length; }
+function touched(t){
+  return (state.codes[t.id] || "").trim() || state.hintUsed[t.id] || state.etalonViewed[t.id] || state.solved[t.id];
+}
+function doneThreshold(){ return Math.ceil(TASKS.length * DONE_SHARE); }
+
+/* ================= RENDER ================= */
+var app = document.getElementById("app");
+
+function parasHTML(s){
+  return s.split("\n\n").map(function(p){ return '<p class="task-text">' + esc(p) + '</p>'; }).join("");
+}
+function formulaHTML(f){
+  var arr = Array.isArray(f) ? f : [f];
+  return arr.map(function(x){ return '<div class="formula">' + esc(x) + '</div>'; }).join("");
+}
+function tableHTML(t){
+  return '<div class="tbl-wrap"><table><thead><tr>' +
+    t.head.map(function(h){ return "<th>" + esc(h) + "</th>"; }).join("") +
+    '</tr></thead><tbody>' +
+    t.rows.map(function(r){
+      return "<tr>" + r.map(function(c){ return "<td>" + esc(c) + "</td>"; }).join("") + "</tr>";
+    }).join("") + '</tbody></table></div>';
+}
+function renderStart(){
+  var e = state.startErrors || {};
+  var st = state.student;
+  return '<div class="container"><div class="start-card">' +
+    '<span class="eyebrow">Python · Практика, глава ' + META.num + '</span>' +
+    '<h1>' + META.topic + '</h1>' +
+    '<p class="author">Автор курса: ' + META.author + '</p>' +
+    '<ul class="start-list"><li>Краткая справка: 5 карточек о списках и их методах.</li><li>' + TASKS.length + ' задачи главы из сборника Б. Стивенсона: условия как в книге, подсказка и эталон у каждой.</li><li>Прогресс, фильтры и поиск по задачам.</li><li>В конце — сводка «Итоги» и отчёт для сохранения в PDF.</li></ul>' +
+    '<form id="startForm" novalidate>' +
+      '<div class="field"><label for="fLast">Фамилия</label><input id="fLast" name="last" autocomplete="family-name" value="' + esc(st.last) + '" class="' + (e.last ? "bad" : "") + '" placeholder="Иванов">' + (e.last ? '<p class="err">' + e.last + '</p>' : '') + '</div>' +
+      '<div class="field"><label for="fFirst">Имя</label><input id="fFirst" name="first" autocomplete="given-name" value="' + esc(st.first) + '" class="' + (e.first ? "bad" : "") + '" placeholder="Иван">' + (e.first ? '<p class="err">' + e.first + '</p>' : '') + '</div>' +
+      '<div class="field"><label for="fCls">Класс</label><input id="fCls" name="cls" value="' + esc(st.cls) + '" class="' + (e.cls ? "bad" : "") + '" placeholder="9А">' + (e.cls ? '<p class="err">' + e.cls + '</p>' : '') + '</div>' +
+      '<button class="btn btn-primary" type="submit">Начать практику</button>' +
+    '</form></div></div>';
+}
+function renderRef(){
+  var cards = REF_CARDS.map(function(c){
+    return '<div class="card"><h3>' + esc(c.t) + '</h3><p>' + esc(c.p) + '</p>' + codeWindow(c.code, "spravka.py") + '</div>';
+  }).join("");
+  return '<div class="container"><p class="section-note">Только то, что нужно для задач главы: создание списков, индексы, циклы, методы append/insert/pop/remove, sort/reverse, поиск и передача списков в функции. Полная теория — в блоке 4 курса («Массивы»).</p>' + cards +
+    '<div class="call info"><span class="call-ic" aria-hidden="true">💡</span><div><p>Все упражнения этой главы решаются с применением списков. Пишите комментарии и понятные имена переменных — как в примерах сборника. Код автосохраняется в этом браузере.</p></div></div></div>';
+}
+function taskCard(t){
+  var open = !!state.open[t.id];
+  var solved = !!state.solved[t.id];
+  var tags = '<span class="tag ' + t.diff + '">' + DIFF_LABEL[t.diff] + '</span>' +
+    (solved ? '<span class="tag solved">решено</span>' : '');
+  var body = "";
+  if(open){
+    body = '<div class="task-body">' +
+      parasHTML(t.text) +
+      (t.bullets ? '<ul class="task-list">' + t.bullets.map(function(b){ return '<li>' + esc(b) + '</li>'; }).join("") + '</ul>' : '') +
+      (t.table ? tableHTML(t.table) : '') +
+      (t.formula ? formulaHTML(t.formula) : '') +
+      (t.text2 ? parasHTML(t.text2) : '') +
+      (t.steps ? '<ol class="task-steps">' + t.steps.map(function(s){ return '<li>' + esc(s) + '</li>'; }).join("") + '</ol>' : '') +
+      (t.after ? parasHTML(t.after) : '') +
+      (t.note ? '<div class="call warn"><span class="call-ic" aria-hidden="true">⚠️</span><div><p><b>Примечание.</b> ' + esc(t.note) + '</p></div></div>' : '') +
+      (t.bookHint ? '<div class="call info"><span class="call-ic" aria-hidden="true">📌</span><div>' +
+        (Array.isArray(t.bookHint) ? t.bookHint : [t.bookHint]).map(function(h){ return '<p><b>Подсказка.</b> ' + esc(h) + '</p>'; }).join("") +
+        '</div></div>' : '') +
+      (t.example ? '<div class="screen"><span class="screen-label">Пример</span><pre>' + esc(t.example) + '</pre></div>' : '') +
+      '<p class="label-sm" id="codeLbl' + t.id + '">Мой код</p>' +
+      '<textarea class="code-input" data-code="' + t.id + '" rows="7" spellcheck="false" aria-labelledby="codeLbl' + t.id + '" placeholder="Введите здесь свой код на Python">' + esc(state.codes[t.id] || "") + '</textarea>' +
+      '<div class="task-actions">' +
+        '<button class="btn-small' + (state.hintShown[t.id] ? " on" : "") + '" type="button" data-act="toggle-hint" data-id="' + t.id + '">💡 Подсказка</button>' +
+        '<button class="btn-small' + (state.etalonShown[t.id] ? " on" : "") + '" type="button" data-act="etalon" data-id="' + t.id + '">Эталон решения</button>' +
+        '<button class="btn-small' + (solved ? " on" : "") + '" type="button" data-act="toggle-solved" data-id="' + t.id + '">' + (solved ? "✓ Решено" : "Отметить решённой") + '</button>' +
+      '</div>' +
+      (state.hintShown[t.id] ? '<div class="hint"><span class="hint-ic" aria-hidden="true">💡</span><div><p><b>Подсказка.</b> ' + esc(t.hint) + '</p></div></div>' : '') +
+      (state.etalonConfirm[t.id] ? '<div class="confirm"><p>В поле «Мой код» пока пусто. Показать эталон без своей попытки? Это попадёт в отчёт.</p><div class="task-actions" style="margin:0"><button class="btn-small warnbtn" type="button" data-act="etalon-yes" data-id="' + t.id + '">Да, показать</button><button class="btn-small" type="button" data-act="etalon-no" data-id="' + t.id + '">Отмена</button></div></div>' : '') +
+      (state.etalonShown[t.id] && state.etalonViewed[t.id] ? '<div class="etalon"><p class="label-sm">Эталон решения</p>' + codeWindow(t.solution, "task" + t.id + ".py") + '</div>' : '') +
+    '</div>';
+  }
+  return '<div class="task-card">' +
+    '<button class="task-head-btn" type="button" data-act="toggle-open" data-id="' + t.id + '" aria-expanded="' + open + '">' +
+      '<span class="task-num">' + t.id + '</span>' +
+      '<span class="task-title">' + esc(t.title) + '</span>' +
+      '<span class="task-tags">' + tags + '</span>' +
+      '<span class="chev" aria-hidden="true">' + (open ? "▴" : "▾") + '</span>' +
+    '</button>' + body + '</div>';
+}
+function renderTasks(){
+  var q = state.query.trim().toLowerCase();
+  var list = TASKS.filter(function(t){
+    if(state.filter === "todo" && state.solved[t.id]) return false;
+    if(state.filter === "done" && !state.solved[t.id]) return false;
+    if(q && String(t.id) !== q && t.title.toLowerCase().indexOf(q) === -1) return false;
+    return true;
+  });
+  var solved = solvedCount();
+  var pct = Math.round(solved / TASKS.length * 100);
+  var first = TASKS[0].id, lastN = TASKS[TASKS.length - 1].id;
+  var toolbar =
+    '<div class="progline"><span>Решено: <b>' + solved + ' из ' + TASKS.length + '</b></span><span><b>' + pct + '%</b> главы</span></div>' +
+    '<div class="sum-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pct + '"><i style="width:' + pct + '%"></i></div>' +
+    '<div class="toolbar">' +
+      '<input class="search" id="taskSearch" type="search" value="' + esc(state.query) + '" placeholder="Поиск: номер или название задачи" aria-label="Поиск задач">' +
+      '<button class="fchip" type="button" data-filter="all" aria-pressed="' + (state.filter === "all") + '">Все</button>' +
+      '<button class="fchip" type="button" data-filter="todo" aria-pressed="' + (state.filter === "todo") + '">Нерешённые</button>' +
+      '<button class="fchip" type="button" data-filter="done" aria-pressed="' + (state.filter === "done") + '">Решённые</button>' +
+    '</div>';
+  var cards = list.length
+    ? list.map(taskCard).join("")
+    : '<div class="empty-list">По вашему запросу ничего не нашлось. Сбросьте поиск или выберите фильтр «Все».</div>';
+  return '<div class="container"><p class="section-note">Упражнения ' + first + '–' + lastN + ' главы ' + META.num + ' сборника Б. Стивенсона: условия приведены по книге, включая таблицы, алгоритмы, примеры, подсказки и примечания автора. Раскройте задачу, напишите код, при необходимости возьмите подсказку. Эталон откроется после своей попытки кода — либо с отметкой в отчёте.</p>' + toolbar + cards + '</div>';
+}
+function sumRow(icon, label, value, pct, note){
+  return '<div class="sum-row"><span class="sum-ic" aria-hidden="true">' + icon + '</span><div class="sum-body">' +
+    '<div class="sum-top"><b>' + label + '</b><span>' + value + '</span></div>' +
+    '<div class="sum-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pct + '"><i style="width:' + pct + '%"></i></div>' +
+    (note ? '<p class="sum-note">' + note + '</p>' : '') +
+    '</div></div>';
+}
+function renderSummary(){
+  var viewed = solvedCount(), code = codeCount(), hints = hintCount(), etal = etalonCount();
+  var th = doneThreshold();
+  var warns = [];
+  if(code === 0) warns.push("Пока нет кода ни к одной задаче.");
+  if(viewed < th) warns.push("До зачёта главы не хватает решённых задач: нужно " + th + " из " + TASKS.length + " (сейчас " + viewed + ").");
+  return '<div class="container">' +
+    '<p class="section-note">Сводка работы за главу. Глава считается пройденной, когда отмечено решёнными не менее ' + Math.round(DONE_SHARE * 100) + '% задач (' + th + ' из ' + TASKS.length + ') и нажата кнопка завершения.</p>' +
+    '<div class="sum-card">' +
+      sumRow("💻", "Код написан", code + " из " + TASKS.length + " задач", Math.round(code / TASKS.length * 100), "Поле «Мой код» непустое.") +
+      sumRow("✅", "Отмечено решёнными", viewed + " из " + TASKS.length, Math.round(viewed / TASKS.length * 100), "Порог зачёта главы: " + th + " задач.") +
+      sumRow("💡", "Подсказки", "использовано " + hints, Math.round(hints / TASKS.length * 100), "Подсказка фиксируется в отчёте.") +
+      sumRow("📖", "Эталоны", "просмотрено " + etal, Math.round(etal / TASKS.length * 100), "Просмотр без своей попытки помечается отдельно.") +
+    '</div>' +
+    (warns.length
+      ? '<div class="call warn" style="margin-top:16px"><span class="call-ic" aria-hidden="true">⚠️</span><div><p><b>Обратите внимание:</b></p><ul style="margin:6px 0 0;padding-left:20px;display:grid;gap:4px;font-size:14px;">' + warns.map(function(w){ return "<li>" + w + "</li>"; }).join("") + '</ul></div></div>'
+      : '<div class="call ok" style="margin-top:16px"><span class="call-ic" aria-hidden="true">🎉</span><div><p>Порог главы достигнут — можно завершать урок и сохранять отчёт!</p></div></div>') +
+    '<div class="sum-actions"><button class="btn btn-primary" type="button" data-act="finish">Завершить урок и открыть отчёт</button></div>' +
+    '<p class="hint-print" style="margin:10px 0 40px">В отчёт попадут только задачи, с которыми вы работали: ваш код и отметки о подсказках и эталонах.</p>' +
+  '</div>';
+}
+function renderReport(){
+  var st = state.student;
+  var date = new Date().toLocaleDateString("ru-RU");
+  var solved = solvedCount();
+  var passed = solved >= doneThreshold();
+  var touchedList = TASKS.filter(touched);
+  var tasks = touchedList.length
+    ? touchedList.map(function(t){
+        return '<h3>Задача ' + t.id + '. ' + esc(t.title) + '</h3>' +
+          '<p class="rep-note">Решена: <b>' + (state.solved[t.id] ? "да" : "нет") + '</b> · Подсказка: <b>' + (state.hintUsed[t.id] ? "да" : "нет") + '</b> · Эталон: <b>' + (state.etalonViewed[t.id] ? (state.etalonNoAttempt[t.id] ? "да, без своей попытки" : "да") : "нет") + '</b></p>' +
+          '<p class="label-sm">Мой код</p><pre>' + ((state.codes[t.id] || "").trim() ? esc(state.codes[t.id]) : "— код не предоставлен —") + '</pre>';
+      }).join("")
+    : '<p class="rep-note">Работ с задачами не зафиксировано.</p>';
+  return '<div class="container"><div class="report" id="reportSheet">' +
+    '<h2>Отчёт по практике</h2>' +
+    '<div class="meta">' +
+      '<span><b>Глава:</b> ' + META.num + '. ' + META.topic + ' (сборник Б. Стивенсона)</span>' +
+      '<span><b>Автор курса:</b> ' + META.author + '</span>' +
+      '<span><b>Ученик:</b> ' + esc(st.last) + ' ' + esc(st.first) + '</span>' +
+      '<span><b>Класс:</b> ' + esc(st.cls) + '</span>' +
+      '<span><b>Дата:</b> ' + date + '</span>' +
+      '<span><b>Решено задач:</b> ' + solved + ' из ' + TASKS.length + ' · глава зачтена: ' + (passed ? "да" : "нет") + '</span>' +
+      '<span><b>Подсказок:</b> ' + hintCount() + ' · <b>эталонов:</b> ' + etalonCount() + ' · задач с кодом: ' + codeCount() + '</span>' +
+    '</div>' +
+    '<h3>Выполненные работы</h3>' + tasks +
+    '</div>' +
+    '<div class="report-actions no-print"><button class="btn btn-primary" type="button" data-act="print">Сохранить отчёт в PDF</button></div>' +
+    '<p class="hint-print no-print">Откроется окно печати — выберите «Сохранить как PDF». В отчёт входят только задачи, с которыми была работа.</p>' +
+    '</div>';
+}
+function renderLesson(){
+  var st = state.student;
+  var tabs = [
+    ["ref", "Справка"],
+    ["tasks", "Задачи"],
+    ["report", state.reportOpen ? "Отчёт" : "Итоги"]
+  ];
+  var body = state.tab === "ref" ? renderRef()
+    : state.tab === "tasks" ? renderTasks()
+    : (state.reportOpen ? renderReport() : renderSummary());
+  return '<div class="container no-print"><div class="lesson-head">' +
+    '<h1>Глава ' + META.num + '. ' + META.topic + '</h1>' +
+    '<button class="chip-student" type="button" data-act="edit-student" title="Изменить данные ученика">' + esc(st.last) + ' ' + esc(st.first) + ' · ' + esc(st.cls) + ' ✎</button>' +
+    '</div>' +
+    '<div class="tabs" role="tablist" aria-label="Разделы практики">' +
+    tabs.map(function(t){
+      return '<button class="tab" role="tab" type="button" aria-selected="' + (state.tab === t[0]) + '" data-tab="' + t[0] + '">' + t[1] + '</button>';
+    }).join("") +
+    '</div></div>' + body;
+}
+function render(){
+  app.innerHTML = state.screen === "start" ? renderStart() : renderLesson();
+}
+
+/* ================= HANDLERS ================= */
+var toastEl = null, toastTimer = null;
+function showToast(msg){
+  toastEl.textContent = msg;
+  toastEl.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ toastEl.classList.remove("show"); }, 2600);
+}
+function onStartSubmit(e){
+  e.preventDefault();
+  var f = e.target;
+  var last = f.last.value.trim(), first = f.first.value.trim(), cls = f.cls.value.trim();
+  var errs = {};
+  if(last.length < 2) errs.last = "Введите фамилию (минимум 2 символа).";
+  if(first.length < 2) errs.first = "Введите имя (минимум 2 символа).";
+  if(!cls) errs.cls = "Введите класс, например 9А.";
+  state.student = {last:last, first:first, cls:cls};
+  if(Object.keys(errs).length){
+    state.startErrors = errs;
+    render();
+    var bad = app.querySelector("input.bad");
+    if(bad) bad.focus();
+    return;
+  }
+  state.startErrors = null;
+  state.screen = "lesson";
+  state.tab = "ref";
+  setProgress("progress");
+  persist();
+  render();
+  showToast("Практика начата: " + TASKS.length + " задачи впереди!");
+}
+function onAppClick(e){
+  var tabBtn = e.target.closest("[data-tab]");
+  if(tabBtn){
+    state.tab = tabBtn.dataset.tab;
+    render();
+    window.scrollTo(0, 0);
+    return;
+  }
+  var fBtn = e.target.closest("[data-filter]");
+  if(fBtn){
+    state.filter = fBtn.dataset.filter;
+    render();
+    return;
+  }
+  var btn = e.target.closest("[data-act]");
+  if(!btn) return;
+  var act = btn.dataset.act;
+  var id = Number(btn.dataset.id || 0);
+  if(act === "toggle-open"){
+    state.open[id] = !state.open[id];
+    render();
+  }
+  else if(act === "toggle-hint"){
+    var nowH = !state.hintShown[id];
+    state.hintShown[id] = nowH;
+    if(nowH) state.hintUsed[id] = true;
+    persist();
+    render();
+  }
+  else if(act === "toggle-solved"){
+    state.solved[id] = !state.solved[id];
+    persist();
+    setProgress(solvedCount() >= doneThreshold() ? "done" : "progress");
+    render();
+    showToast(state.solved[id] ? "Задача " + id + " отмечена решённой." : "Отметка снята с задачи " + id + ".");
+  }
+  else if(act === "etalon"){
+    if(state.etalonViewed[id]){
+      state.etalonShown[id] = !state.etalonShown[id];
+    }else if((state.codes[id] || "").trim()){
+      state.etalonViewed[id] = true;
+      state.etalonShown[id] = true;
+      persist();
+    }else{
+      state.etalonConfirm[id] = true;
+    }
+    render();
+  }
+  else if(act === "etalon-yes"){
+    state.etalonViewed[id] = true;
+    state.etalonNoAttempt[id] = true;
+    state.etalonShown[id] = true;
+    state.etalonConfirm[id] = false;
+    persist();
+    render();
+  }
+  else if(act === "etalon-no"){
+    state.etalonConfirm[id] = false;
+    render();
+  }
+  else if(act === "finish"){
+    state.reportOpen = true;
+    state.tab = "report";
+    setProgress(solvedCount() >= doneThreshold() ? "done" : "progress");
+    persist();
+    render();
+    window.scrollTo(0, 0);
+    showToast("Урок завершён! Отчёт готов к сохранению в PDF.");
+  }
+  else if(act === "edit-student"){ state.screen = "start"; render(); window.scrollTo(0, 0); }
+  else if(act === "print"){ window.print(); }
+}
+function onAppInput(e){
+  var ta = e.target.closest("textarea[data-code]");
+  if(ta){
+    state.codes[Number(ta.dataset.code)] = ta.value;
+    persist();
+    return;
+  }
+  if(e.target.id === "taskSearch"){
+    state.query = e.target.value;
+    render();
+    var el = document.getElementById("taskSearch");
+    if(el){
+      el.focus();
+      el.setSelectionRange(el.value.length, el.value.length);
+    }
+  }
+}
+
+/* ================= INIT ================= */
+function init(){
+  loadSaved();
+  /* если глава уже начата, сразу синхронизируем статус с главной страницей */
+  if(state.student.last){
+    setProgress(solvedCount() >= doneThreshold() ? "done" : "progress");
+  }
+  toastEl = document.createElement("div");
+  toastEl.className = "toast";
+  toastEl.setAttribute("role", "status");
+  toastEl.setAttribute("aria-live", "polite");
+  document.body.appendChild(toastEl);
+  render();
+  app.addEventListener("click", onAppClick);
+  app.addEventListener("input", onAppInput);
+  app.addEventListener("submit", onStartSubmit);
+}
+try{
+  init();
+}catch(err){
+  app.innerHTML = '<div class="fatal">Ошибка при запуске: ' + err.message + '</div>';
+}
+</script>
+</body>
+</html>
