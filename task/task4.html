@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Практика · Глава 4 — Python‑тренажер</title>
+<style>
+:root{
+  --bg:#f5f5f7;
+  --surface:#ffffff;
+  --text:#1d1d1f;
+  --muted:#6e6e73;
+  --accent:#0071e3;
+  --accent-dark:#005bb9;
+  --danger:#c22a1e;
+  --ok:#1c7c3c;
+  --radius:18px;
+  --radius-sm:12px;
+  --shadow:0 8px 24px rgba(0,0,0,.06);
+  --shadow-lift:0 14px 34px rgba(0,0,0,.10);
+  --border:rgba(0,0,0,.07);
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  line-height:1.5;-webkit-font-smoothing:antialiased;
+  overflow-x:clip;
+}
+.container{width:100%;max-width:960px;margin:0 auto;padding-left:20px;padding-right:20px;min-width:0}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:8px}
+.skip{position:absolute;left:-9999px;top:0;z-index:200;background:#fff;color:var(--accent);padding:12px 18px;border-radius:0 0 12px 0;font-weight:600;text-decoration:none}
+.skip:focus{left:0}
+b{font-weight:700}
+.fatal{padding:40px 20px;font-family:var(--mono);font-size:14px;color:var(--danger);white-space:pre-wrap}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 24px;border-radius:999px;border:none;font-size:16px;font-weight:600;cursor:pointer;text-decoration:none;transition:background .15s ease,transform .15s ease}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:var(--accent-dark)}
+.btn-small{min-height:44px;padding:0 18px;border-radius:999px;font-size:14px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--text)}
+.btn-small:hover{background:#f5f5f7}
+
+.start-card{max-width:560px;margin:44px auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px}
+.eyebrow{color:var(--accent);font-weight:700;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase}
+.start-card h1{font-size:clamp(28px,5vw,40px);font-weight:800;letter-spacing:-.02em;margin:10px 0 6px}
+.author{color:var(--muted);margin:0 0 18px;font-size:15px}
+.start-list{margin:0 0 22px;padding-left:20px;color:var(--muted);font-size:14.5px;display:grid;gap:6px}
+.field{display:grid;gap:6px;margin-bottom:14px}
+.field label{font-size:14px;font-weight:600}
+.field input{min-height:48px;border:1px solid var(--border);border-radius:12px;padding:0 14px;font-size:16px;background:#fff;color:var(--text);width:100%}
+.field input:focus{outline:3px solid rgba(0,113,227,.35);border-color:var(--accent)}
+.field input.bad{border-color:var(--danger);box-shadow:0 0 0 3px rgba(194,42,30,.12)}
+.err{color:var(--danger);font-size:13px;margin:0}
+
+.lesson-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:16px 0 10px}
+.lesson-head h1{font-size:20px;margin:0;letter-spacing:-.01em;flex:1 1 auto;min-width:160px}
+.chip-student{min-height:44px;display:inline-flex;align-items:center;gap:8px;border:1px solid var(--border);background:#fff;border-radius:999px;padding:0 16px;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer}
+.chip-student:hover{background:#f5f5f7}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{min-height:44px;padding:0 18px;border-radius:999px;border:1px solid var(--border);background:#fff;font-size:15px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap}
+.tab:hover{background:#f5f5f7}
+.tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.section-note{color:var(--muted);font-size:14.5px;margin:14px 0 18px;max-width:760px}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin:0 0 14px;min-width:0}
+.card h3{margin:0 0 8px;font-size:17px}
+.card p{margin:0 0 10px;font-size:14.5px;line-height:1.6}
+.call{display:flex;gap:12px;align-items:flex-start;border-radius:14px;padding:12px 14px;margin:0 0 12px;border:1px solid}
+.call p{margin:0;font-size:14px;line-height:1.6;min-width:0}
+.call>div{min-width:0}
+.call-ic{font-size:20px;line-height:1.4;flex:none}
+.call.info{background:rgba(0,113,227,.07);border-color:rgba(0,113,227,.25)}
+.call.warn{background:rgba(255,159,10,.1);border-color:rgba(255,159,10,.35)}
+.call.ok{background:rgba(52,199,89,.1);border-color:rgba(52,199,89,.35)}
+.code-window{background:#161617;border-radius:14px;overflow:hidden;margin:0 0 12px;box-shadow:var(--shadow);min-width:0}
+.code-bar{display:flex;align-items:center;gap:7px;padding:10px 14px;background:#1d1d1f}
+.dot{width:11px;height:11px;border-radius:50%;flex:none}
+.dot.r{background:#ff5f57}.dot.y{background:#febc2e}.dot.g{background:#28c840}
+.code-bar .file{margin-left:6px;color:#98989d;font-family:var(--mono);font-size:12px}
+pre.code{margin:0;padding:14px 16px;color:#f5f5f7;font-family:var(--mono);font-size:13px;line-height:1.65;overflow-x:auto;white-space:pre;max-width:100%}
+.tk-c{color:#83838a}.tk-k{color:#ff7ab2}.tk-s{color:#ffa740}.tk-n{color:#d9bf69}.tk-f{color:#6bdfff}
+.screen{background:rgba(52,199,89,.08);border:1px solid rgba(52,199,89,.35);border-radius:12px;padding:10px 14px;margin:0 0 12px;min-width:0}
+.screen-label{display:block;font-size:11.5px;font-weight:700;color:var(--ok);margin-bottom:4px;text-transform:uppercase;letter-spacing:.08em}
+.screen pre{margin:0;font-family:var(--mono);font-size:13px;line-height:1.55;white-space:pre-wrap;color:var(--text)}
+.tbl-wrap{overflow-x:auto;margin:0 0 12px;border:1px solid var(--border);border-radius:12px}
+table{border-collapse:collapse;width:100%;font-size:14px;background:#fff}
+th,td{padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);vertical-align:top}
+th{background:#f5f5f7;font-weight:700}
+tr:last-child td{border-bottom:none}
+
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:0 0 6px}
+.search{min-height:44px;border:1px solid var(--border);border-radius:999px;padding:0 18px;font-size:14.5px;background:#fff;color:var(--text);flex:1 1 200px;min-width:0}
+.search:focus{outline:3px solid rgba(0,113,227,.35);border-color:var(--accent)}
+.fchip{min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--border);background:#fff;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap}
+.fchip[aria-pressed="true"]{background:rgba(0,113,227,.1);border-color:var(--accent);color:var(--accent-dark)}
+.progline{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:14px;color:var(--muted);margin:10px 0 6px}
+.progline b{color:var(--text)}
+.sum-bar{height:8px;background:#e8e8ed;border-radius:999px;overflow:hidden;margin:0 0 16px}
+.sum-bar i{display:block;height:100%;background:linear-gradient(90deg,#37a0ff,var(--accent));border-radius:999px;transition:width .3s ease}
+
+.task-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin:0 0 12px;min-width:0;overflow:hidden}
+.task-head-btn{display:flex;width:100%;background:none;border:none;cursor:pointer;gap:10px;align-items:center;padding:16px 18px;text-align:left;min-height:56px}
+.task-head-btn:hover{background:rgba(0,0,0,.03)}
+.task-num{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--accent);background:rgba(0,113,227,.1);border-radius:8px;padding:4px 9px;flex:none}
+.task-title{font-size:15.5px;font-weight:600;flex:1 1 auto;min-width:0;overflow-wrap:break-word}
+.task-tags{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.tag{font-size:12px;color:#48484a;background:#e8e8ed;border-radius:999px;padding:4px 10px;white-space:nowrap}
+.tag.easy{background:rgba(52,199,89,.16);color:#1c7c3c}
+.tag.mid{background:rgba(255,159,10,.16);color:#8a5a00}
+.tag.hard{background:rgba(255,69,58,.14);color:#b3261e}
+.tag.solved{background:rgba(52,199,89,.16);color:#1c7c3c;font-weight:700}
+.chev{color:var(--muted);font-size:14px;flex:none}
+.task-body{padding:4px 18px 18px;border-top:1px solid var(--border)}
+.task-text{margin:0 0 10px;font-size:14.5px;line-height:1.65}
+.formula{background:#f5f5f7;border:1px solid var(--border);border-radius:12px;padding:10px 14px;margin:0 0 12px;font-family:var(--mono);font-size:13.5px;text-align:center;overflow-x:auto;white-space:pre-wrap}
+.task-list{margin:0 0 12px;padding-left:20px;display:grid;gap:4px;font-size:14.5px}
+.task-steps{margin:0 0 12px;padding-left:22px;display:grid;gap:4px;font-size:14px;line-height:1.55}
+.task-steps li::marker{color:var(--accent);font-weight:700}
+.label-sm{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:0 0 6px}
+textarea.code-input{width:100%;min-height:150px;resize:vertical;border:1px solid var(--border);border-radius:12px;padding:12px 14px;font-family:var(--mono);font-size:13px;line-height:1.6;background:#fff;color:var(--text)}
+textarea.code-input:focus{outline:3px solid rgba(0,113,227,.35);border-color:var(--accent)}
+.task-actions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 4px}
+.btn-small.on{background:rgba(52,199,89,.14);border-color:rgba(52,199,89,.5);color:#1c7c3c}
+.btn-small.warnbtn{color:#8a5a00;border-color:rgba(255,159,10,.5)}
+.hint{display:flex;gap:12px;background:rgba(255,159,10,.09);border:1px solid rgba(255,159,10,.35);border-radius:14px;padding:12px 14px;margin:10px 0 4px}
+.hint>div{min-width:0;flex:1}
+.hint-ic{font-size:20px;flex:none;line-height:1.4}
+.hint p{margin:0;font-size:14px;line-height:1.6}
+.hint .code-window{margin:10px 0 0}
+.hint .code-bar{padding:8px 12px}
+.hint pre.code{padding:12px 14px;font-size:12.5px}
+.etalon{margin:10px 0 4px}
+.etalon .code-window{margin:0}
+.confirm{background:rgba(194,42,30,.07);border:1px solid rgba(194,42,30,.35);border-radius:14px;padding:12px 14px;margin:10px 0 4px;font-size:14px}
+.confirm p{margin:0 0 10px}
+.empty-list{color:var(--muted);font-size:14.5px;padding:18px;border:1px dashed var(--border);border-radius:var(--radius);text-align:center}
+
+.sum-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px;margin-top:16px;display:grid;gap:18px}
+.sum-row{display:flex;gap:14px;align-items:flex-start}
+.sum-ic{flex:none;width:44px;height:44px;border-radius:12px;background:rgba(0,113,227,.1);display:grid;place-items:center;font-size:20px}
+.sum-body{flex:1;min-width:0}
+.sum-top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:14.5px;margin-bottom:6px}
+.sum-top b{font-size:15px}
+.sum-note{color:var(--muted);font-size:13px;margin:6px 0 0}
+.sum-actions{display:flex;justify-content:center;margin:22px 0 6px}
+
+.report{background:#fff;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px;max-width:820px;margin:16px auto 0;min-width:0}
+.report h2{margin:0 0 4px;font-size:24px}
+.report .meta{display:grid;gap:4px;font-size:14.5px;margin:12px 0 6px}
+.report h3{font-size:16px;margin:18px 0 6px}
+.report pre{background:#f5f5f7;border:1px solid var(--border);border-radius:10px;padding:12px;font-family:var(--mono);font-size:12.5px;line-height:1.55;white-space:pre-wrap;word-break:break-word;margin:0 0 10px}
+.report .rep-note{color:var(--muted);font-size:13px;margin:6px 0}
+.report-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:18px 0 4px}
+.hint-print{color:var(--muted);font-size:13.5px;text-align:center;margin:0 0 40px}
+
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(16px);background:#1d1d1f;color:#fff;padding:12px 20px;border-radius:999px;font-size:14.5px;opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease;z-index:100;box-shadow:var(--shadow-lift);max-width:calc(100vw - 40px);text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media print{
+  body{background:#fff}
+  .no-print{display:none !important}
+  .container{padding:0;max-width:100%}
+  .report{border:none;box-shadow:none;margin:0;padding:0;max-width:100%}
+  .report pre{white-space:pre-wrap;word-break:break-word}
+}
+@media (max-width:640px){
+  .card{padding:16px}
+  .task-head-btn{padding:14px}
+  .task-body{padding:4px 14px 14px}
+  pre.code{font-size:12px;padding:12px}
+  .sum-card{padding:16px}
+  .task-tags{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{transition:none !important}
+}
+</style>
+</head>
+<body>
+<a class="skip no-print" href="#main">Перейти к содержимому</a>
+<div id="app"></div>
+<script>
+/* аварийный экран: если основной скрипт упадёт, покажем текст ошибки вместо пустоты */
+window.addEventListener("error", function(ev){
+  var a = document.getElementById("app");
+  if(a && !a.innerHTML.trim()){
+    a.innerHTML = '<div class="fatal">Ошибка скрипта: ' + (ev.message || "неизвестная") + '</div>';
+  }
+});
+</script>
+<script>
+"use strict";
+/* ================= CONSTANTS ================= */
+var META = { num:4, topic:"Функции", author:"Масликов М.М." };
+var DONE_SHARE = 0.6;
+
+/* Краткая справка по главе 4 */
+var REF_CARDS = [
+  { t:"Определение и вызов функции",
+    p:"Определение функции начинается с ключевого слова def, за которым идут имя, скобки и двоеточие; тело пишется с отступами. Обращение к функции по имени со скобками называется вызовом: тело выполняется, затем программа продолжается со строки после вызова.",
+    code:'# Рисуем прямоугольник из звездочек\ndef drawBox():\n    print("***********")\n    print("*         *")\n    print("***********")\n\n# Вызов функции\ndrawBox()' },
+  { t:"Параметры, аргументы и значения по умолчанию",
+    p:"Значения, переданные в скобках при вызове, инициализируют переменные параметров. Некоторым параметрам можно задать значения по умолчанию через присваивание в объявлении — тогда их можно не передавать.",
+    code:'def drawBox(width, height, outline="*", fill=" "):\n    print(outline * width)\n    for i in range(height - 2):\n        print(outline + fill * (width - 2) + outline)\n    print(outline * width)\n\ndrawBox(14, 5, "@", ".")' },
+  { t:"Локальные переменные",
+    p:"Переменные, объявленные внутри функции (включая переменные параметров), называются локальными: они доступны только в теле функции и очищаются из памяти после её завершения.",
+    code:'def summa(a, b):\n    c = a + b   # c - локальная переменная\n    return c\n\n# Здесь переменная c не существует' },
+  { t:"Возвращаемые значения",
+    p:"Для возврата значения служит ключевое слово return: дойдя до него, функция мгновенно завершается, а значение передаётся в место вызова. return может встречаться несколько раз — сработает первый достигнутый.",
+    code:'def sumGeometric(a, r, n):\n    if r == 1:\n        return a * n\n    s = a * (1 - r ** n) / (1 - r)\n    return s' },
+  { t:"Импорт функций и структура с main",
+    p:"Функции из другого файла импортируются командой import с именем файла без .py. Чтобы код не запускался при импорте, основную логику помещают в функцию main и защищают условием if __name__ == \"__main__\":.",
+    code:'from mymodule import myFunc\n\ndef main():\n    print(myFunc(5))\n\nif __name__ == "__main__":\n    main()' }
+];
+
+/* Задачи главы 4 (упражнения 85–109): условия дословно из сборника,
+   bookHint — подсказки книги, hint — наша подсказка, solution — эталон */
+var TASKS = [
+  { id:85, title:"Вычисляем длину гипотенузы", diff:"mid",
+    text:"Напишите функцию, принимающую на вход длины двух катетов прямоугольного треугольника и возвращающую длину гипотенузы, рассчитанную по теореме Пифагора. В главной программе должен осуществляться запрос длин сторон у пользователя, вызов функции и вывод на экран полученного результата.",
+    hint:"Гипотенуза = sqrt(a² + b²): опишите функцию через def и return, в основной программе вызовите её с введёнными катетами.",
+    solution:'# Длина гипотенузы по двум катетам\nfrom math import sqrt\n\n## Вычисляем длину гипотенузы\n# @param a - длина первого катета\n# @param b - длина второго катета\n# @return длина гипотенузы\ndef hypotenuse(a, b):\n    return sqrt(a ** 2 + b ** 2)\n\n# Запрашиваем катеты у пользователя\na = float(input("Введите длину первого катета: "))\nb = float(input("Введите длину второго катета: "))\nprint("Длина гипотенузы:", hypotenuse(a, b))' },
+  { id:86, title:"Плата за такси", diff:"mid",
+    text:"Представьте, что сумма за пользование услугами такси складывается из базового тарифа в размере $4,00 плюс $0,25 за каждые 140 м поездки. Напишите функцию, принимающую в качестве единственного параметра расстояние поездки в километрах и возвращающую итоговую сумму оплаты такси. В основной программе должен демонстрироваться результат вызова функции.",
+    bookHint:"Цены на такси могут меняться со временем. Используйте константы для представления базового тарифа и плавающей ставки, чтобы программу можно было легко обновлять при изменении цен.",
+    hint:"140 м — это 0.14 км; сумма = базовый тариф + 0.25 × (distance / 0.14).",
+    solution:'# Плата за такси\nBASE_FARE = 4.00\nVARIABLE_RATE = 0.25\nDISTANCE_PER_UNIT = 0.14   # 140 м в километрах\n\n## Вычисляем сумму оплаты такси\n# @param distance - расстояние поездки в километрах\n# @return итоговая сумма оплаты\ndef taxiFare(distance):\n    return BASE_FARE + VARIABLE_RATE * distance / DISTANCE_PER_UNIT\n\n# Демонстрируем результат вызова функции\nd = float(input("Введите расстояние поездки (км): "))\nprint("Сумма оплаты такси: $%.2f" % taxiFare(d))' },
+  { id:87, title:"Расчет стоимости доставки", diff:"mid",
+    text:"Интернет-магазин предоставляет услугу экспресс-доставки для части своих товаров по цене $10,95 за первый товар в заказе и $2,95 – за все последующие. Напишите функцию, принимающую в качестве единственного параметра количество товаров в заказе и возвращающую общую сумму доставки. В основной программе должны производиться запрос количества позиций в заказе у пользователя и отображаться на экране сумма доставки.",
+    hint:"При n > 0 сумма = 10.95 + 2.95 × (n − 1); при нуле товаров доставка равна 0.",
+    solution:'# Стоимость доставки\nFIRST_ITEM = 10.95\nNEXT_ITEMS = 2.95\n\n## Вычисляем общую сумму доставки\n# @param n - количество товаров в заказе\n# @return общая сумма доставки\ndef shippingCost(n):\n    if n <= 0:\n        return 0.00\n    return FIRST_ITEM + NEXT_ITEMS * (n - 1)\n\n# Запрашиваем количество позиций и выводим сумму доставки\ncount = int(input("Сколько товаров в заказе? "))\nprint("Сумма доставки: $%.2f" % shippingCost(count))' },
+  { id:88, title:"Медиана трех значений", diff:"hard",
+    text:"Напишите функцию, которая будет принимать на вход три числа в качестве параметров и возвращать их медиану. В основной программе должен производиться запрос к пользователю на предмет ввода трех чисел, а также вызов функции и отображение результата.",
+    bookHint:"Медианой называется число, находящееся ровно посередине отсортированной по возрастанию последовательности. Его можно получить путем реализации условных блоков if или с применением творческого подхода к математике и статистике.",
+    hint:"Творческий способ: медиана = a + b + c − min(a, b, c) − max(a, b, c).",
+    solution:'# Медиана трех значений\n\n## Рассчитываем медиану трех чисел при помощи блока if\n# @param a - первое значение\n# @param b - второе значение\n# @param c - третье значение\n# @return медиана чисел a, b и c\ndef median(a, b, c):\n    if a < b and b < c or a > b and b > c:\n        return b\n    if b < a and a < c or b > a and a > c:\n        return a\n    if c < a and b < c or c > a and b > c:\n        return c\n\n## Рассчитываем медиану при помощи min, max и капельки арифметики\n# @return медиана чисел a, b и c\ndef alternateMedian(a, b, c):\n    return a + b + c - min(a, b, c) - max(a, b, c)\n\n# Выводим медиану чисел, введенных пользователем\ndef main():\n    x = float(input("Введите первое число: "))\n    y = float(input("Введите второе число: "))\n    z = float(input("Введите третье число: "))\n    print("Медиана равна:", median(x, y, z))\n    print("С помощью альтернативного метода:", alternateMedian(x, y, z))\n\n# Вызываем основную функцию\nmain()' },
+  { id:89, title:"Переводим целые числа в числительные", diff:"hard",
+    text:"Такие слова, как первый, второй, третий, являются числительными. В данном упражнении вам необходимо написать функцию, принимающую на вход в качестве единственного аргумента целое число и возвращающую строковое значение, содержащее соответствующее числительное (на английском языке). Ваша функция должна обрабатывать числа в диапазоне от 1 до 12. Если входящее значение выходит за границы этого диапазона, вывод должен оставаться пустым. В основной программе запустите цикл по натуральным числам от 1 до 12 и выведите на экран соответствующие им числительные. Ваша программа должна запускаться только в том случае, если она не импортирована в виде модуля в другой файл.",
+    hint:"Цепочка if-elif на 12 значений: first, second, third, …, twelfth; вне диапазона возвращайте пустую строку; защиту от импорта даёт if __name__ == \"__main__\":.",
+    solution:'# Целые числа в числительные\n\n## Возвращаем числительное для целого числа от 1 до 12\n# @param num - целое число\n# @return строка с числительным или пустая строка\ndef intToOrdinal(num):\n    if num == 1:\n        return "first"\n    elif num == 2:\n        return "second"\n    elif num == 3:\n        return "third"\n    elif num == 4:\n        return "fourth"\n    elif num == 5:\n        return "fifth"\n    elif num == 6:\n        return "sixth"\n    elif num == 7:\n        return "seventh"\n    elif num == 8:\n        return "eighth"\n    elif num == 9:\n        return "ninth"\n    elif num == 10:\n        return "tenth"\n    elif num == 11:\n        return "eleventh"\n    elif num == 12:\n        return "twelfth"\n    return ""\n\n# Выводим числительные для чисел от 1 до 12\ndef main():\n    for i in range(1, 13):\n        print(i, "-", intToOrdinal(i))\n\n# Запускаем основную программу, только если файл не импортирован\nif __name__ == "__main__":\n    main()' },
+  { id:90, title:"Двенадцать дней Рождества", diff:"hard",
+    text:"«Двенадцать дней Рождества» (The Twelve Days of Christmas) – старая английская песня, построение которой базируется на постоянно увеличивающемся списке подарков в каждый из 12 дней Рождества. В первый день был послан один подарок, в следующий – второй и т. д.\n\nНапишите программу, которая будет сама строить куплеты этой песенки. В программе должна присутствовать функция для отображения одного куплета. В качестве входного параметра она должна принимать порядковый номер дня, а в качестве результата возвращать готовый куплет. Далее в основной программе эта функция должна быть вызвана 12 раз подряд. Каждая строка с очередным подарком должна присутствовать в вашей программе лишь раз, за исключением строки «A partridge in a pear tree». В этом случае вы можете отдельно хранить такой вид строки для первого куплета и слегка измененный («And a partridge in a pear tree») – для всех последующих. Импортируйте свою функцию из упражнения 89 для выполнения этого задания.",
+    hint:"Храните подарки списком из 11 строк (со второго дня) плюс две версии строки про куропатку; куплет собирается циклом от текущего дня вниз до второго, затем печатается строка про куропатку.",
+    solution:'# Двенадцать дней Рождества\nfrom int_ordinal import intToOrdinal   # функция из упражнения 89\n\nPARTRIDGE_FIRST = "A partridge in a pear tree."\nPARTRIDGE_OTHER = "And a partridge in a pear tree."\nGIFTS = ["Two turtle doves,", "Three French hens,", "Four calling birds,",\n         "Five golden rings,", "Six geese a-laying,", "Seven swans a-swimming,",\n         "Eight maids a-milking,", "Nine ladies dancing,", "Ten lords a-leaping,",\n         "Eleven pipers piping,", "Twelve drummers drumming,"]\n\n## Отображаем один куплет песни\n# @param n - номер дня (куплета)\ndef displayVerse(n):\n    print("On the", intToOrdinal(n), "day of Christmas")\n    print("my true love sent to me:")\n    for i in range(n, 1, -1):\n        print(GIFTS[i - 2])\n    if n == 1:\n        print(PARTRIDGE_FIRST)\n    else:\n        print(PARTRIDGE_OTHER)\n    print()\n\n# Отображаем все 12 куплетов песни\ndef main():\n    for verse in range(1, 13):\n        displayVerse(verse)\n\n# Вызываем основную функцию\nmain()' },
+  { id:91, title:"Григорианский календарь в порядковый", diff:"hard",
+    text:"Порядковая дата содержит номер года и порядковый номер дня в этом году – оба в целочисленном формате. При этом год может быть любым согласно григорианскому календарю, а номер дня – числом в интервале от 1 до 366 (чтобы учесть високосные годы). Порядковые даты удобно использовать при расчете разницы в днях, когда счет ведется именно в днях, а не месяцах.\n\nНапишите функцию с именем ordinalDate, принимающую на вход три целых числа: день, месяц и год. Функция должна возвращать порядковый номер заданного дня в указанном году. В основной программе у пользователя должны запрашиваться день, месяц и год соответственно и выводиться на экран порядковый номер дня в заданном году. Программа должна запускаться только в том случае, если она не импортирована в виде модуля в другой файл.",
+    hint:"Сложите дни всех прошедших месяцев (список длин месяцев, февраль — с учётом високосности) и прибавьте день.",
+    solution:'# Григорианский календарь в порядковый\n\n## Определяем, високосный ли год\n# @param year - год\n# @return True, если год високосный\ndef isLeapYear(year):\n    return year % 400 == 0 or (year % 4 == 0 and year % 100 != 0)\n\n## Возвращаем порядковый номер дня в году\n# @param day - день\n# @param month - месяц\n# @param year - год\n# @return порядковый номер дня\ndef ordinalDate(day, month, year):\n    days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]\n    if isLeapYear(year):\n        days[1] = 29\n    ordinal = day\n    for m in range(month - 1):\n        ordinal = ordinal + days[m]\n    return ordinal\n\ndef main():\n    day = int(input("Введите день: "))\n    month = int(input("Введите месяц (1-12): "))\n    year = int(input("Введите год: "))\n    print("Порядковый номер дня в году:", ordinalDate(day, month, year))\n\nif __name__ == "__main__":\n    main()' },
+  { id:92, title:"Порядковая дата в григорианский календарь", diff:"hard",
+    text:"Разработайте функцию, принимающую в качестве единственного параметра порядковую дату, включающую в себя год и день по порядку. В качестве результата функция должна возвращать день и месяц, соответствующие переданной порядковой дате. Убедитесь, что ваша функция корректно обрабатывает високосные годы.\n\nИспользуйте эту функцию, а также функцию ordinalDate, написанную при выполнении упражнения 91, для разработки основной программы. Для начала должен производиться запрос порядковой даты у пользователя. После этого программа должна вычислить вторую дату, отстоящую от первой на определенное количество дней. Например, ваша программа могла бы запрашивать у пользователя порядковую дату, когда был приобретен товар, и выводить последнюю дату, когда можно осуществить возврат (согласно определенным правилам возврата товаров). Или вы могли бы спрогнозировать дату появления ребенка на свет на основании срока беременности в 280 дней. Удостоверьтесь, что программа корректно обрабатывает ситуации, когда заданная дата и расчетная находятся в разных годах.",
+    hint:"Вычитайте из порядкового номера дни месяцев по порядку (февраль — с учётом високосности), пока остаток не станет не больше длины текущего месяца; при переходе через год увеличивайте год и сбрасывайте остаток.",
+    solution:'# Порядковая дата в григорианский календарь\n\n## Определяем, високосный ли год\n# @param year - год\n# @return True, если год високосный\ndef isLeapYear(year):\n    return year % 400 == 0 or (year % 4 == 0 and year % 100 != 0)\n\n## Количество дней в году\n# @param year - год\n# @return 366 или 365\ndef daysInYear(year):\n    if isLeapYear(year):\n        return 366\n    return 365\n\n## Возвращаем день и месяц по порядковой дате\n# @param year - год\n# @param ordinal - порядковый номер дня в году\n# @return кортеж (день, месяц)\ndef dateFromOrdinal(year, ordinal):\n    days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]\n    if isLeapYear(year):\n        days[1] = 29\n    month = 1\n    while ordinal > days[month - 1]:\n        ordinal = ordinal - days[month - 1]\n        month = month + 1\n    return ordinal, month\n\ndef main():\n    year = int(input("Введите год порядковой даты: "))\n    ordinal = int(input("Введите порядковый номер дня: "))\n    add = int(input("Сколько дней прибавить (например, 280)? "))\n    total = ordinal + add\n    while total > daysInYear(year):\n        total = total - daysInYear(year)\n        year = year + 1\n    day, month = dateFromOrdinal(year, total)\n    print("Расчетная дата: день", day, ", месяц", month, ", год", year)\n\nif __name__ == "__main__":\n    main()' },
+  { id:93, title:"Центрируем строку", diff:"mid",
+    text:"Напишите функцию, которая будет принимать в качестве параметров строку s, а также ширину окна в символах – w. Возвращать функция должна новую строку, в которой в начале добавлено необходимое количество пробелов, чтобы первоначальная строка оказалась размещена по центру заданного окна. Новая строка должна формироваться по следующему принципу: если длина исходной строки s больше или равна ширине заданного окна, возвращаем ее в неизменном виде; в противном случае должна быть возвращена строка s с ведущими пробелами в количестве (w – len(s)) // 2 штук. В вашей основной программе должен осуществляться пример вывода нескольких строк в окнах разной ширины.",
+    hint:"Пробелы умножаются на строку: \" \" * spaces + s; если len(s) >= w — возвращаем s без изменений.",
+    solution:'# Центрируем строку в рамках заданного окна\nWIDTH = 80\n\n## Создаем новую строку, центрированную в окне заданной ширины\n# @param s - строка для центрирования\n# @param width - ширина окна, в котором будет центрирована строка\n# @return копия строки s с ведущими пробелами для центрирования\ndef center(s, width):\n    # Если строка слишком длинная, возвращаем оригинал\n    if width < len(s):\n        return s\n    # Вычисляем количество пробелов, необходимое для центрирования\n    spaces = (width - len(s)) // 2\n    result = " " * spaces + s\n    return result\n\n# Демонстрируем центрирование строки\ndef main():\n    print(center("Известная история", WIDTH))\n    print(center("от:", WIDTH))\n    print(center("Кого-то известного", WIDTH))\n    print()\n    print("Жили-были...")\n\n# Вызываем основную функцию\nmain()' },
+  { id:94, title:"Треугольник ли?", diff:"hard",
+    text:"Всем известно, что из трех веточек разной длины далеко не всегда можно составить треугольник, соединив их концы. Например, если все они будут длиной 6 см, можно без труда построить равносторонний треугольник. Но если одна веточка будет длиной 6 см, а остальные две длиной 2 см, треугольник просто не получится. Правило здесь простое: если длина одной стороны больше или равна сумме двух оставшихся сторон, треугольник НЕ образуется. Иначе это возможно.\n\nНапишите функцию для определения возможности построения треугольника на основании длин трех его потенциальных сторон. Функция должна принимать три числовых параметра и возвращать булево значение. Если длина хотя бы одной из трех сторон меньше или равна нулю, функция должна вернуть False. В противном случае необходимо выполнить проверку на допустимость построения треугольника на основании введенных длин сторон и вернуть соответствующее значение. Напишите основную программу, запрашивающую у пользователя длины сторон и выводящую на экран информацию о том, может ли при заданных значениях получиться треугольник.",
+    hint:"Проверьте три неравенства: a < b + c, b < a + c и c < a + b при положительных сторонах — тогда True.",
+    solution:'# Треугольник ли?\n\n## Определяем, можно ли построить треугольник из трех сторон\n# @param a - длина первой стороны\n# @param b - длина второй стороны\n# @param c - длина третьей стороны\n# @return True, если треугольник существует\ndef isTriangle(a, b, c):\n    if a <= 0 or b <= 0 or c <= 0:\n        return False\n    if a >= b + c or b >= a + c or c >= a + b:\n        return False\n    return True\n\ndef main():\n    a = float(input("Введите длину первой стороны: "))\n    b = float(input("Введите длину второй стороны: "))\n    c = float(input("Введите длину третьей стороны: "))\n    if isTriangle(a, b, c):\n        print("Из таких сторон треугольник получится.")\n    else:\n        print("Из таких сторон треугольник не получится.")\n\nif __name__ == "__main__":\n    main()' },
+  { id:95, title:"Озаглавим буквы", diff:"hard",
+    text:"Многие в своих сообщениях не ставят заглавные буквы, особенно если используют для набора мобильные устройства. Создайте функцию, которая будет принимать на вход исходную строку и возвращать строку с восстановленными заглавными буквами. По существу, ваша функция должна: сделать заглавной первую букву в строке, не считая пробелы; сделать заглавной первую букву после точки, восклицательного или вопросительного знака, не считая пробелы; если текст на английском языке, сделать заглавными буквы «i», которым предшествует пробел или за которыми следует пробел, точка, восклицательный или вопросительный знак.\n\nРеализация такого рода автоматической корректуры исключит большую часть ошибок с регистром букв. В основной программе запросите у пользователя исходную строку, обработайте ее при помощи своей функции и выведите на экран итоговый результат.",
+    hint:"Идите по строке посимвольно с флагом «начало предложения»; английское i заменяйте на I, если перед ним пробел, а после — пробел или знак . ! ?",
+    solution:'# Заглавные буквы в строке\n\n## Озаглавливаем нужные буквы в строке\n# @param s - исходная строка для обработки\n# @return новая строка с восстановленными заглавными буквами\ndef capitalize(s):\n    result = s\n    # Делаем заглавной первый непробельный символ в строке\n    pos = 0\n    while pos < len(s) and result[pos] == " ":\n        pos = pos + 1\n    if pos < len(s):\n        result = result[0:pos] + result[pos].upper() + result[pos + 1:len(result)]\n    # Делаем заглавной первую букву после точки, ! и ?\n    pos = 0\n    while pos < len(s):\n        if result[pos] == "." or result[pos] == "!" or result[pos] == "?":\n            pos = pos + 1\n            while pos < len(s) and result[pos] == " ":\n                pos = pos + 1\n            if pos < len(s):\n                result = result[0:pos] + result[pos].upper() + result[pos + 1:len(result)]\n        pos = pos + 1\n    # Делаем заглавными английские i между пробелами и знаками\n    pos = 1\n    while pos < len(s) - 1:\n        if result[pos - 1] == " " and result[pos] == "i" and (result[pos + 1] == " " or result[pos + 1] == "." or result[pos + 1] == "!" or result[pos + 1] == "?"):\n            result = result[0:pos] + "I" + result[pos + 1:len(result)]\n        pos = pos + 1\n    return result\n\n# Демонстрируем работу функции\ndef main():\n    s = input("Введите текст: ")\n    print("Новая версия:", capitalize(s))\n\nif __name__ == "__main__":\n    main()' },
+  { id:96, title:"Является ли строка целым числом?", diff:"mid",
+    text:"В данном упражнении вам предстоит написать функцию с именем isInteger, определяющую, представляет ли введенная строка целочисленное значение. При проверке вы можете игнорировать ведущие и замыкающие пробелы в строке. После исключения лишних пробелов строку можно считать представляющей целое число, если ее длина больше или равна одному символу и она целиком состоит из цифр. Возможен также вариант с ведущим знаком «+» или «-», после которого должны идти цифры.\n\nВ основной программе у пользователя должна запрашиваться исходная строка и выводиться сообщение о том, можно ли введенное значение воспринимать как целое число. Убедитесь, что основная программа не будет запускаться, если файл импортирован в другой файл в качестве модуля.",
+    bookHint:"При работе с этим заданием вам, вероятно, понадобятся методы lstrip, rstrip и/или strip. Их описание можно найти в интернете.",
+    hint:"s.strip() уберёт пробелы по краям; затем проверьте первый символ на «+»/«-», а остаток строки — методом isdigit().",
+    solution:'# Представляет ли строка целое число\n\n## Проверяем, включает ли строка целочисленное значение\n# @param s - строка для проверки\n# @return True, если это целое число, иначе False\ndef isInteger(s):\n    # Удаляем пробелы в начале и конце строки\n    s = s.strip()\n    # Определяем, являются ли оставшиеся символы целым числом\n    if (s[0] == "+" or s[0] == "-") and s[1:].isdigit():\n        return True\n    if s.isdigit():\n        return True\n    return False\n\n# Демонстрируем работу функции isInteger\ndef main():\n    s = input("Введите строку: ")\n    if isInteger(s):\n        print("Строка является целым числом.")\n    else:\n        print("Строка не является целым числом.")\n\nif __name__ == "__main__":\n    main()' },
+  { id:97, title:"Приоритеты операторов", diff:"mid",
+    text:"Напишите функцию с именем precedence, которая будет возвращать целое число, представляющее собой приоритет или старшинство математического оператора. В качестве единственного параметра эта функция будет принимать строку, содержащую оператор. На выходе функция должна давать 1 для операторов «+» и «–», 2 для «*» и «/» и 3 для «ˆ». Если строка, переданная в функцию, не содержит ни один из перечисленных операторов, должно быть возвращено значение -1. Дополните функцию основной программой, в которой будет выполняться запрос оператора у пользователя и выводиться на экран его приоритет или сообщение об ошибке, если был осуществлен неверный ввод. Программа должна запускаться только в том случае, если она не импортирована в виде модуля в другой файл.",
+    note:"В данном упражнении, как и во всех последующих в этой книге, мы будем использовать оператор «ˆ» (крышечка) для возведения в степень. Применение этого символа вместо стандартного для Python «**» позволит облегчить написание программы, поскольку в этом случае все операторы будут состоять из одного символа.",
+    hint:"Цепочка if-elif по символу оператора; любой другой символ — return -1.",
+    solution:'# Приоритеты операторов\n\n## Возвращаем приоритет математического оператора\n# @param op - строка, содержащая оператор\n# @return приоритет оператора или -1 при неверном вводе\ndef precedence(op):\n    if op == "+" or op == "-":\n        return 1\n    if op == "*" or op == "/":\n        return 2\n    if op == "^":\n        return 3\n    return -1\n\ndef main():\n    op = input("Введите оператор: ")\n    p = precedence(op)\n    if p == -1:\n        print("Это не известный мне оператор.")\n    else:\n        print("Приоритет оператора:", p)\n\nif __name__ == "__main__":\n    main()' },
+  { id:98, title:"Простое число?", diff:"mid",
+    text:"Простое число представляет собой число, большее единицы, которое без остатка делится лишь на само себя и единицу. Напишите функцию для определения того, является ли введенное число простым. Возвращаемое значение должно быть либо True, либо False. В основной программе, как и ожидается, пользователь должен ввести целое число и получить ответ о том, является ли оно простым. Убедитесь, что основная программа не будет запускаться, если файл импортирован в другой файл в качестве модуля.",
+    hint:"Перебирайте делители от 2 до n − 1: если n % i == 0 — число не простое; для n <= 1 сразу False.",
+    solution:'# Простое число?\n\n## Определяем, является ли число простым\n# @param n - целое число для проверки\n# @return True, если число простое, иначе False\ndef isPrime(n):\n    if n <= 1:\n        return False\n    # Проверяем все числа от двух до n, не включая его\n    for i in range(2, n):\n        if n % i == 0:\n            return False\n    return True\n\ndef main():\n    value = int(input("Введите целое число: "))\n    if isPrime(value):\n        print(value, "- простое число.")\n    else:\n        print(value, "не является простым числом.")\n\nif __name__ == "__main__":\n    main()' },
+  { id:99, title:"Следующее простое число", diff:"mid",
+    text:"В данном упражнении вам нужно написать функцию с именем nextPrime, которая находит и возвращает первое простое число, большее введенного числа n. Само число n должно передаваться в функцию в качестве единственного параметра. В основной программе запросите у пользователя это значение и выведите на экран первое простое число, большее заданного. Для решения этой задачи импортируйте функцию, созданную в упражнении 98.",
+    hint:"Начните с n + 1 и увеличивайте кандидат на 1, пока isPrime не вернёт True.",
+    solution:'# Следующее простое число\nfrom is_prime import isPrime   # функция из упражнения 98\n\n## Находим первое простое число, большее n\n# @param n - исходное число\n# @return первое простое число, большее n\ndef nextPrime(n):\n    candidate = n + 1\n    while not isPrime(candidate):\n        candidate = candidate + 1\n    return candidate\n\ndef main():\n    n = int(input("Введите целое число: "))\n    print("Первое простое число, большее", n, ":", nextPrime(n))\n\nif __name__ == "__main__":\n    main()' },
+  { id:100, title:"Случайный пароль", diff:"hard",
+    text:"Напишите функцию, которая будет генерировать случайный пароль. В пароле должно быть от 7 до 10 символов, при этом каждый символ должен быть случайным образом выбран из диапазона от 33 до 126 в таблице ASCII. Ваша функция не должна принимать на вход параметры, а возвращать будет сгенерированный пароль. В основной программе вы должны просто вывести созданный случайным образом пароль. Программа должна запускаться только в том случае, если она не импортирована в виде модуля в другой файл.",
+    bookHint:"При решении этого упражнения вам, возможно, понадобится функция chr. Полную информацию о ней можно найти в интернете.",
+    hint:"Длину выберите randint(7, 10); каждый символ — chr(randint(33, 126)); собирайте строку в цикле.",
+    solution:'# Случайный пароль\nfrom random import randint\nSHORTEST = 7\nLONGEST = 10\nMIN_ASCII = 33\nMAX_ASCII = 126\n\n## Генерируем случайный пароль\n# @return строка, содержащая случайный пароль\ndef randomPassword():\n    # Выбираем случайную длину пароля\n    randomLength = randint(SHORTEST, LONGEST)\n    # Генерируем соответствующее количество случайных символов\n    result = ""\n    for i in range(randomLength):\n        randomChar = chr(randint(MIN_ASCII, MAX_ASCII))\n        result = result + randomChar\n    return result\n\ndef main():\n    print("Ваш случайный пароль:", randomPassword())\n\nif __name__ == "__main__":\n    main()' },
+  { id:101, title:"Случайный номерной знак", diff:"hard",
+    text:"Представьте, что в вашем регионе устаревшим является формат номерных автомобильных знаков из трех букв, следом за которыми идут три цифры. Когда все номера такого шаблона закончились, было решено обновить формат, поставив в начало четыре цифры, а за ними три буквы. Напишите функцию, которая будет генерировать случайный номерной знак. При этом номера в старом и новом форматах должны создаваться примерно с одинаковой вероятностью. В основной программе нужно сгенерировать и вывести на экран случайный номерной знак.",
+    hint:"Бросьте монетку randint(0, 1): 0 — старый формат (3 буквы + 3 цифры), 1 — новый (4 цифры + 3 буквы); заглавную букву даёт chr(randint(65, 90)).",
+    solution:'# Случайный номерной знак\nfrom random import randint\n\n## Генерируем случайный номерной знак старого или нового формата\n# @return строка с номерным знаком\ndef randomPlate():\n    plate = ""\n    if randint(0, 1) == 0:\n        # Старый формат: три буквы и три цифры\n        for i in range(3):\n            plate = plate + chr(randint(65, 90))\n        for i in range(3):\n            plate = plate + str(randint(0, 9))\n    else:\n        # Новый формат: четыре цифры и три буквы\n        for i in range(4):\n            plate = plate + str(randint(0, 9))\n        for i in range(3):\n            plate = plate + chr(randint(65, 90))\n    return plate\n\ndef main():\n    print("Случайный номерной знак:", randomPlate())\n\nif __name__ == "__main__":\n    main()' },
+  { id:102, title:"Проверка пароля на надежность", diff:"hard",
+    text:"В данном упражнении вам необходимо написать функцию, проверяющую введенный пароль на надежность. Определим как надежный пароль, состоящий минимум из восьми символов и включающий хотя бы по одной букве в верхнем и нижнем регистрах и как минимум одну цифру. Функция должна возвращать True, если переданный в качестве параметра пароль отвечает требованиям надежности. В противном случае возвращаемым значением должно быть False. В основной программе необходимо запросить у пользователя пароль и оповестить его о том, является ли он достаточно надежным. Программа должна запускаться только в том случае, если она не импортирована в виде модуля в другой файл.",
+    hint:"Три флага: has_upper, has_lower, has_num — выставляйте их в цикле по символам; в конце проверьте длину >= 8 и все три флага.",
+    solution:'# Проверка пароля на надежность\n\n## Проверяем, является ли пароль надежным\n# @param password - пароль для проверки\n# @return True, если пароль надежен, иначе False\ndef checkPassword(password):\n    has_upper = False\n    has_lower = False\n    has_num = False\n    # Проверяем каждый символ в пароле\n    for ch in password:\n        if ch >= "A" and ch <= "Z":\n            has_upper = True\n        elif ch >= "a" and ch <= "z":\n            has_lower = True\n        elif ch >= "0" and ch <= "9":\n            has_num = True\n    # Пароль надежен, если соблюдены все требования\n    if len(password) >= 8 and has_upper and has_lower and has_num:\n        return True\n    return False\n\ndef main():\n    p = input("Введите пароль: ")\n    if checkPassword(p):\n        print("Это надежный пароль.")\n    else:\n        print("Это ненадежный пароль.")\n\nif __name__ == "__main__":\n    main()' },
+  { id:103, title:"Случайный надежный пароль", diff:"mid",
+    text:"Используя решения из упражнений 100 и 102, напишите программу, генерирующую случайный надежный пароль и выводящую его на экран. Посчитайте, с какого раза удастся создать пароль, отвечающий нашим требованиям надежности, и выведите на экран количество попыток. Импортируйте функции из предыдущих упражнений и вызывайте их при необходимости для решения этой задачи.",
+    hint:"Цикл while: генерируем пароль randomPassword() и проверяем checkPassword(); счётчик попыток растёт до первого успеха.",
+    solution:'# Случайный надежный пароль\nfrom random_password import randomPassword   # упражнение 100\nfrom check_password import checkPassword     # упражнение 102\n\ndef main():\n    attempts = 1\n    password = randomPassword()\n    while not checkPassword(password):\n        password = randomPassword()\n        attempts = attempts + 1\n    print("Случайный надежный пароль:", password)\n    print("Потребовалось попыток:", attempts)\n\nif __name__ == "__main__":\n    main()' },
+  { id:104, title:"Шестнадцатеричные и десятичные числа", diff:"hard",
+    text:"Напишите две функции с именами hex2int и int2hex для конвертации значений из шестнадцатеричной системы счисления (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, A, B, C, D, E и F) в десятичную (по основанию 10) и обратно. Функция hex2int должна принимать на вход строку с единственным символом в шестнадцатеричной системе и преобразовывать его в число от нуля до 15 в десятичной системе, тогда как функция int2hex будет выполнять обратное действие – принимать десятичное число из диапазона от 0 до 15 и возвращать шестнадцатеричный эквивалент. Обе функции должны принимать единственный параметр со входным значением и возвращать преобразованное число. Удостоверьтесь, что функция hex2int корректно обрабатывает буквы в верхнем и нижнем регистрах. Если введенное пользователем значение выходит за допустимые границы, вы должны вывести сообщение об ошибке.",
+    hint:"Держите строку цифр \"0123456789ABCDEF\": значение символа — его индекс (после upper()), обратное преобразование — символ по индексу.",
+    solution:'# Шестнадцатеричные и десятичные числа\nHEX_DIGITS = "0123456789ABCDEF"\n\n## Преобразуем шестнадцатеричную цифру в десятичное число\n# @param ch - строка с одним шестнадцатеричным символом\n# @return число от 0 до 15\ndef hex2int(ch):\n    ch = ch.upper()\n    if ch not in HEX_DIGITS:\n        print("Ошибка: недопустимый шестнадцатеричный символ.")\n        quit()\n    return HEX_DIGITS.index(ch)\n\n## Преобразуем десятичное число от 0 до 15 в шестнадцатеричную цифру\n# @param num - целое число от 0 до 15\n# @return строка с шестнадцатеричной цифрой\ndef int2hex(num):\n    if num < 0 or num > 15:\n        print("Ошибка: число вне диапазона от 0 до 15.")\n        quit()\n    return HEX_DIGITS[num]\n\ndef main():\n    h = input("Введите шестнадцатеричную цифру: ")\n    print("В десятичной системе:", hex2int(h))\n    d = int(input("Введите число от 0 до 15: "))\n    print("В шестнадцатеричной системе:", int2hex(d))\n\nif __name__ == "__main__":\n    main()' },
+  { id:105, title:"Произвольные системы счисления", diff:"hard",
+    text:"Напишите программу, которая позволит пользователю преобразовывать числа из одной системы счисления в другую произвольным образом. Ваша программа должна поддерживать все системы счисления в диапазоне от 2 до 16 как для входных, так и для выходных данных. Если пользователь выберет систему с основанием, выходящим за границы допустимого, на экран должна быть выведена ошибка. Разделите код программы на несколько функций, включая функцию, конвертирующую число из произвольной системы счисления в десятичную, и обратную функцию, переводящую значение из десятичной системы в произвольную. В основной программе необходимо запросить у пользователя исходную систему счисления, целевую систему, а также число для преобразования. При выполнении данного упражнения вам могут пригодиться функции из заданий 81, 82 и 104.",
+    hint:"В десятичную: decimal = decimal * base + hex2int(цифра). Из десятичной: делите на основание с остатком и ставьте int2hex(остаток) в начало строки.",
+    solution:'# Произвольные системы счисления\nfrom hex_digit import hex2int, int2hex   # функции из упражнения 104\n\n## Переводим число из системы по основанию b в десятичную\n# @param num - число в виде строки\n# @param b - основание преобразуемого числа\n# @return число в десятичной системе\ndef n2dec(num, b):\n    decimal = 0\n    for i in range(len(num)):\n        decimal = decimal * b\n        decimal = decimal + hex2int(num[i])\n    return decimal\n\n## Переводим десятичное число в систему по основанию new_base\n# @param num - десятичное число\n# @param new_base - основание выходной системы\n# @return строка с числом в новой системе\ndef dec2n(num, new_base):\n    result = ""\n    q = num\n    r = q % new_base\n    result = int2hex(r) + result\n    q = q // new_base\n    while q > 0:\n        r = q % new_base\n        result = int2hex(r) + result\n        q = q // new_base\n    return result\n\ndef main():\n    from_base = int(input("Исходная система счисления (2-16): "))\n    if from_base < 2 or from_base > 16:\n        print("Допустимый диапазон систем счисления: от 2 до 16.")\n        quit()\n    from_num = input("Введите число по этому основанию: ")\n    dec = n2dec(from_num, from_base)\n    print("Результат: %d по основанию 10." % dec)\n    to_base = int(input("Введите требуемую систему счисления (2-16): "))\n    if to_base < 2 or to_base > 16:\n        print("Допустимый диапазон систем счисления: от 2 до 16.")\n        quit()\n    print("Результат: %s по основанию %d." % (dec2n(dec, to_base), to_base))\n\nif __name__ == "__main__":\n    main()' },
+  { id:106, title:"Дни в месяце", diff:"hard",
+    text:"Напишите функцию для определения количества дней в конкретном месяце. Ваша функция должна принимать два параметра: номер месяца в виде целого числа в диапазоне от 1 до 12 и год, состоящий из четырех цифр. Убедитесь, что функция корректно обрабатывает февраль високосного года. В основной программе запросите у пользователя номер месяца и год и отобразите на экране количество дней в указанном месяце. При решении этой задачи вам может пригодиться написанная вами функция из упражнения 58.",
+    hint:"Список длин месяцев [31, 28, 31, 30, ...]; для високосного года февраль равен 29; високосность — по правилу из задачи 58.",
+    solution:'# Дни в месяце\n\n## Определяем, високосный ли год\n# @param year - год\n# @return True, если год високосный\ndef isLeapYear(year):\n    if year % 400 == 0:\n        return True\n    if year % 100 == 0:\n        return False\n    if year % 4 == 0:\n        return True\n    return False\n\n## Возвращаем количество дней в месяце\n# @param month - номер месяца (1-12)\n# @param year - год\n# @return количество дней в месяце\ndef daysInMonth(month, year):\n    days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]\n    if month == 2 and isLeapYear(year):\n        return 29\n    return days[month - 1]\n\ndef main():\n    month = int(input("Введите номер месяца (1-12): "))\n    year = int(input("Введите год: "))\n    print("Дней в месяце:", daysInMonth(month, year))\n\nif __name__ == "__main__":\n    main()' },
+  { id:107, title:"Максимальное сокращение дробей", diff:"hard",
+    text:"Напишите функцию, принимающую на вход два целочисленных параметра, представляющих числитель и знаменатель дроби. В теле функции должно выполняться максимально возможное сокращение дроби, а полученные в итоге числитель и знаменатель должны быть возвращены исходной программе. Например, если на вход функции передать числа 6 и 63, числитель и знаменатель итоговой дроби должны быть 2 и 21. В основной программе нужно запросить у пользователя числитель и знаменатель исходной дроби, передать их в функцию и вывести на экран результат.",
+    bookHint:"В упражнении 79 вы писали функцию для определения наибольшего общего делителя для двух целых чисел. Воспользуйтесь ей в этом задании.",
+    hint:"Найдите НОД как в задаче 79 (d = min(n, m), уменьшаем, пока оба не делятся), затем поделите числитель и знаменатель на НОД.",
+    solution:'# Максимальное сокращение дробей\n\n## Вычисляем наибольший общий делитель двух целых чисел\n# @param n - первое число (ненулевое)\n# @param m - второе число (ненулевое)\n# @return наибольший общий делитель\ndef gcd(n, m):\n    d = min(n, m)\n    while n % d != 0 or m % d != 0:\n        d = d - 1\n    return d\n\n## Сокращаем дробь до предела\n# @param num - числитель дроби\n# @param den - знаменатель дроби (ненулевой)\n# @return числитель и знаменатель сокращенной дроби\ndef reduce(num, den):\n    # Если числитель равен нулю, сокращенная дробь равна 0/1\n    if num == 0:\n        return (0, 1)\n    # Делим числитель и знаменатель на НОД\n    g = gcd(num, den)\n    return (num // g, den // g)\n\ndef main():\n    num = int(input("Введите числитель дроби: "))\n    den = int(input("Введите знаменатель дроби: "))\n    (n, d) = reduce(num, den)\n    print("Дробь %d/%d может быть сокращена до %d/%d." % (num, den, n, d))\n\nif __name__ == "__main__":\n    main()' },
+  { id:108, title:"Переводим меры", diff:"hard",
+    text:"Во многих кулинарных книгах до сих пор можно встретить рецепты, в которых ингредиенты отмеряются стаканами, чайными и столовыми ложками. И хотя при наличии этих нехитрых предметов таким рецептам следовать довольно удобно, бывает трудно быстро преобразовать подобные меры при приготовлении рождественского ужина на огромную семью.\n\nНапишите функцию, выражающую заданный объем ингредиентов с использованием минимально возможных замеров. Функция должна принимать в качестве параметра количество единиц измерения, а также их тип (стакан, столовая или чайная ложка). На выходе мы должны получить строку, представляющую указанное количество вещества, с задействованием минимального количества действий и предметов. Например, если на вход функции вы подали объем, равный 59 чайным ложкам, возвращенная строка должна быть такой: «1 cup, 3 tablespoons, 2 teaspoons».",
+    note:"Используйте в этом упражнении английское написание мер: cup, tablespoon и teaspoon, добавляя к ним во множественном числе окончание s.",
+    bookHint:"Один стакан вмещает 16 столовых ложек, а одна столовая ложка эквивалентна трем чайным ложкам.",
+    hint:"Переведите всё в чайные ложки (1 cup = 48 tsp, 1 tbsp = 3 tsp), затем делите: стаканы = tsp // 48, столовые = остаток // 3, чайные = остаток.",
+    solution:'# Переводим меры объема ингредиентов\nTSP_PER_TBSP = 3\nTSP_PER_CUP = 48\n\n## Выражаем объем минимальным количеством мер\n# @param num - количество единиц объема для преобразования\n# @param unit - единица измерения (cup, tablespoon или teaspoon)\n# @return строка, представляющая меры в сокращенной форме\ndef reduceMeasure(num, unit):\n    unit = unit.lower()\n    # Вычисляем объем в чайных ложках\n    if unit == "teaspoon" or unit == "teaspoons":\n        teaspoons = num\n    elif unit == "tablespoon" or unit == "tablespoons":\n        teaspoons = num * TSP_PER_TBSP\n    else:\n        teaspoons = num * TSP_PER_CUP\n    # Преобразуем объем в чайных ложках в другие единицы\n    cups = teaspoons // TSP_PER_CUP\n    teaspoons = teaspoons - cups * TSP_PER_CUP\n    tablespoons = teaspoons // TSP_PER_TBSP\n    teaspoons = teaspoons - tablespoons * TSP_PER_TBSP\n    # Создаем строковую переменную для результата\n    result = ""\n    if cups > 0:\n        result = result + str(cups) + " cup"\n        if cups > 1:\n            result = result + "s"\n    if tablespoons > 0:\n        if result != "":\n            result = result + ", "\n        result = result + str(tablespoons) + " tablespoon"\n        if tablespoons > 1:\n            result = result + "s"\n    if teaspoons > 0:\n        if result != "":\n            result = result + ", "\n        result = result + str(teaspoons) + " teaspoon"\n        if teaspoons > 1:\n            result = result + "s"\n    if result == "":\n        result = "0 teaspoons"\n    return result\n\ndef main():\n    num = int(input("Введите количество единиц: "))\n    unit = input("Введите единицу (cup, tablespoon, teaspoon): ")\n    print(reduceMeasure(num, unit))\n\nif __name__ == "__main__":\n    main()' },
+  { id:109, title:"Магические даты", diff:"mid",
+    text:"Магическими называются даты, в которых произведение дня и месяца составляет последние две цифры года. Например, 10 июня 1960 года – магическая дата, поскольку 10 * 6 = 60. Напишите функцию, определяющую, является ли введенная дата магической. Используйте написанную функцию в главной программе для отображения всех магических дат в XX веке. Возможно, вам пригодится здесь функция, разработанная в упражнении 106.",
+    hint:"Условие магии: day * month == year % 100; тройным циклом переберите годы 1900–1999, месяцы 1–12 и дни от 1 до daysInMonth(month, year).",
+    solution:'# Магические даты\nfrom days_in_month import daysInMonth   # функция из упражнения 106\n\n## Определяем, является ли дата магической\n# @param day - день в дате\n# @param month - месяц в дате\n# @param year - год в дате\n# @return True, если дата является магической, иначе False\ndef isMagicDate(day, month, year):\n    if day * month == year % 100:\n        return True\n    return False\n\n# Находим и отображаем все магические даты XX века\ndef main():\n    for year in range(1900, 2000):\n        for month in range(1, 13):\n            for day in range(1, daysInMonth(month, year) + 1):\n                if isMagicDate(day, month, year):\n                    print("%02d/%02d/%04d - магическая дата." % (day, month, year))\n\nif __name__ == "__main__":\n    main()' }
+];
+var DIFF_LABEL = { easy:"легкая", mid:"средняя", hard:"сложная" };
+
+var LS_STATE = "python-task4-state-v1";
+var LS_PROGRESS = "python-trainer-progress-v1";
+
+/* ================= STATE ================= */
+var state = {
+  screen:"start",
+  tab:"ref",               // ref | tasks | report
+  student:{last:"", first:"", cls:""},
+  startErrors:null,
+  codes:{},
+  hintShown:{}, hintUsed:{},
+  etalonShown:{}, etalonViewed:{}, etalonNoAttempt:{}, etalonConfirm:{},
+  solved:{},
+  open:{},
+  filter:"all",            // all | todo | done
+  query:"",
+  reportOpen:false
+};
+function loadSaved(){
+  try{
+    var raw = localStorage.getItem(LS_STATE);
+    if(!raw) return;
+    var s = JSON.parse(raw);
+    if(s.student) state.student = s.student;
+    if(s.codes) state.codes = Object.assign(state.codes, s.codes);
+    if(s.hintUsed) state.hintUsed = Object.assign(state.hintUsed, s.hintUsed);
+    if(s.etalonViewed) state.etalonViewed = Object.assign(state.etalonViewed, s.etalonViewed);
+    if(s.etalonNoAttempt) state.etalonNoAttempt = Object.assign(state.etalonNoAttempt, s.etalonNoAttempt);
+    if(s.solved) state.solved = Object.assign(state.solved, s.solved);
+    if(s.reportOpen) state.reportOpen = true;
+  }catch(e){}
+}
+function persist(){
+  try{
+    localStorage.setItem(LS_STATE, JSON.stringify({
+      student:state.student, codes:state.codes,
+      hintUsed:state.hintUsed, etalonViewed:state.etalonViewed,
+      etalonNoAttempt:state.etalonNoAttempt, solved:state.solved,
+      reportOpen:state.reportOpen
+    }));
+  }catch(e){}
+}
+function setProgress(status){
+  try{
+    var raw = localStorage.getItem(LS_PROGRESS);
+    var p = raw ? JSON.parse(raw) : {topic:{}, task:{}};
+    p.task = p.task || {};
+    p.task[String(META.num)] = status;
+    localStorage.setItem(LS_PROGRESS, JSON.stringify(p));
+  }catch(e){}
+}
+function esc(s){
+  return String(s).replace(/[&<>"']/g, function(ch){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch];
+  });
+}
+function hlPy(src){
+  return esc(src).replace(
+    /(#.*$)|(&quot;(?:[^&\\]|\\.)*?&quot;|&#39;(?:[^&\\]|\\.)*?&#39;)|\b(from|import|def|return|if|elif|else|for|while|in|and|or|not|True|False|pass|break|continue|try|except|with|as|lambda|global|None)\b|\b(\d+(?:\.\d+)?)\b|([A-Za-z_][A-Za-z0-9_]*)(?=\s*\()/gm,
+    function(m, com, str, kw, num, fn){
+      if(com) return '<span class="tk-c">' + com + '</span>';
+      if(str) return '<span class="tk-s">' + str + '</span>';
+      if(kw)  return '<span class="tk-k">' + kw + '</span>';
+      if(num) return '<span class="tk-n">' + num + '</span>';
+      if(fn)  return '<span class="tk-f">' + fn + '</span>';
+      return m;
+    });
+}
+function codeWindow(src, file){
+  return '<div class="code-window"><div class="code-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="file">' + (file || "program.py") + '</span></div><pre class="code">' + hlPy(src) + '</pre></div>';
+}
+/* счётчики */
+function solvedCount(){ return TASKS.filter(function(t){ return state.solved[t.id]; }).length; }
+function codeCount(){ return TASKS.filter(function(t){ return (state.codes[t.id] || "").trim(); }).length; }
+function hintCount(){ return TASKS.filter(function(t){ return state.hintUsed[t.id]; }).length; }
+function etalonCount(){ return TASKS.filter(function(t){ return state.etalonViewed[t.id]; }).length; }
+function touched(t){
+  return (state.codes[t.id] || "").trim() || state.hintUsed[t.id] || state.etalonViewed[t.id] || state.solved[t.id];
+}
+function doneThreshold(){ return Math.ceil(TASKS.length * DONE_SHARE); }
+
+/* ================= RENDER ================= */
+var app = document.getElementById("app");
+
+function parasHTML(s){
+  return s.split("\n\n").map(function(p){ return '<p class="task-text">' + esc(p) + '</p>'; }).join("");
+}
+function formulaHTML(f){
+  var arr = Array.isArray(f) ? f : [f];
+  return arr.map(function(x){ return '<div class="formula">' + esc(x) + '</div>'; }).join("");
+}
+function tableHTML(t){
+  return '<div class="tbl-wrap"><table><thead><tr>' +
+    t.head.map(function(h){ return "<th>" + esc(h) + "</th>"; }).join("") +
+    '</tr></thead><tbody>' +
+    t.rows.map(function(r){
+      return "<tr>" + r.map(function(c){ return "<td>" + esc(c) + "</td>"; }).join("") + "</tr>";
+    }).join("") + '</tbody></table></div>';
+}
+function renderStart(){
+  var e = state.startErrors || {};
+  var st = state.student;
+  return '<div class="container"><div class="start-card">' +
+    '<span class="eyebrow">Python · Практика, глава ' + META.num + '</span>' +
+    "<h1>" + META.topic + "</h1>" +
+    '<p class="author">Автор курса: ' + META.author + "</p>" +
+    '<ul class="start-list"><li>Краткая справка: 5 карточек о функциях и модулях.</li><li>' + TASKS.length + ' задачи главы из сборника Б. Стивенсона: условия как в книге, подсказка и эталон у каждой.</li><li>Прогресс, фильтры и поиск по задачам.</li><li>В конце — сводка «Итоги» и отчёт для сохранения в PDF.</li></ul>' +
+    '<form id="startForm" novalidate>' +
+      '<div class="field"><label for="fLast">Фамилия</label><input id="fLast" name="last" autocomplete="family-name" value="' + esc(st.last) + '" class="' + (e.last ? "bad" : "") + '" placeholder="Иванов">' + (e.last ? '<p class="err">' + e.last + "</p>" : "") + "</div>" +
+      '<div class="field"><label for="fFirst">Имя</label><input id="fFirst" name="first" autocomplete="given-name" value="' + esc(st.first) + '" class="' + (e.first ? "bad" : "") + '" placeholder="Иван">' + (e.first ? '<p class="err">' + e.first + "</p>" : "") + "</div>" +
+      '<div class="field"><label for="fCls">Класс</label><input id="fCls" name="cls" value="' + esc(st.cls) + '" class="' + (e.cls ? "bad" : "") + '" placeholder="9А">' + (e.cls ? '<p class="err">' + e.cls + "</p>" : "") + "</div>" +
+      '<button class="btn btn-primary" type="submit">Начать практику</button>' +
+    "</form></div></div>";
+}
+function renderRef(){
+  var cards = REF_CARDS.map(function(c){
+    return '<div class="card"><h3>' + esc(c.t) + '</h3><p>' + esc(c.p) + '</p>' + codeWindow(c.code, "spravka.py") + '</div>';
+  }).join("");
+  return '<div class="container"><p class="section-note">Только то, что нужно для задач главы: определение и вызов функций, параметры, локальные переменные, return и импорт. Полная теория — в блоке 6 курса.</p>' + cards +
+    '<div class="call info"><span class="call-ic" aria-hidden="true">💡</span><div><p>Все упражнения этой главы должны быть выполнены с применением функций. Пишите комментарии и понятные имена — как в примерах сборника. Код автосохраняется в этом браузере.</p></div></div></div>';
+}
+function taskCard(t){
+  var open = !!state.open[t.id];
+  var solved = !!state.solved[t.id];
+  var tags = '<span class="tag ' + t.diff + '">' + DIFF_LABEL[t.diff] + '</span>' +
+    (solved ? '<span class="tag solved">решено</span>' : '');
+  var body = "";
+  if(open){
+    body = '<div class="task-body">' +
+      parasHTML(t.text) +
+      (t.bullets ? '<ul class="task-list">' + t.bullets.map(function(b){ return '<li>' + esc(b) + '</li>'; }).join("") + '</ul>' : '') +
+      (t.table ? tableHTML(t.table) : '') +
+      (t.formula ? formulaHTML(t.formula) : '') +
+      (t.text2 ? parasHTML(t.text2) : '') +
+      (t.steps ? '<ol class="task-steps">' + t.steps.map(function(s){ return '<li>' + esc(s) + '</li>'; }).join("") + '</ol>' : '') +
+      (t.after ? parasHTML(t.after) : '') +
+      (t.note ? '<div class="call warn"><span class="call-ic" aria-hidden="true">⚠️</span><div><p><b>Примечание.</b> ' + esc(t.note) + '</p></div></div>' : '') +
+      (t.bookHint ? '<div class="call info"><span class="call-ic" aria-hidden="true">📌</span><div>' +
+        (Array.isArray(t.bookHint) ? t.bookHint : [t.bookHint]).map(function(h){ return '<p><b>Подсказка.</b> ' + esc(h) + '</p>'; }).join("") +
+        '</div></div>' : '') +
+      (t.example ? '<div class="screen"><span class="screen-label">Пример</span><pre>' + esc(t.example) + '</pre></div>' : '') +
+      '<p class="label-sm" id="codeLbl' + t.id + '">Мой код</p>' +
+      '<textarea class="code-input" data-code="' + t.id + '" rows="7" spellcheck="false" aria-labelledby="codeLbl' + t.id + '" placeholder="Введите здесь свой код на Python">' + esc(state.codes[t.id] || "") + '</textarea>' +
+      '<div class="task-actions">' +
+        '<button class="btn-small' + (state.hintShown[t.id] ? " on" : "") + '" type="button" data-act="toggle-hint" data-id="' + t.id + '">💡 Подсказка</button>' +
+        '<button class="btn-small' + (state.etalonShown[t.id] ? " on" : "") + '" type="button" data-act="etalon" data-id="' + t.id + '">Эталон решения</button>' +
+        '<button class="btn-small' + (solved ? " on" : "") + '" type="button" data-act="toggle-solved" data-id="' + t.id + '">' + (solved ? "✓ Решено" : "Отметить решённой") + '</button>' +
+      '</div>' +
+      (state.hintShown[t.id] ? '<div class="hint"><span class="hint-ic" aria-hidden="true">💡</span><div><p><b>Подсказка.</b> ' + esc(t.hint) + '</p></div></div>' : '') +
+      (state.etalonConfirm[t.id] ? '<div class="confirm"><p>В поле «Мой код» пока пусто. Показать эталон без своей попытки? Это попадёт в отчёт.</p><div class="task-actions" style="margin:0"><button class="btn-small warnbtn" type="button" data-act="etalon-yes" data-id="' + t.id + '">Да, показать</button><button class="btn-small" type="button" data-act="etalon-no" data-id="' + t.id + '">Отмена</button></div></div>' : '') +
+      (state.etalonShown[t.id] && state.etalonViewed[t.id] ? '<div class="etalon"><p class="label-sm">Эталон решения</p>' + codeWindow(t.solution, "task" + t.id + ".py") + '</div>' : '') +
+    '</div>';
+  }
+  return '<div class="task-card">' +
+    '<button class="task-head-btn" type="button" data-act="toggle-open" data-id="' + t.id + '" aria-expanded="' + open + '">' +
+      '<span class="task-num">' + t.id + '</span>' +
+      '<span class="task-title">' + esc(t.title) + '</span>' +
+      '<span class="task-tags">' + tags + '</span>' +
+      '<span class="chev" aria-hidden="true">' + (open ? "▴" : "▾") + '</span>' +
+    '</button>' + body + '</div>';
+}
+function renderTasks(){
+  var q = state.query.trim().toLowerCase();
+  var list = TASKS.filter(function(t){
+    if(state.filter === "todo" && state.solved[t.id]) return false;
+    if(state.filter === "done" && !state.solved[t.id]) return false;
+    if(q && String(t.id) !== q && t.title.toLowerCase().indexOf(q) === -1) return false;
+    return true;
+  });
+  var solved = solvedCount();
+  var pct = Math.round(solved / TASKS.length * 100);
+  var first = TASKS[0].id, lastN = TASKS[TASKS.length - 1].id;
+  var toolbar =
+    '<div class="progline"><span>Решено: <b>' + solved + ' из ' + TASKS.length + '</b></span><span><b>' + pct + '%</b> главы</span></div>' +
+    '<div class="sum-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pct + '"><i style="width:' + pct + '%"></i></div>' +
+    '<div class="toolbar">' +
+      '<input class="search" id="taskSearch" type="search" value="' + esc(state.query) + '" placeholder="Поиск: номер или название задачи" aria-label="Поиск задач">' +
+      '<button class="fchip" type="button" data-filter="all" aria-pressed="' + (state.filter === "all") + '">Все</button>' +
+      '<button class="fchip" type="button" data-filter="todo" aria-pressed="' + (state.filter === "todo") + '">Нерешённые</button>' +
+      '<button class="fchip" type="button" data-filter="done" aria-pressed="' + (state.filter === "done") + '">Решённые</button>' +
+    '</div>';
+  var cards = list.length
+    ? list.map(taskCard).join("")
+    : '<div class="empty-list">По вашему запросу ничего не нашлось. Сбросьте поиск или выберите фильтр «Все».</div>';
+  return '<div class="container"><p class="section-note">Упражнения ' + first + '–' + lastN + ' главы ' + META.num + ' сборника Б. Стивенсона: условия приведены по книге, включая подсказки и примечания автора. Все задачи главы выполняются с применением функций. Раскройте задачу, напишите код, при необходимости возьмите подсказку. Эталон откроется после своей попытки кода — либо с отметкой в отчёте.</p>' + toolbar + cards + '</div>';
+}
+function sumRow(icon, label, value, pct, note){
+  return '<div class="sum-row"><span class="sum-ic" aria-hidden="true">' + icon + '</span><div class="sum-body">' +
+    '<div class="sum-top"><b>' + label + '</b><span>' + value + '</span></div>' +
+    '<div class="sum-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pct + '"><i style="width:' + pct + '%"></i></div>' +
+    (note ? '<p class="sum-note">' + note + '</p>' : '') +
+    '</div></div>';
+}
+function renderSummary(){
+  var solved = solvedCount(), code = codeCount(), hints = hintCount(), etal = etalonCount();
+  var th = doneThreshold();
+  var warns = [];
+  if(code === 0) warns.push("Пока нет кода ни к одной задаче.");
+  if(solved < th) warns.push("До зачёта главы не хватает решённых задач: нужно " + th + " из " + TASKS.length + " (сейчас " + solved + ").");
+  return '<div class="container">' +
+    '<p class="section-note">Сводка работы за главу. Глава считается пройденной, когда отмечено решёнными не менее ' + Math.round(DONE_SHARE * 100) + '% задач (' + th + ' из ' + TASKS.length + ') и нажата кнопка завершения.</p>' +
+    '<div class="sum-card">' +
+      sumRow("💻", "Код написан", code + " из " + TASKS.length + " задач", Math.round(code / TASKS.length * 100), "Поле «Мой код» непустое.") +
+      sumRow("✅", "Отмечено решёнными", solved + " из " + TASKS.length, Math.round(solved / TASKS.length * 100), "Порог зачёта главы: " + th + " задач.") +
+      sumRow("💡", "Подсказки", "использовано " + hints, Math.round(hints / TASKS.length * 100), "Подсказка фиксируется в отчёте.") +
+      sumRow("📖", "Эталоны", "просмотрено " + etal, Math.round(etal / TASKS.length * 100), "Просмотр без своей попытки помечается отдельно.") +
+    '</div>' +
+    (warns.length
+      ? '<div class="call warn" style="margin-top:16px"><span class="call-ic" aria-hidden="true">⚠️</span><div><p><b>Обратите внимание:</b></p><ul style="margin:6px 0 0;padding-left:20px;display:grid;gap:4px;font-size:14px;">' + warns.map(function(w){ return "<li>" + w + "</li>"; }).join("") + '</ul></div></div>'
+      : '<div class="call ok" style="margin-top:16px"><span class="call-ic" aria-hidden="true">🎉</span><div><p>Порог главы достигнут — можно завершать урок и сохранять отчёт!</p></div></div>') +
+    '<div class="sum-actions"><button class="btn btn-primary" type="button" data-act="finish">Завершить урок и открыть отчёт</button></div>' +
+    '<p class="hint-print" style="margin:10px 0 40px">В отчёт попадут только задачи, с которыми вы работали: ваш код и отметки о подсказках и эталонах.</p>' +
+  '</div>';
+}
+function renderReport(){
+  var st = state.student;
+  var date = new Date().toLocaleDateString("ru-RU");
+  var solved = solvedCount();
+  var passed = solved >= doneThreshold();
+  var touchedList = TASKS.filter(touched);
+  var tasks = touchedList.length
+    ? touchedList.map(function(t){
+        return '<h3>Задача ' + t.id + '. ' + esc(t.title) + '</h3>' +
+          '<p class="rep-note">Решена: <b>' + (state.solved[t.id] ? "да" : "нет") + '</b> · Подсказка: <b>' + (state.hintUsed[t.id] ? "да" : "нет") + '</b> · Эталон: <b>' + (state.etalonViewed[t.id] ? (state.etalonNoAttempt[t.id] ? "да, без своей попытки" : "да") : "нет") + '</b></p>' +
+          '<p class="label-sm">Мой код</p><pre>' + ((state.codes[t.id] || "").trim() ? esc(state.codes[t.id]) : "— код не предоставлен —") + '</pre>';
+      }).join("")
+    : '<p class="rep-note">Работ с задачами не зафиксировано.</p>';
+  return '<div class="container"><div class="report" id="reportSheet">' +
+    '<h2>Отчёт по практике</h2>' +
+    '<div class="meta">' +
+      '<span><b>Глава:</b> ' + META.num + '. ' + META.topic + ' (сборник Б. Стивенсона)</span>' +
+      '<span><b>Автор курса:</b> ' + META.author + '</span>' +
+      '<span><b>Ученик:</b> ' + esc(st.last) + ' ' + esc(st.first) + '</span>' +
+      '<span><b>Класс:</b> ' + esc(st.cls) + '</span>' +
+      '<span><b>Дата:</b> ' + date + '</span>' +
+      '<span><b>Решено задач:</b> ' + solved + ' из ' + TASKS.length + ' · глава зачтена: ' + (passed ? "да" : "нет") + '</span>' +
+      '<span><b>Подсказок:</b> ' + hintCount() + ' · <b>эталонов:</b> ' + etalonCount() + ' · задач с кодом: ' + codeCount() + '</span>' +
+    '</div>' +
+    '<h3>Выполненные работы</h3>' + tasks +
+    '</div>' +
+    '<div class="report-actions no-print"><button class="btn btn-primary" type="button" data-act="print">Сохранить отчёт в PDF</button></div>' +
+    '<p class="hint-print no-print">Откроется окно печати — выберите «Сохранить как PDF». В отчёт входят только задачи, с которыми была работа.</p>' +
+    '</div>';
+}
+function renderLesson(){
+  var st = state.student;
+  var tabs = [
+    ["ref", "Справка"],
+    ["tasks", "Задачи"],
+    ["report", state.reportOpen ? "Отчёт" : "Итоги"]
+  ];
+  var body = state.tab === "ref" ? renderRef()
+    : state.tab === "tasks" ? renderTasks()
+    : (state.reportOpen ? renderReport() : renderSummary());
+  return '<div class="container no-print"><div class="lesson-head">' +
+    '<h1>Глава ' + META.num + '. ' + META.topic + '</h1>' +
+    '<button class="chip-student" type="button" data-act="edit-student" title="Изменить данные ученика">' + esc(st.last) + ' ' + esc(st.first) + ' · ' + esc(st.cls) + ' ✎</button>' +
+    '</div>' +
+    '<div class="tabs" role="tablist" aria-label="Разделы практики">' +
+    tabs.map(function(t){
+      return '<button class="tab" role="tab" type="button" aria-selected="' + (state.tab === t[0]) + '" data-tab="' + t[0] + '">' + t[1] + '</button>';
+    }).join("") +
+    '</div></div>' + body;
+}
+function render(){
+  app.innerHTML = state.screen === "start" ? renderStart() : renderLesson();
+}
+
+/* ================= HANDLERS ================= */
+var toastEl = null, toastTimer = null;
+function showToast(msg){
+  toastEl.textContent = msg;
+  toastEl.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ toastEl.classList.remove("show"); }, 2600);
+}
+function onStartSubmit(e){
+  e.preventDefault();
+  var f = e.target;
+  var last = f.last.value.trim(), first = f.first.value.trim(), cls = f.cls.value.trim();
+  var errs = {};
+  if(last.length < 2) errs.last = "Введите фамилию (минимум 2 символа).";
+  if(first.length < 2) errs.first = "Введите имя (минимум 2 символа).";
+  if(!cls) errs.cls = "Введите класс, например 9А.";
+  state.student = {last:last, first:first, cls:cls};
+  if(Object.keys(errs).length){
+    state.startErrors = errs;
+    render();
+    var bad = app.querySelector("input.bad");
+    if(bad) bad.focus();
+    return;
+  }
+  state.startErrors = null;
+  state.screen = "lesson";
+  state.tab = "ref";
+  setProgress("progress");
+  persist();
+  render();
+  showToast("Практика начата: " + TASKS.length + " задачи впереди!");
+}
+function onAppClick(e){
+  var tabBtn = e.target.closest("[data-tab]");
+  if(tabBtn){
+    state.tab = tabBtn.dataset.tab;
+    render();
+    window.scrollTo(0, 0);
+    return;
+  }
+  var fBtn = e.target.closest("[data-filter]");
+  if(fBtn){
+    state.filter = fBtn.dataset.filter;
+    render();
+    return;
+  }
+  var btn = e.target.closest("[data-act]");
+  if(!btn) return;
+  var act = btn.dataset.act;
+  var id = Number(btn.dataset.id || 0);
+  if(act === "toggle-open"){
+    state.open[id] = !state.open[id];
+    render();
+  }
+  else if(act === "toggle-hint"){
+    var nowH = !state.hintShown[id];
+    state.hintShown[id] = nowH;
+    if(nowH) state.hintUsed[id] = true;
+    persist();
+    render();
+  }
+  else if(act === "toggle-solved"){
+    state.solved[id] = !state.solved[id];
+    persist();
+    render();
+    showToast(state.solved[id] ? "Задача " + id + " отмечена решённой." : "Отметка снята с задачи " + id + ".");
+  }
+  else if(act === "etalon"){
+    if(state.etalonViewed[id]){
+      state.etalonShown[id] = !state.etalonShown[id];
+    }else if((state.codes[id] || "").trim()){
+      state.etalonViewed[id] = true;
+      state.etalonShown[id] = true;
+      persist();
+    }else{
+      state.etalonConfirm[id] = true;
+    }
+    render();
+  }
+  else if(act === "etalon-yes"){
+    state.etalonViewed[id] = true;
+    state.etalonNoAttempt[id] = true;
+    state.etalonShown[id] = true;
+    state.etalonConfirm[id] = false;
+    persist();
+    render();
+  }
+  else if(act === "etalon-no"){
+    state.etalonConfirm[id] = false;
+    render();
+  }
+  else if(act === "finish"){
+    state.reportOpen = true;
+    state.tab = "report";
+    setProgress(solvedCount() >= doneThreshold() ? "done" : "progress");
+    persist();
+    render();
+    window.scrollTo(0, 0);
+    showToast("Урок завершён! Отчёт готов к сохранению в PDF.");
+  }
+  else if(act === "edit-student"){ state.screen = "start"; render(); window.scrollTo(0, 0); }
+  else if(act === "print"){ window.print(); }
+}
+function onAppInput(e){
+  var ta = e.target.closest("textarea[data-code]");
+  if(ta){
+    state.codes[Number(ta.dataset.code)] = ta.value;
+    persist();
+    return;
+  }
+  if(e.target.id === "taskSearch"){
+    state.query = e.target.value;
+    render();
+    var el = document.getElementById("taskSearch");
+    if(el){
+      el.focus();
+      el.setSelectionRange(el.value.length, el.value.length);
+    }
+  }
+}
+
+/* ================= INIT ================= */
+function init(){
+  loadSaved();
+  toastEl = document.createElement("div");
+  toastEl.className = "toast";
+  toastEl.setAttribute("role", "status");
+  toastEl.setAttribute("aria-live", "polite");
+  document.body.appendChild(toastEl);
+  render();
+  app.addEventListener("click", onAppClick);
+  app.addEventListener("input", onAppInput);
+  app.addEventListener("submit", onStartSubmit);
+}
+try{
+  init();
+}catch(err){
+  app.innerHTML = '<div class="fatal">Ошибка при запуске: ' + err.message + '</div>';
+}
+</script>
+</body>
+</html>
