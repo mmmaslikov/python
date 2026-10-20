@@ -81,23 +81,21 @@ b{font-weight:700}
 .s-p{margin:0 0 12px;font-size:15.5px;line-height:1.6}
 .s-p b,.s-ul b,.call b,.keycard b{font-weight:700}
 .ic{font-family:var(--mono);font-size:.88em;background:rgba(0,113,227,.09);color:var(--accent-dark);border-radius:6px;padding:1px 6px;white-space:nowrap}
-/* списки с иконками */
 .s-ul{list-style:none;padding:0;display:grid;gap:10px;margin:0 0 14px}
 .s-ul li{display:flex;gap:10px;align-items:flex-start;font-size:15px;line-height:1.55}
 .li-ic{flex:none;width:28px;height:28px;border-radius:9px;background:rgba(0,113,227,.1);display:grid;place-items:center;font-size:14px}
 .li-tx{min-width:0}
-/* плашки-выноски с эмодзи */
 .call{display:flex;gap:12px;align-items:flex-start;border-radius:14px;padding:14px 16px;margin:0 0 14px;border:1px solid}
 .call p{margin:0;font-size:14.5px;line-height:1.6;min-width:0}
+.call ul{margin:6px 0 0;padding-left:20px;display:grid;gap:4px;font-size:14px}
+.call>div{min-width:0}
 .call-ic{font-size:20px;line-height:1.4;flex:none}
 .call.info{background:rgba(0,113,227,.07);border-color:rgba(0,113,227,.25)}
 .call.warn{background:rgba(255,159,10,.1);border-color:rgba(255,159,10,.35)}
 .call.ok{background:rgba(52,199,89,.1);border-color:rgba(52,199,89,.35)}
-/* карточка «Главное» */
 .keycard{background:var(--surface);border:1px solid var(--border);border-left:4px solid #34c759;border-radius:14px;padding:14px 16px;margin:0 0 14px;box-shadow:var(--shadow)}
 .key-title{margin:0 0 8px;font-weight:800;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--ok)}
 .keycard ul{margin:0;padding-left:20px;display:grid;gap:6px;font-size:14.5px}
-/* окно кода в стиле главной страницы */
 .code-window{background:#161617;border-radius:14px;overflow:hidden;margin:0 0 14px;box-shadow:var(--shadow);min-width:0}
 .code-bar{display:flex;align-items:center;gap:7px;padding:10px 14px;background:#1d1d1f}
 .dot{width:11px;height:11px;border-radius:50%;flex:none}
@@ -105,11 +103,9 @@ b{font-weight:700}
 .code-bar .file{margin-left:6px;color:#98989d;font-family:var(--mono);font-size:12px}
 pre.code{margin:0;padding:16px 18px;color:#f5f5f7;font-family:var(--mono);font-size:13.5px;line-height:1.7;overflow-x:auto;white-space:pre}
 .tk-c{color:#83838a}.tk-k{color:#ff7ab2}.tk-s{color:#ffa740}.tk-n{color:#d9bf69}.tk-f{color:#6bdfff}
-/* блок «На экране» */
 .screen{background:rgba(52,199,89,.08);border:1px solid rgba(52,199,89,.35);border-radius:12px;padding:12px 14px;margin:0 0 14px;min-width:0}
 .screen-label{display:block;font-size:11.5px;font-weight:700;color:var(--ok);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em}
 .screen pre{margin:0;font-family:var(--mono);font-size:13.5px;line-height:1.6;white-space:pre-wrap;color:var(--text)}
-/* таблицы */
 .tbl-wrap{overflow-x:auto;margin:0 0 14px;border:1px solid var(--border);border-radius:12px}
 table{border-collapse:collapse;width:100%;font-size:14px;background:#fff}
 th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--border);vertical-align:top}
@@ -149,7 +145,6 @@ label.opt span{min-width:0;overflow-wrap:break-word}
 textarea.code-input{width:100%;min-height:190px;resize:vertical;border:1px solid var(--border);border-radius:12px;padding:12px 14px;font-family:var(--mono);font-size:13.5px;line-height:1.6;background:#fff;color:var(--text)}
 textarea.code-input:focus{outline:3px solid rgba(0,113,227,.35);border-color:var(--accent)}
 .task-actions{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0 4px}
-/* подсказка */
 .hint{display:flex;gap:12px;background:rgba(255,159,10,.09);border:1px solid rgba(255,159,10,.35);border-radius:14px;padding:14px 16px;margin:12px 0 4px}
 .hint>div{min-width:0;flex:1}
 .hint-ic{font-size:20px;flex:none;line-height:1.4}
@@ -157,6 +152,18 @@ textarea.code-input:focus{outline:3px solid rgba(0,113,227,.35);border-color:var
 .hint .code-window{margin:10px 0 0}
 .hint .code-bar{padding:8px 12px}
 .hint pre.code{padding:12px 14px;font-size:12.5px}
+
+/* ========== Итоги (сводка перед отчётом) ========== */
+.sum-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px;margin-top:16px;display:grid;gap:18px}
+.sum-row{display:flex;gap:14px;align-items:flex-start}
+.sum-ic{flex:none;width:44px;height:44px;border-radius:12px;background:rgba(0,113,227,.1);display:grid;place-items:center;font-size:20px}
+.sum-body{flex:1;min-width:0}
+.sum-top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:14.5px;margin-bottom:6px}
+.sum-top b{font-size:15px}
+.sum-bar{height:8px;background:#e8e8ed;border-radius:999px;overflow:hidden}
+.sum-bar i{display:block;height:100%;background:linear-gradient(90deg,#37a0ff,var(--accent));border-radius:999px;transition:width .3s ease}
+.sum-note{color:var(--muted);font-size:13px;margin:6px 0 0}
+.sum-actions{display:flex;justify-content:center;margin:22px 0 6px}
 
 /* ========== Отчёт ========== */
 .report{background:#fff;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px;max-width:820px;margin:16px auto 0;min-width:0}
@@ -310,7 +317,7 @@ const QUESTIONS = [
   {q:"Какой символ начинает комментарий в Python?", opts:["//","/*","#","%"], c:2}
 ];
 
-/* Практика: задачи с подсказками и эталонами (эталон уходит только в отчёт) */
+/* Практика: задачи с подсказками и эталонами (эталон виден только в отчёте после завершения) */
 const TASKS = [
   { id:1, title:"Обмен значений переменных",
     text:"Составьте программу, меняющую местами значения двух переменных a и b, введённых с клавиатуры.",
@@ -332,7 +339,7 @@ const TASKS = [
     solution:'# Сумма цифр трёхзначного числа\n# Трёхзначное число x = a·100 + b·10 + c,\n# где a, b, c - цифры этого числа\nx = int(input("Введите трёхзначное число: "))\na = x // 100         # сотни\nb = x % 100 // 10    # десятки\nc = x % 10           # единицы\ns = a + b + c\nprint("Сумма цифр равна", s)' }
 ];
 
-const LS_STATE = "python-topic1-state-v2";
+const LS_STATE = "python-topic1-state-v3";
 const LS_PROGRESS = "python-trainer-progress-v1"; // общий ключ прогресса с главной страницей
 
 /* ================= STATE ================= */
@@ -340,6 +347,7 @@ const state = {
   screen:"start",            // start | lesson
   tab:"theory",              // theory | test | practice | report
   slide:0,
+  viewed:{},                 // отмеченные просмотренными слайды {индекс: true}
   student:{last:"", first:"", cls:""},
   startErrors:null,
   testAnswers:{},            // {индекс вопроса: индекс выбора}
@@ -348,7 +356,8 @@ const state = {
   testResult:null,           // {score, answers}
   codes:{1:"", 2:"", 3:""},  // код ученика к задачам
   hintShown:{},              // открыта ли подсказка сейчас
-  hintUsed:{}                // была ли подсказка использована (попадает в отчёт)
+  hintUsed:{},               // была ли подсказка использована (попадает в отчёт)
+  reportOpen:false           // отчёт открывается только после «Завершить урок»
 };
 function loadSaved(){
   try{
@@ -360,6 +369,8 @@ function loadSaved(){
     if(s.testAnswers) state.testAnswers = s.testAnswers;
     if(s.testResult) state.testResult = s.testResult;
     if(s.hintUsed) state.hintUsed = s.hintUsed;
+    if(s.viewed) state.viewed = s.viewed;
+    if(s.reportOpen) state.reportOpen = true;
   }catch(e){}
 }
 function persist(){
@@ -367,7 +378,7 @@ function persist(){
     localStorage.setItem(LS_STATE, JSON.stringify({
       student:state.student, codes:state.codes,
       testAnswers:state.testAnswers, testResult:state.testResult,
-      hintUsed:state.hintUsed
+      hintUsed:state.hintUsed, viewed:state.viewed, reportOpen:state.reportOpen
     }));
   }catch(e){}
 }
@@ -416,6 +427,22 @@ function hlPy(src){
 function codeWindow(src, file){
   return '<div class="code-window"><div class="code-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="file">' + (file || "program.py") + '</span></div><pre class="code">' + hlPy(src) + "</pre></div>";
 }
+/* счётчики для сводки и отчёта */
+function viewedCount(){
+  return Object.keys(state.viewed).filter(function(k){ return SLIDES[Number(k)]; }).length;
+}
+function doneTasksCount(){
+  return TASKS.filter(function(t){ return (state.codes[t.id] || "").trim(); }).length;
+}
+function hintsUsedCount(){
+  return TASKS.filter(function(t){ return state.hintUsed[t.id]; }).length;
+}
+function markSlideViewed(i){
+  if(!state.viewed[i]){
+    state.viewed[i] = true;
+    persist();
+  }
+}
 
 /* ================= RENDER ================= */
 const app = document.getElementById("app");
@@ -428,7 +455,7 @@ function blockHTML(b){
       return '<li><span class="li-ic" aria-hidden="true">' + item.i + '</span><span class="li-tx">' + inline(item.t) + "</span></li>";
     }).join("") + "</ul>";
   }
-  if(b.k === "call") return '<div class="call ' + b.tone + '"><span class="call-ic" aria-hidden="true">' + b.icon + "</span><p>" + inline(b.v) + "</p></div>";
+  if(b.k === "call") return '<div class="call ' + b.tone + '"><span class="call-ic" aria-hidden="true">' + b.icon + "</span><div><p>" + inline(b.v) + "</p></div></div>";
   if(b.k === "key") return '<div class="keycard"><p class="key-title">✅ Главное</p><ul>' + b.v.map(function(x){ return "<li>" + inline(x) + "</li>"; }).join("") + "</ul></div>";
   if(b.k === "code") return codeWindow(b.v, b.file);
   if(b.k === "screen") return '<div class="screen"><span class="screen-label">На экране</span><pre>' + esc(b.v) + "</pre></div>";
@@ -449,7 +476,7 @@ function renderStart(){
     '<span class="eyebrow">Python · Теоретический блок ' + META.num + "</span>" +
     "<h1>" + META.topic + "</h1>" +
     '<p class="author">Автор урока: ' + META.author + "</p>" +
-    '<ul class="start-list"><li>Теория: 8 слайдов с примерами программ.</li><li>Тест: 10 вопросов по теме.</li><li>Практика: 3 задачи с полем для кода и подсказками.</li><li>В конце — отчёт, который можно сохранить в PDF.</li></ul>' +
+    '<ul class="start-list"><li>Теория: 8 слайдов с примерами программ.</li><li>Тест: 10 вопросов по теме.</li><li>Практика: 3 задачи с полем для кода и подсказками.</li><li>В конце — сводка «Итоги» и отчёт для сохранения в PDF.</li></ul>' +
     '<form id="startForm" novalidate>' +
       '<div class="field"><label for="fLast">Фамилия</label><input id="fLast" name="last" autocomplete="family-name" value="' + esc(st.last) + '" class="' + (e.last ? "bad" : "") + '" placeholder="Иванов">' + (e.last ? '<p class="err">' + e.last + "</p>" : "") + "</div>" +
       '<div class="field"><label for="fFirst">Имя</label><input id="fFirst" name="first" autocomplete="given-name" value="' + esc(st.first) + '" class="' + (e.first ? "bad" : "") + '" placeholder="Иван">' + (e.first ? '<p class="err">' + e.first + "</p>" : "") + "</div>" +
@@ -517,12 +544,50 @@ function renderPractice(){
         : "") +
       "</div>";
   }).join("");
-  return '<div class="container"><p class="section-note">Введите свой код в поле «Мой код». Если застряли — нажмите «Подсказка»: она покажет идею или ключевой кусочек кода, но не всё решение. Отметка об использовании подсказки попадёт в отчёт, а эталонное решение учитель увидит там же.</p>' + cards + "</div>";
+  return '<div class="container"><p class="section-note">Введите свой код в поле «Мой код». Если застряли — нажмите «Подсказка»: она покажет идею или ключевой кусочек кода, но не всё решение. Эталонные решения откроются только в отчёте после завершения урока.</p>' + cards + "</div>";
+}
+/* сводка перед отчётом: что ученик успел сделать */
+function sumRow(icon, label, value, pct, note){
+  return '<div class="sum-row"><span class="sum-ic" aria-hidden="true">' + icon + '</span><div class="sum-body">' +
+    '<div class="sum-top"><b>' + label + "</b><span>" + value + "</span></div>" +
+    '<div class="sum-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pct + '" aria-label="' + label + '"><i style="width:' + pct + '%"></i></div>' +
+    (note ? '<p class="sum-note">' + note + "</p>" : "") +
+    "</div></div>";
+}
+function renderSummary(){
+  const viewed = viewedCount();
+  const res = state.testResult;
+  const done = doneTasksCount();
+  const hints = hintsUsedCount();
+  const warns = [];
+  if(viewed < SLIDES.length) warns.push("Просмотрены не все слайды теории: " + viewed + " из " + SLIDES.length + ".");
+  if(!res) warns.push("Тест ещё не пройден.");
+  if(done === 0) warns.push("Пока нет кода ни к одной задаче практики.");
+  else if(done < TASKS.length) warns.push("Код написан не ко всем задачам: " + done + " из " + TASKS.length + ".");
+  return '<div class="container">' +
+    '<p class="section-note">Здесь собрана сводка вашей работы за урок. Проверьте её и нажмите «Завершить урок» — после этого откроется отчёт с эталонными решениями, который можно сохранить в PDF.</p>' +
+    '<div class="sum-card">' +
+      sumRow("📚", "Теория", "Слайды: " + viewed + " из " + SLIDES.length, Math.round(viewed / SLIDES.length * 100),
+        viewed === SLIDES.length ? "Все слайды просмотрены ✅" : "Вернитесь во вкладку «Теория», чтобы досмотреть слайды.") +
+      sumRow("🧠", "Тест", res ? ("Результат: " + res.score + " из " + QUESTIONS.length + " · оценка " + markOf(res.score)) : "Ещё не пройден",
+        res ? Math.round(res.score / QUESTIONS.length * 100) : 0,
+        res ? "Разбор ответов доступен во вкладке «Тест»." : "Тест доступен во вкладке «Тест».") +
+      sumRow("💻", "Практика", "Код написан к " + done + " из " + TASKS.length + " задач", Math.round(done / TASKS.length * 100),
+        "Подсказки использованы: " + hints + " из " + TASKS.length + ".") +
+    "</div>" +
+    (warns.length
+      ? '<div class="call warn" style="margin-top:16px"><span class="call-ic" aria-hidden="true">⚠️</span><div><p><b>Обратите внимание:</b></p><ul>' + warns.map(function(w){ return "<li>" + w + "</li>"; }).join("") + "</ul></div></div>"
+      : '<div class="call ok" style="margin-top:16px"><span class="call-ic" aria-hidden="true">🎉</span><div><p>Все этапы урока выполнены — можно завершать урок и сохранять отчёт!</p></div></div>') +
+    '<div class="sum-actions"><button class="btn btn-primary" type="button" data-act="finish">Завершить урок и открыть отчёт</button></div>' +
+    '<p class="hint-print" style="margin:10px 0 40px">В отчёт попадут: ваши данные, количество просмотренных слайдов, результат теста, ваш код задач и эталонные решения.</p>' +
+  "</div>";
 }
 function renderReport(){
   const st = state.student;
   const date = new Date().toLocaleDateString("ru-RU");
   const res = state.testResult;
+  const viewed = viewedCount();
+  const done = doneTasksCount();
   const tasks = TASKS.map(function(t){
     const code = (state.codes[t.id] || "").trim();
     const used = !!state.hintUsed[t.id];
@@ -540,6 +605,8 @@ function renderReport(){
       "<span><b>Ученик:</b> " + esc(st.last) + " " + esc(st.first) + "</span>" +
       "<span><b>Класс:</b> " + esc(st.cls) + "</span>" +
       "<span><b>Дата:</b> " + date + "</span>" +
+      "<span><b>Теория:</b> просмотрено " + viewed + " из " + SLIDES.length + " слайдов</span>" +
+      "<span><b>Практика:</b> код написан к " + done + " из " + TASKS.length + " задач</span>" +
     "</div>" +
     "<h3>1. Тест</h3>" +
     (res
@@ -548,16 +615,21 @@ function renderReport(){
     "<h3>2. Практика</h3>" + tasks +
     "</div>" +
     '<div class="report-actions no-print"><button class="btn btn-primary" type="button" data-act="print">Сохранить отчёт в PDF</button></div>' +
-    '<p class="hint-print no-print">Откроется окно печати — выберите «Сохранить как PDF». В отчёт попадут ваши данные, результат теста, ваш код задач и отметки об использовании подсказок.</p>' +
+    '<p class="hint-print no-print">Откроется окно печати — выберите «Сохранить как PDF». В отчёт попадут ваши данные, результат теста, ваш код задач и эталонные решения.</p>' +
     "</div>";
 }
 function renderLesson(){
   const st = state.student;
-  const tabs = [["theory","Теория"],["test","Тест"],["practice","Практика"],["report","Отчёт"]];
+  const tabs = [
+    ["theory", "Теория"],
+    ["test", "Тест"],
+    ["practice", "Практика"],
+    ["report", state.reportOpen ? "Отчёт" : "Итоги"]
+  ];
   const body = state.tab === "theory" ? renderTheory()
     : state.tab === "test" ? renderTest()
     : state.tab === "practice" ? renderPractice()
-    : renderReport();
+    : (state.reportOpen ? renderReport() : renderSummary());
   return '<div class="container no-print"><div class="lesson-head">' +
     "<h1>" + META.topic + " · Python</h1>" +
     '<button class="chip-student" type="button" data-act="edit-student" title="Изменить данные ученика">' + esc(st.last) + " " + esc(st.first) + " · " + esc(st.cls) + " ✎</button>" +
@@ -601,6 +673,7 @@ function onStartSubmit(e){
   state.screen = "lesson";
   state.tab = "theory";
   state.slide = 0;
+  markSlideViewed(0);
   setProgress(state.testResult ? (state.testResult.score >= 6 ? "done" : "progress") : "progress");
   persist();
   render();
@@ -635,6 +708,7 @@ function onAppClick(e){
   const tabBtn = e.target.closest("[data-tab]");
   if(tabBtn){
     state.tab = tabBtn.dataset.tab;
+    if(state.tab === "theory") markSlideViewed(state.slide);
     render();
     window.scrollTo(0, 0);
     return;
@@ -642,8 +716,16 @@ function onAppClick(e){
   const btn = e.target.closest("[data-act]");
   if(!btn) return;
   const act = btn.dataset.act;
-  if(act === "slide-prev"){ state.slide = Math.max(0, state.slide - 1); render(); }
-  else if(act === "slide-next"){ state.slide = Math.min(SLIDES.length - 1, state.slide + 1); render(); }
+  if(act === "slide-prev"){
+    state.slide = Math.max(0, state.slide - 1);
+    markSlideViewed(state.slide);
+    render();
+  }
+  else if(act === "slide-next"){
+    state.slide = Math.min(SLIDES.length - 1, state.slide + 1);
+    markSlideViewed(state.slide);
+    render();
+  }
   else if(act === "test-submit"){ submitTest(); }
   else if(act === "test-retake"){
     state.testAnswers = {}; state.testResult = null; state.testError = ""; state.testInvalid = [];
@@ -656,6 +738,15 @@ function onAppClick(e){
     if(now) state.hintUsed[id] = true; // подсказка засчитывается как использованная
     persist();
     render();
+  }
+  else if(act === "finish"){
+    /* отчёт с эталонами открывается только отсюда */
+    state.reportOpen = true;
+    state.tab = "report";
+    persist();
+    render();
+    window.scrollTo(0, 0);
+    showToast("Урок завершён! Отчёт готов к сохранению в PDF.");
   }
   else if(act === "edit-student"){ state.screen = "start"; render(); window.scrollTo(0, 0); }
   else if(act === "print"){ window.print(); }
@@ -689,6 +780,7 @@ function onAppChange(e){
 /* ================= INIT ================= */
 function init(){
   loadSaved();
+  if(state.screen === "lesson" && state.tab === "theory") markSlideViewed(state.slide);
   toastEl = document.createElement("div");
   toastEl.className = "toast";
   toastEl.setAttribute("role", "status");
