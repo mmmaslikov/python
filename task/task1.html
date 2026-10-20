@@ -792,6 +792,9 @@ function onAppInput(e){
 /* ================= INIT ================= */
 function init(){
   loadSaved();
+  if(state.student.last){
+    setProgress(solvedCount() >= doneThreshold() ? "done" : "progress");
+  }
   toastEl = document.createElement("div");
   toastEl.className = "toast";
   toastEl.setAttribute("role", "status");
