@@ -29,8 +29,9 @@ body{
   margin:0;background:var(--bg);color:var(--text);
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   line-height:1.5;-webkit-font-smoothing:antialiased;
+  overflow-x:clip; /* блоки не вылезают за экран и не прижимаются впритык */
 }
-.container{width:100%;max-width:1080px;margin:0 auto;padding:0 20px}
+.container{width:100%;max-width:1080px;margin:0 auto;padding:0 20px;min-width:0}
 :focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:8px}
 .skip{position:absolute;left:-9999px;top:0;z-index:200;background:#fff;color:var(--accent);padding:12px 18px;border-radius:0 0 12px 0;font-weight:600;text-decoration:none}
 .skip:focus{left:0}
@@ -38,9 +39,9 @@ body{
 /* ========== Layout: шапка ========== */
 .site-header{position:sticky;top:0;z-index:50;background:rgba(245,245,247,.85);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
 .header-row{display:flex;align-items:center;gap:12px;min-height:56px}
-.logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text);font-weight:700;font-size:16px;letter-spacing:-.01em}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text);font-weight:700;font-size:16px;letter-spacing:-.01em;flex:none}
 .logo-badge{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#37a0ff,#0071e3);color:#fff;display:grid;place-items:center;font-weight:800;font-size:14px;font-family:var(--mono)}
-.nav{margin-left:auto;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.nav{margin-left:auto;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;min-width:0}
 .nav::-webkit-scrollbar{display:none}
 .nav a{display:inline-flex;align-items:center;min-height:44px;padding:0 12px;border-radius:10px;color:var(--muted);text-decoration:none;font-size:15px;white-space:nowrap}
 .nav a:hover{color:var(--text);background:rgba(0,0,0,.05)}
@@ -48,8 +49,8 @@ body{
 /* ========== Layout: герой ========== */
 .hero{padding:52px 0 6px;text-align:center}
 .eyebrow{color:var(--accent);font-weight:700;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase}
-.hero h1{font-size:clamp(34px,6vw,56px);font-weight:800;letter-spacing:-.02em;line-height:1.06;margin:12px 0 14px}
-.lead{max-width:660px;margin:0 auto;color:var(--muted);font-size:clamp(16px,2.4vw,19px)}
+.hero h1{font-size:clamp(30px,6vw,56px);font-weight:800;letter-spacing:-.02em;line-height:1.08;margin:12px 0 14px;overflow-wrap:break-word}
+.lead{max-width:660px;margin:0 auto;color:var(--muted);font-size:clamp(15.5px,2.4vw,19px)}
 .hero-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:26px 0 30px}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 24px;border-radius:999px;border:none;font-size:16px;font-weight:600;cursor:pointer;text-decoration:none;transition:background .15s ease,transform .15s ease}
 .btn:active{transform:scale(.98)}
@@ -59,33 +60,33 @@ body{
 .btn-ghost:hover{background:rgba(0,113,227,.08)}
 
 /* ========== Компонент: окно кода ========== */
-.code-window{max-width:680px;margin:0 auto;background:#161617;border-radius:var(--radius);box-shadow:var(--shadow-lift);overflow:hidden;text-align:left}
+.code-window{max-width:680px;width:100%;margin:0 auto;background:#161617;border-radius:var(--radius);box-shadow:var(--shadow-lift);overflow:hidden;text-align:left}
 .code-bar{display:flex;align-items:center;gap:7px;padding:12px 14px;background:#1d1d1f}
-.dot{width:11px;height:11px;border-radius:50%}
+.dot{width:11px;height:11px;border-radius:50%;flex:none}
 .dot.r{background:#ff5f57}.dot.y{background:#febc2e}.dot.g{background:#28c840}
 .code-bar .file{margin-left:8px;color:#98989d;font-family:var(--mono);font-size:12.5px}
-pre.code{margin:0;padding:18px 18px 22px;color:#f5f5f7;font-family:var(--mono);font-size:13.5px;line-height:1.75;overflow-x:auto}
+pre.code{margin:0;padding:18px 18px 22px;color:#f5f5f7;font-family:var(--mono);font-size:13.5px;line-height:1.75;overflow-x:auto;white-space:pre;max-width:100%}
 .tok-c{color:#83838a}.tok-k{color:#ff7ab2}.tok-f{color:#6bdfff}.tok-s{color:#ffa740}.tok-n{color:#d9bf69}
 
 /* ========== Layout: статистика ========== */
 .stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:44px}
-.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:18px 14px;text-align:center;box-shadow:var(--shadow)}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:18px 14px;text-align:center;box-shadow:var(--shadow);min-width:0}
 .stat b{display:block;font-size:30px;letter-spacing:-.02em}
 .stat span{color:var(--muted);font-size:13.5px}
 
 /* ========== Layout: секции и сетки ========== */
 .section{padding:56px 0 6px;scroll-margin-top:70px}
 .section-head{margin-bottom:22px}
-.section h2{font-size:clamp(26px,4vw,36px);font-weight:800;letter-spacing:-.02em;margin:6px 0 8px}
+.section h2{font-size:clamp(24px,4vw,36px);font-weight:800;letter-spacing:-.02em;margin:6px 0 8px;overflow-wrap:break-word}
 .sub{color:var(--muted);max-width:660px;margin:0}
-.grid{display:grid;gap:14px;grid-template-columns:1fr}
+.grid{display:grid;gap:14px;grid-template-columns:1fr;min-width:0}
 
 /* ========== Компонент: карточка модуля ========== */
-.card{display:flex;flex-direction:column;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-decoration:none;color:var(--text);box-shadow:var(--shadow);transition:transform .18s ease,box-shadow .18s ease}
+.card{display:flex;flex-direction:column;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-decoration:none;color:var(--text);box-shadow:var(--shadow);transition:transform .18s ease,box-shadow .18s ease;min-width:0}
 .card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lift)}
 .card-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
 .num{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--accent);background:rgba(0,113,227,.1);border-radius:8px;padding:4px 9px}
-.card h3{margin:0;font-size:18px;letter-spacing:-.01em}
+.card h3{margin:0;font-size:18px;letter-spacing:-.01em;overflow-wrap:break-word}
 .card .desc{margin:0;color:var(--muted);font-size:14.5px;flex:1 1 auto}
 .meta{display:flex;flex-wrap:wrap;gap:6px}
 .tag{font-size:12px;color:var(--chip-idle-tx);background:var(--chip-idle-bg);border-radius:999px;padding:4px 10px}
@@ -98,7 +99,7 @@ pre.code{margin:0;padding:18px 18px 22px;color:#f5f5f7;font-family:var(--mono);f
 .chip.done{background:var(--chip-done-bg);color:var(--chip-done-tx)}
 
 /* ========== Компонент: панель прогресса ========== */
-.progress-panel{margin-top:18px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);display:grid;gap:14px}
+.progress-panel{margin-top:18px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);display:grid;gap:14px;min-width:0}
 .prow{display:grid;gap:6px}
 .plabel{display:flex;justify-content:space-between;gap:10px;font-size:14px;color:var(--muted)}
 .plabel b{color:var(--text)}
@@ -119,7 +120,7 @@ pre.code{margin:0;padding:18px 18px 22px;color:#f5f5f7;font-family:var(--mono);f
 
 /* ========== Компонент: шаги ========== */
 .steps{display:grid;gap:14px}
-.step{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;display:flex;gap:16px;align-items:flex-start;box-shadow:var(--shadow)}
+.step{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;display:flex;gap:16px;align-items:flex-start;box-shadow:var(--shadow);min-width:0}
 .step .n{font-family:var(--mono);font-size:26px;font-weight:700;color:var(--accent);line-height:1.1}
 .step h3{margin:0 0 6px;font-size:17px}
 .step p{margin:0;color:var(--muted);font-size:14.5px}
@@ -141,6 +142,22 @@ pre.code{margin:0;padding:18px 18px 22px;color:#f5f5f7;font-family:var(--mono);f
   .grid.cols-3{grid-template-columns:repeat(3,1fr)}
   .grid.cols-4{grid-template-columns:repeat(4,1fr)}
   .steps{grid-template-columns:repeat(3,1fr)}
+}
+/* мобильные доводки: больше воздуха, крупнее_TOUCH-зоны, компактнее код */
+@media (max-width:640px){
+  .hero{padding-top:36px}
+  .section{padding-top:44px}
+  .card{padding:18px}
+  .step{padding:18px;gap:12px}
+  pre.code{font-size:12.5px;padding:14px 14px 18px}
+  .stats{gap:10px}
+  .stat{padding:14px 10px}
+  .stat b{font-size:26px}
+  .footer-row{flex-direction:column;gap:6px}
+  .slide-nav,.hero-actions{flex-direction:column}
+  .hero-actions .btn{width:100%}
+  .progress-panel{padding:16px}
+  .report,.slide-card{padding:18px}
 }
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
@@ -174,8 +191,9 @@ const PRACTICE = [
   {id:7, title:"Файлы и исключения", count:24, desc:"Чтение и запись, аргументы командной строки, try / except: head, tail, cat и анализ текстов."},
   {id:8, title:"Рекурсия", count:14, desc:"Базовый и рекурсивный случаи: числа Фибоначчи, палиндромы, редакционное расстояние и выравнивание списков."}
 ];
-/* Страницы, которые уже опубликованы (по мере выхода уроков список пополняется) */
-const BUILT = { topic: [], task: [] };
+/* Страницы, которые уже опубликованы и открываются по клику.
+   По мере выхода уроков добавляйте номера сюда (topic1.html уже на сайте). */
+const BUILT = { topic: [1], task: [] };
 /* Причины «почему Python» */
 const WHY = [
   {t:"Читаемый синтаксис", d:"Код на Python похож на псевдокод: минимум лишнего шума, максимум смысла. Идеально для старта с нуля.",
@@ -229,7 +247,7 @@ function hasData(){
   return THEORY.some(function(t){ return statusOf("topic", t.id) !== "idle"; }) ||
          PRACTICE.some(function(p){ return statusOf("task", p.id) !== "idle"; });
 }
-/* русские формы множественного числа: plural(28, ["задача","задачи","задач"]) */
+/* русские формы множественного числа */
 function plural(n, forms){
   const n10 = n % 10, n100 = n % 100;
   if(n10 === 1 && n100 !== 11) return forms[0];
@@ -242,30 +260,30 @@ const app = document.getElementById("app");
 
 function chipHTML(group, id){
   const s = statusOf(group, id);
-  return '<span class="chip ' + s + '">' + CHIP_LABEL[s] + '</span>';
+  return '<span class="chip ' + s + '">' + CHIP_LABEL[s] + "</span>";
 }
 function theoryCard(t){
   const href = "topic/topic" + t.id + ".html";
   return '<a class="card" href="' + href + '" data-group="topic" data-id="' + t.id + '">' +
-    '<div class="card-top"><span class="num">0' + t.id + '</span>' + chipHTML("topic", t.id) + '</div>' +
-    '<h3>' + t.title + '</h3>' +
-    '<p class="desc">' + t.desc + '</p>' +
-    '<div class="meta">' + t.tags.map(function(x){ return '<span class="tag">' + x + '</span>'; }).join("") + '</div>' +
+    '<div class="card-top"><span class="num">0' + t.id + "</span>" + chipHTML("topic", t.id) + "</div>" +
+    "<h3>" + t.title + "</h3>" +
+    '<p class="desc">' + t.desc + "</p>" +
+    '<div class="meta">' + t.tags.map(function(x){ return '<span class="tag">' + x + "</span>"; }).join("") + "</div>" +
     '<div class="card-foot"><span>Открыть раздел</span><span class="arrow" aria-hidden="true">→</span></div></a>';
 }
 function practiceCard(p){
   const href = "task/task" + p.id + ".html";
   const nn = p.id < 10 ? "0" + p.id : String(p.id);
   return '<a class="card" href="' + href + '" data-group="task" data-id="' + p.id + '">' +
-    '<div class="card-top"><span class="num">' + nn + '</span>' + chipHTML("task", p.id) + '</div>' +
-    '<h3>' + p.title + '</h3>' +
-    '<p class="desc">' + p.desc + '</p>' +
+    '<div class="card-top"><span class="num">' + nn + "</span>" + chipHTML("task", p.id) + "</div>" +
+    "<h3>" + p.title + "</h3>" +
+    '<p class="desc">' + p.desc + "</p>" +
     '<div class="meta"><span class="tag">' + p.count + " " + plural(p.count, ["задача","задачи","задач"]) + '</span><span class="tag">Продвинутый уровень</span></div>' +
     '<div class="card-foot"><span>Открыть раздел</span><span class="arrow" aria-hidden="true">→</span></div></a>';
 }
 function whyCard(w){
-  return '<div class="card why"><div class="icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + w.svg + '</svg></div>' +
-    '<h3>' + w.t + '</h3><p>' + w.d + '</p></div>';
+  return '<div class="card why"><div class="icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + w.svg + "</svg></div>" +
+    "<h3>" + w.t + "</h3><p>" + w.d + "</p></div>";
 }
 function progressPanelHTML(){
   /* пустое состояние: прогресса ещё нет */
@@ -285,7 +303,7 @@ function progressPanelHTML(){
     '<div class="pbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + tp + '" aria-label="Прогресс теории"><i style="width:' + tp + '%"></i></div></div>' +
     '<div class="prow"><div class="plabel"><span>Практика</span><b>' + pd + " из " + PRACTICE.length + " · " + pp + '%</b></div>' +
     '<div class="pbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pp + '" aria-label="Прогресс практики"><i style="width:' + pp + '%"></i></div></div>' +
-    '<div class="panel-actions">' + actions + '</div></div>';
+    '<div class="panel-actions">' + actions + "</div></div>";
 }
 function render(){
   /* собираем страницу целиком из констант; пользовательского ввода в разметке нет */
@@ -294,52 +312,52 @@ function render(){
   '<header class="site-header"><div class="container header-row">' +
     '<a class="logo" href="#top" aria-label="На главную"><span class="logo-badge">Py</span><span>Тренажёр Python</span></a>' +
     '<nav class="nav" aria-label="Разделы сайта"><a href="#theory">Теория</a><a href="#practice">Практика</a><a href="#why">Почему Python</a><a href="#how">Как заниматься</a></nav>' +
-  '</div></header>' +
+  "</div></header>" +
   '<main id="main">' +
     '<section class="hero container" id="top" aria-labelledby="hero-title">' +
-      '<span class="eyebrow">Масликов Михаил Михайлович · учитель информатики</span>' +
+      '<span class="eyebrow">Тренажёр · 9–11 классы</span>' +
       '<h1 id="hero-title">Python: от первых строк до продвинутых задач</h1>' +
       '<p class="lead">Python — язык программирования с простым и понятным синтаксисом. На нём пишут веб‑сервисы, анализируют данные, создают игры и автоматизацию; его выбирают на ОГЭ, ЕГЭ и олимпиадах. Этот тренажёр проведёт вас от основ до 186 задач продвинутого уровня.</p>' +
       '<div class="hero-actions"><a class="btn btn-primary" href="#theory">Начать обучение</a><a class="btn btn-ghost" href="#practice">Каталог практики</a></div>' +
       '<div class="code-window" aria-hidden="true"><div class="code-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="file">hello.py</span></div>' +
       '<pre class="code">' + CODE_LINES.join("\n") + '</pre></div>' +
       '<div class="stats" role="list">' +
-        '<div class="stat" role="listitem"><b>' + THEORY.length + '</b><span>блоков теории</span></div>' +
-        '<div class="stat" role="listitem"><b>' + PRACTICE.length + '</b><span>разделов практики</span></div>' +
-        '<div class="stat" role="listitem"><b>' + totalTasks + '</b><span>задач в тренажёре</span></div>' +
-        '<div class="stat" role="listitem"><b>9–11</b><span>классы и экзамены</span></div>' +
-      '</div>' +
-    '</section>' +
+        '<div class="stat" role="listitem"><b>' + THEORY.length + "</b><span>блоков теории</span></div>" +
+        '<div class="stat" role="listitem"><b>' + PRACTICE.length + "</b><span>разделов практики</span></div>" +
+        '<div class="stat" role="listitem"><b>' + totalTasks + "</b><span>задач в тренажёре</span></div>" +
+        '<div class="stat" role="listitem"><b>9–11</b><span>классы</span></div>' +
+      "</div>" +
+    "</section>" +
     '<section class="section container" id="progress" aria-labelledby="progress-title">' +
       '<div class="section-head"><span class="eyebrow">Продолжить обучение</span><h2 id="progress-title">Ваш прогресс</h2>' +
       '<p class="sub">Тренажёр запоминает, какие разделы вы открыли и прошли, — прямо в этом браузере.</p></div>' +
       progressPanelHTML() +
-    '</section>' +
+    "</section>" +
     '<section class="section container" id="theory" aria-labelledby="theory-title">' +
       '<div class="section-head"><span class="eyebrow">База</span><h2 id="theory-title">Теория: 6 блоков</h2>' +
       '<p class="sub">Последовательный курс основ: конспект, тест и разобранные задачи в каждом блоке.</p></div>' +
-      '<div class="grid cols-3">' + THEORY.map(theoryCard).join("") + '</div>' +
-    '</section>' +
+      '<div class="grid cols-3">' + THEORY.map(theoryCard).join("") + "</div>" +
+    "</section>" +
     '<section class="section container" id="practice" aria-labelledby="practice-title">' +
       '<div class="section-head"><span class="eyebrow">Продвинутый уровень</span><h2 id="practice-title">Практика: 8 разделов</h2>' +
       '<p class="sub">186 задач по материалам книги Бена Стивенсона «Python. Сборник упражнений»: от разминки до рекурсии.</p></div>' +
-      '<div class="grid cols-4">' + PRACTICE.map(practiceCard).join("") + '</div>' +
-    '</section>' +
+      '<div class="grid cols-4">' + PRACTICE.map(practiceCard).join("") + "</div>" +
+    "</section>" +
     '<section class="section container" id="why" aria-labelledby="why-title">' +
       '<div class="section-head"><span class="eyebrow">Мотивация</span><h2 id="why-title">Почему именно Python</h2>' +
       '<p class="sub">Четыре причины, по которым Python стал языком номер один в обучении и индустрии.</p></div>' +
-      '<div class="grid cols-4">' + WHY.map(whyCard).join("") + '</div>' +
-    '</section>' +
+      '<div class="grid cols-4">' + WHY.map(whyCard).join("") + "</div>" +
+    "</section>" +
     '<section class="section container" id="how" aria-labelledby="how-title">' +
       '<div class="section-head"><span class="eyebrow">Маршрут</span><h2 id="how-title">Как заниматься в тренажёре</h2>' +
       '<p class="sub">Три шага одного цикла обучения. Повторяйте его для каждого раздела — и результат придёт.</p></div>' +
-      '<div class="steps">' + STEPS.map(function(s,i){ return '<div class="step"><span class="n" aria-hidden="true">0' + (i+1) + '</span><div><h3>' + s.t + '</h3><p>' + s.d + '</p></div></div>'; }).join("") + '</div>' +
-    '</section>' +
-  '</main>' +
+      '<div class="steps">' + STEPS.map(function(s,i){ return '<div class="step"><span class="n" aria-hidden="true">0' + (i+1) + '</span><div><h3>' + s.t + "</h3><p>" + s.d + "</p></div></div>"; }).join("") + "</div>" +
+    "</section>" +
+  "</main>" +
   '<footer class="site-footer"><div class="container footer-row">' +
-    '<span>Учебный тренажёр по Python · 9–11 классы · базовый и продвинутый уровни</span>' +
-    '<span>Практика — по книге Б. Стивенсона «Python. Сборник упражнений» (186 задач)</span>' +
-  '</div></footer>';
+    "<span>Учебный тренажёр по Python · 9–11 классы · базовый и продвинутый уровни</span>" +
+    "<span>Практика — по книге Б. Стивенсона «Python. Сборник упражнений» (186 задач)</span>" +
+  "</div></footer>";
 }
 
 /* ================= HANDLERS ================= */
@@ -350,16 +368,16 @@ function showToast(msg){
   clearTimeout(toastTimer);
   toastTimer = setTimeout(function(){ toastEl.classList.remove("show"); }, 2600);
 }
-function clearProgress(){
-  try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
-  state.progress = {topic:{}, task:{}};
-}
 /* делегированный клик: карточки модулей и кнопки панели прогресса */
 function onAppClick(e){
   const card = e.target.closest("a[data-group]");
   if(card){
     const group = card.dataset.group, id = Number(card.dataset.id);
-    if(BUILT[group].indexOf(id) === -1){      // страница раздела ещё не опубликована
+    const built = BUILT[group].indexOf(id) !== -1;
+    /* обычные клики по неопубликованным разделам заменяем тостом;
+       ctrl/meta/shift/средняя кнопка всегда работают как нативные (открыть в новой вкладке) */
+    const plainLeftClick = e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey;
+    if(!built && plainLeftClick){
       e.preventDefault();
       showToast("Раздел уже в плане курса и скоро появится.");
     }
@@ -378,6 +396,10 @@ function onAppClick(e){
   }
   render();
   window.scrollTo(0, scrollY);
+}
+function clearProgress(){
+  try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
+  state.progress = {topic:{}, task:{}};
 }
 
 /* ================= INIT ================= */
