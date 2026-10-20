@@ -28,7 +28,7 @@ body{
   margin:0;background:var(--bg);color:var(--text);
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   line-height:1.5;-webkit-font-smoothing:antialiased;
-  overflow-x:clip; /* страховка от горизонтального вылезания */
+  overflow-x:clip;
 }
 .container{width:100%;max-width:960px;margin:0 auto;padding-left:20px;padding-right:20px;min-width:0}
 :focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:8px}
@@ -207,12 +207,12 @@ textarea.code-input:focus{outline:3px solid rgba(0,113,227,.35);border-color:var
 <script>
 "use strict";
 /* ================= CONSTANTS ================= */
-const META = { num:2, topic:"Ветвление", author:"Масликов М.М." };
+var META = { num:2, topic:"Ветвление", author:"Масликов М.М." };
 
 /* Теория: слайды по конспекту «Ветвление в языке Python» */
-const SLIDES = [
+var SLIDES = [
   { t:"Операторы ветвления. Полная форма", b:[
-    {k:"p", v:"**Операторы ветвления** (условные операторы) позволяют программе выбрать, какой блок операторов выполнить, в зависимости от истинности условия."},
+    {k:"p", v:"**Операторы ветвления** (условные операторы) позволяют программе выбрать, какой блок оператор выполнить, в зависимости от истинности условия."},
     {k:"code", file:"if_else.py", v:"if условие:\n    блок_операторов_1\nelse:\n    блок_операторов_2"},
     {k:"p", v:"Если условие **истинно**, то выполняется **блок_1**, иначе — **блок_2**. Оба блока одновременно выполнены быть не могут."},
     {k:"ul", v:[
@@ -237,7 +237,7 @@ const SLIDES = [
       {i:"🚫", t:"**Логическое отрицание `not`** («НЕ»): если условие истинно, то его отрицание ложно, и наоборот."}]},
     {k:"code", file:"logic.py", v:"5 > 3 and 2 * 2 == 4   # истинно\n5 > 3 and 2 * 2 == 5   # ложно\n5 < 3 or 2 * 2 == 4    # истинно\n5 < 3 or 2 * 2 == 5    # ложно\nnot 2 * 2 == 4         # ложно"},
     {k:"key", v:[
-      "Сначала выполняются **операции сравнения**: <, >, <=, >=, ==, !=.",
+      "Сначала выполняются **операции сравнения** (меньше, больше, равно, неравно).",
       "Затем — операция **not**.",
       "Затем — операция **and**.",
       "В последнюю очередь — операция **or**."]}
@@ -265,21 +265,21 @@ const SLIDES = [
 ];
 
 /* Тест: 10 вопросов по теории */
-const QUESTIONS = [
+var QUESTIONS = [
   {q:"Каким ключевым словом начинается оператор ветвления?", opts:["if","when","condition","case"], c:0},
   {q:"Когда выполняется блок операторов после ключевого слова else?", opts:["когда условие ложно","когда условие истинно","всегда","никогда"], c:0},
-  {q:"Как в Python определяются начало и конец блока операторов?", opts:["по отступам от левой границы текста","ключевыми словами begin и end","фигурными скобками { }","точкой с запятой в конце строк"], c:0},
+  {q:"Как в Python определяются начало и конец блока операторов?", opts:["по отступам от левой границы текста","ключевыми словами begin и end","фигурными скобками","точкой с запятой в конце строк"], c:0},
   {q:"Каков результат выражения 5 > 3 and 2 * 2 == 5?", opts:["False","True","4","ошибка"], c:0},
   {q:"Каков результат выражения 5 < 3 or 2 * 2 == 4?", opts:["True","False","4","ошибка"], c:0},
   {q:"Что делает логическая операция not?", opts:["обращает значение условия","объединяет условия союзом «И»","объединяет условия союзом «ИЛИ»","сравнивает два значения"], c:0},
-  {q:"Какая из перечисленных операций выполняется раньше остальных?", opts:["операции сравнения (<, >, <=, >=, ==, !=)","not","and","or"], c:0},
+  {q:"Какая из перечисленных операций выполняется раньше остальных?", opts:["операции сравнения","not","and","or"], c:0},
   {q:"Какое ключевое слово используется для «каскадного» ветвления («else-if»)?", opts:["elif","else if","elseif","unless"], c:0},
   {q:"Какая форма записи допустима, если в каждом блоке ветвления всего один оператор?", opts:["if условие: оператор_1  else: оператор_2","if (условие) then оператор_1 else оператор_2","if условие { оператор_1 } else { оператор_2 }","в одну строку ветвление записать нельзя"], c:0},
   {q:"Какая запись двойного неравенства является верной в Python?", opts:["if -1 <= x <= 1:","if -1 <= x and <= 1:","if x >= -1 <= 1:","if -1 =< x =< 1:"], c:0}
 ];
 
 /* Практика: задачи с подсказками и эталонами (эталон виден только в отчёте после завершения) */
-const TASKS = [
+var TASKS = [
   { id:1, title:"Большее из двух значений",
     text:"Составьте программу, определяющую большее из двух значений переменных, введённых с клавиатуры.",
     screen:"Введите два числа:\na=5\nb=6\nБольшее число 6",
@@ -300,31 +300,31 @@ const TASKS = [
     solution:'# Значение функции\nx = float(input("Введите x: "))\nif x < -1:\n    y = x + 2\nif x >= -1 and x <= 1:\n    y = 1\nif x > 1:\n    y = 2 - x\nprint("y=", y)\n\n# Примечание: в Python разрешены двойные неравенства:\n# if -1 <= x <= 1:\n#     y = 1' }
 ];
 
-const LS_STATE = "python-topic2-state-v1";
-const LS_PROGRESS = "python-trainer-progress-v1"; // общий ключ прогресса с главной страницей
+var LS_STATE = "python-topic2-state-v1";
+var LS_PROGRESS = "python-trainer-progress-v1"; // общий ключ прогресса с главной страницей
 
 /* ================= STATE ================= */
-const state = {
+var state = {
   screen:"start",            // start | lesson
   tab:"theory",              // theory | test | practice | report
   slide:0,
-  viewed:{},                 // отмеченные просмотренными слайды {индекс: true}
+  viewed:{},                 // отмеченные просмотренными слайды
   student:{last:"", first:"", cls:""},
   startErrors:null,
-  testAnswers:{},            // {индекс вопроса: индекс выбора}
+  testAnswers:{},
   testInvalid:[],
   testError:"",
-  testResult:null,           // {score, answers}
-  codes:{1:"", 2:"", 3:""},  // код ученика к задачам
-  hintShown:{},              // открыта ли подсказка сейчас
-  hintUsed:{},               // была ли подсказка использована (попадает в отчёт)
-  reportOpen:false           // отчёт открывается только после «Завершить урок»
+  testResult:null,
+  codes:{1:"", 2:"", 3:""},
+  hintShown:{},
+  hintUsed:{},
+  reportOpen:false
 };
 function loadSaved(){
   try{
-    const raw = localStorage.getItem(LS_STATE);
+    var raw = localStorage.getItem(LS_STATE);
     if(!raw) return;
-    const s = JSON.parse(raw);
+    var s = JSON.parse(raw);
     if(s.student) state.student = s.student;
     if(s.codes) state.codes = Object.assign(state.codes, s.codes);
     if(s.testAnswers) state.testAnswers = s.testAnswers;
@@ -346,8 +346,8 @@ function persist(){
 /* отметка прогресса для главной страницы сайта */
 function setProgress(status){
   try{
-    const raw = localStorage.getItem(LS_PROGRESS);
-    const p = raw ? JSON.parse(raw) : {topic:{}, task:{}};
+    var raw = localStorage.getItem(LS_PROGRESS);
+    var p = raw ? JSON.parse(raw) : {topic:{}, task:{}};
     p.topic = p.topic || {};
     p.topic[String(META.num)] = status;
     localStorage.setItem(LS_PROGRESS, JSON.stringify(p));
@@ -355,7 +355,7 @@ function setProgress(status){
 }
 function markOf(score){ return score >= 9 ? 5 : score >= 7 ? 4 : score >= 5 ? 3 : 2; }
 function plural(n, forms){
-  const n10 = n % 10, n100 = n % 100;
+  var n10 = n % 10, n100 = n % 100;
   if(n10 === 1 && n100 !== 11) return forms[0];
   if(n10 >= 2 && n10 <= 4 && (n100 < 12 || n100 > 14)) return forms[1];
   return forms[2];
@@ -406,7 +406,7 @@ function markSlideViewed(i){
 }
 
 /* ================= RENDER ================= */
-const app = document.getElementById("app");
+var app = document.getElementById("app");
 
 function blockHTML(b){
   if(b.k === "p") return '<p class="s-p">' + inline(b.v) + "</p>";
@@ -416,7 +416,7 @@ function blockHTML(b){
       return '<li><span class="li-ic" aria-hidden="true">' + item.i + '</span><span class="li-tx">' + inline(item.t) + "</span></li>";
     }).join("") + "</ul>";
   }
-  if(b.k === "call") return '<div class="call ' + b.tone + '"><span class="call-ic" aria-hidden="true">' + b.icon + "</span><div><p>" + inline(b.v) + "</p></div></div>";
+  if(b.k === "call") return '<div class="call ' + b.tone + '"><span class="call-ic" aria-hidden="true">' + b.icon + '</span><div><p>' + inline(b.v) + "</p></div></div>";
   if(b.k === "key") return '<div class="keycard"><p class="key-title">✅ Главное</p><ul>' + b.v.map(function(x){ return "<li>" + inline(x) + "</li>"; }).join("") + "</ul></div>";
   if(b.k === "code") return codeWindow(b.v, b.file);
   if(b.k === "screen") return '<div class="screen"><span class="screen-label">На экране</span><pre>' + esc(b.v) + "</pre></div>";
@@ -431,8 +431,8 @@ function blockHTML(b){
   return "";
 }
 function renderStart(){
-  const e = state.startErrors || {};
-  const st = state.student;
+  var e = state.startErrors || {};
+  var st = state.student;
   return '<div class="container"><div class="start-card">' +
     '<span class="eyebrow">Python · Теоретический блок ' + META.num + "</span>" +
     "<h1>" + META.topic + "</h1>" +
@@ -446,8 +446,8 @@ function renderStart(){
     "</form></div></div>";
 }
 function renderTheory(){
-  const i = state.slide, s = SLIDES[i], n = SLIDES.length;
-  const last = i === n - 1;
+  var i = state.slide, s = SLIDES[i], n = SLIDES.length;
+  var last = i === n - 1;
   return '<div class="container"><div class="slide-card">' +
     '<div class="slide-top"><span>Слайд ' + (i + 1) + " из " + n + '</span><span>' + META.topic + "</span></div>" +
     '<div class="slide-bar" aria-hidden="true"><i style="width:' + Math.round((i + 1) / n * 100) + '%"></i></div>' +
@@ -462,9 +462,9 @@ function renderTheory(){
 }
 function renderTest(){
   if(state.testResult){
-    const r = state.testResult;
-    const review = QUESTIONS.map(function(q, i){
-      const ua = r.answers[i], ok = ua === q.c;
+    var r = state.testResult;
+    var review = QUESTIONS.map(function(q, i){
+      var ua = r.answers[i], ok = ua === q.c;
       return '<div class="rev ' + (ok ? "ok" : "bad") + '"><b>' + (i + 1) + ". " + esc(q.q) + "</b>" +
         '<p class="who">Ваш ответ: <b>' + (ua == null ? "—" : esc(q.opts[ua])) + "</b>" +
         (ok ? "" : ' · Правильный ответ: <b>' + esc(q.opts[q.c]) + "</b>") + "</p></div>";
@@ -478,10 +478,10 @@ function renderTest(){
       '<button class="btn btn-primary" type="button" data-tab="practice">К практике →</button></div>' +
       '<div class="review"><h3>Разбор ответов</h3>' + review + "</div></div></div>";
   }
-  const qs = QUESTIONS.map(function(q, i){
-    const inv = state.testInvalid.indexOf(i) !== -1;
-    const opts = q.opts.map(function(o, oi){
-      const ch = state.testAnswers[i] === oi;
+  var qs = QUESTIONS.map(function(q, i){
+    var inv = state.testInvalid.indexOf(i) !== -1;
+    var opts = q.opts.map(function(o, oi){
+      var ch = state.testAnswers[i] === oi;
       return '<label class="opt"><input type="radio" name="q' + i + '" value="' + oi + '"' + (ch ? " checked" : "") + "><span>" + esc(o) + "</span></label>";
     }).join("");
     return '<div class="q' + (inv ? " invalid" : "") + '" role="radiogroup" aria-labelledby="qt' + i + '"><p class="q-title" id="qt' + i + '">' + (i + 1) + ". " + esc(q.q) + "</p>" + opts + "</div>";
@@ -489,11 +489,11 @@ function renderTest(){
   return '<div class="container"><p class="section-note">Выберите один вариант ответа в каждом вопросе и нажмите «Завершить тест». Всего вопросов: ' + QUESTIONS.length + ".</p>" +
     (state.testError ? '<p class="test-err" role="alert">' + state.testError + "</p>" : "") +
     qs +
-    '<div class="no-print" style="margin:6px 0 40px"><button class="btn btn-primary" type="button" data-act="test-submit">Завершить тест</button></div></div>";
+    '<div class="no-print" style="margin:6px 0 40px"><button class="btn btn-primary" type="button" data-act="test-submit">Завершить тест</button></div></div>';
 }
 function renderPractice(){
-  const cards = TASKS.map(function(t){
-    const shown = !!state.hintShown[t.id];
+  var cards = TASKS.map(function(t){
+    var shown = !!state.hintShown[t.id];
     return '<div class="task-card"><div class="task-head"><span class="task-num">Задача ' + t.id + "</span><h3>" + esc(t.title) + "</h3></div>" +
       '<p class="task-text">' + esc(t.text) + "</p>" +
       '<div class="screen"><span class="screen-label">На экране</span><pre>' + esc(t.screen) + "</pre></div>" +
@@ -516,11 +516,11 @@ function sumRow(icon, label, value, pct, note){
     "</div></div>";
 }
 function renderSummary(){
-  const viewed = viewedCount();
-  const res = state.testResult;
-  const done = doneTasksCount();
-  const hints = hintsUsedCount();
-  const warns = [];
+  var viewed = viewedCount();
+  var res = state.testResult;
+  var done = doneTasksCount();
+  var hints = hintsUsedCount();
+  var warns = [];
   if(viewed < SLIDES.length) warns.push("Просмотрены не все слайды теории: " + viewed + " из " + SLIDES.length + ".");
   if(!res) warns.push("Тест ещё не пройден.");
   if(done === 0) warns.push("Пока нет кода ни к одной задаче практики.");
@@ -544,14 +544,14 @@ function renderSummary(){
   "</div>";
 }
 function renderReport(){
-  const st = state.student;
-  const date = new Date().toLocaleDateString("ru-RU");
-  const res = state.testResult;
-  const viewed = viewedCount();
-  const done = doneTasksCount();
-  const tasks = TASKS.map(function(t){
-    const code = (state.codes[t.id] || "").trim();
-    const used = !!state.hintUsed[t.id];
+  var st = state.student;
+  var date = new Date().toLocaleDateString("ru-RU");
+  var res = state.testResult;
+  var viewed = viewedCount();
+  var done = doneTasksCount();
+  var tasks = TASKS.map(function(t){
+    var code = (state.codes[t.id] || "").trim();
+    var used = !!state.hintUsed[t.id];
     return "<h3>Задача " + t.id + ". " + esc(t.title) + "</h3>" +
       '<p class="rep-note">' + esc(t.text) + "</p>" +
       '<p class="label-sm">Мой код</p><pre>' + (code ? esc(state.codes[t.id]) : "— код не предоставлен —") + "</pre>" +
@@ -580,14 +580,14 @@ function renderReport(){
     "</div>";
 }
 function renderLesson(){
-  const st = state.student;
-  const tabs = [
+  var st = state.student;
+  var tabs = [
     ["theory", "Теория"],
     ["test", "Тест"],
     ["practice", "Практика"],
     ["report", state.reportOpen ? "Отчёт" : "Итоги"]
   ];
-  const body = state.tab === "theory" ? renderTheory()
+  var body = state.tab === "theory" ? renderTheory()
     : state.tab === "test" ? renderTest()
     : state.tab === "practice" ? renderPractice()
     : (state.reportOpen ? renderReport() : renderSummary());
@@ -606,7 +606,7 @@ function render(){
 }
 
 /* ================= HANDLERS ================= */
-let toastEl = null, toastTimer = null;
+var toastEl = null, toastTimer = null;
 function showToast(msg){
   toastEl.textContent = msg;
   toastEl.classList.add("show");
@@ -616,9 +616,9 @@ function showToast(msg){
 /* старт: валидация формы и переход к уроку */
 function onStartSubmit(e){
   e.preventDefault();
-  const f = e.target;
-  const last = f.last.value.trim(), first = f.first.value.trim(), cls = f.cls.value.trim();
-  const errs = {};
+  var f = e.target;
+  var last = f.last.value.trim(), first = f.first.value.trim(), cls = f.cls.value.trim();
+  var errs = {};
   if(last.length < 2) errs.last = "Введите фамилию (минимум 2 символа).";
   if(first.length < 2) errs.first = "Введите имя (минимум 2 символа).";
   if(!cls) errs.cls = "Введите класс, например 9А.";
@@ -626,7 +626,7 @@ function onStartSubmit(e){
   if(Object.keys(errs).length){
     state.startErrors = errs;
     render();
-    const bad = app.querySelector("input.bad");
+    var bad = app.querySelector("input.bad");
     if(bad) bad.focus();
     return;
   }
@@ -642,7 +642,7 @@ function onStartSubmit(e){
 }
 /* тест: проверка ответов и подсчёт баллов */
 function submitTest(){
-  const unanswered = [];
+  var unanswered = [];
   QUESTIONS.forEach(function(q, i){
     if(state.testAnswers[i] == null) unanswered.push(i);
   });
@@ -650,11 +650,11 @@ function submitTest(){
     state.testInvalid = unanswered;
     state.testError = "Осталось без ответа: " + unanswered.length + " " + plural(unanswered.length, ["вопрос", "вопроса", "вопросов"]) + ". Ответьте на все вопросы теста.";
     render();
-    const inv = app.querySelector(".q.invalid");
+    var inv = app.querySelector(".q.invalid");
     if(inv) inv.scrollIntoView({block:"center", behavior:"smooth"});
     return;
   }
-  let score = 0;
+  var score = 0;
   QUESTIONS.forEach(function(q, i){ if(state.testAnswers[i] === q.c) score++; });
   state.testResult = {score:score, answers:Object.assign({}, state.testAnswers)};
   state.testError = "";
@@ -666,7 +666,7 @@ function submitTest(){
   showToast("Тест завершён: " + score + " из " + QUESTIONS.length + ".");
 }
 function onAppClick(e){
-  const tabBtn = e.target.closest("[data-tab]");
+  var tabBtn = e.target.closest("[data-tab]");
   if(tabBtn){
     state.tab = tabBtn.dataset.tab;
     if(state.tab === "theory") markSlideViewed(state.slide);
@@ -674,9 +674,9 @@ function onAppClick(e){
     window.scrollTo(0, 0);
     return;
   }
-  const btn = e.target.closest("[data-act]");
+  var btn = e.target.closest("[data-act]");
   if(!btn) return;
-  const act = btn.dataset.act;
+  var act = btn.dataset.act;
   if(act === "slide-prev"){
     state.slide = Math.max(0, state.slide - 1);
     markSlideViewed(state.slide);
@@ -693,8 +693,8 @@ function onAppClick(e){
     persist(); render(); window.scrollTo(0, 0);
   }
   else if(act === "toggle-hint"){
-    const id = Number(btn.dataset.id);
-    const now = !state.hintShown[id];
+    var id = Number(btn.dataset.id);
+    var now = !state.hintShown[id];
     state.hintShown[id] = now;
     if(now) state.hintUsed[id] = true; // подсказка засчитывается как использованная
     persist();
@@ -714,23 +714,23 @@ function onAppClick(e){
 }
 /* ввод кода и выбор ответов — без перерисовки, чтобы не терять фокус */
 function onAppInput(e){
-  const ta = e.target.closest("textarea[data-code]");
+  var ta = e.target.closest("textarea[data-code]");
   if(ta){
     state.codes[Number(ta.dataset.code)] = ta.value;
     persist();
   }
 }
 function onAppChange(e){
-  const r = e.target.closest('input[type="radio"][name^="q"]');
+  var r = e.target.closest('input[type="radio"][name^="q"]');
   if(r){
-    const qi = Number(r.name.slice(1));
+    var qi = Number(r.name.slice(1));
     state.testAnswers[qi] = Number(r.value);
-    const box = r.closest(".q");
+    var box = r.closest(".q");
     if(box) box.classList.remove("invalid");
     state.testInvalid = state.testInvalid.filter(function(i){ return i !== qi; });
     if(state.testError){
-      const left = QUESTIONS.filter(function(q, i){ return state.testAnswers[i] == null; }).length;
-      const errEl = app.querySelector(".test-err");
+      var left = QUESTIONS.filter(function(q, i){ return state.testAnswers[i] == null; }).length;
+      var errEl = app.querySelector(".test-err");
       if(left === 0){ if(errEl) errEl.remove(); state.testError = ""; }
       else if(errEl){ errEl.textContent = "Осталось без ответа: " + left + " " + plural(left, ["вопрос", "вопроса", "вопросов"]) + ". Ответьте на все вопросы теста."; }
     }
