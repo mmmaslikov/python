@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Массивы — Python‑тренажёр</title>
+<style>
+:root{
+  --bg:#f5f5f7;
+  --surface:#ffffff;
+  --text:#1d1d1f;
+  --muted:#6e6e73;
+  --accent:#0071e3;
+  --accent-dark:#005bb9;
+  --danger:#c22a1e;
+  --ok:#1c7c3c;
+  --radius:18px;
+  --radius-sm:12px;
+  --shadow:0 8px 24px rgba(0,0,0,.06);
+  --shadow-lift:0 14px 34px rgba(0,0,0,.10);
+  --border:rgba(0,0,0,.07);
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  line-height:1.5;-webkit-font-smoothing:antialiased;
+  overflow-x:clip;
+}
+.container{width:100%;max-width:960px;margin:0 auto;padding-left:20px;padding-right:20px;min-width:0}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:8px}
+.skip{position:absolute;left:-9999px;top:0;z-index:200;background:#fff;color:var(--accent);padding:12px 18px;border-radius:0 0 12px 0;font-weight:600;text-decoration:none}
+.skip:focus{left:0}
+b{font-weight:700}
+.fatal{padding:40px 20px;font-family:var(--mono);font-size:14px;color:var(--danger);white-space:pre-wrap}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 24px;border-radius:999px;border:none;font-size:16px;font-weight:600;cursor:pointer;text-decoration:none;transition:background .15s ease,transform .15s ease}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:var(--accent-dark)}
+.btn-ghost{background:transparent;color:var(--accent);box-shadow:inset 0 0 0 1.5px rgba(0,113,227,.4)}
+.btn-ghost:hover{background:rgba(0,113,227,.08)}
+.btn-small{min-height:44px;padding:0 18px;border-radius:999px;font-size:14px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--text)}
+.btn-small:hover{background:#f5f5f7}
+.btn-small[disabled]{opacity:.45;cursor:default}
+
+.start-card{max-width:560px;margin:44px auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px}
+.eyebrow{color:var(--accent);font-weight:700;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase}
+.start-card h1{font-size:clamp(28px,5vw,40px);font-weight:800;letter-spacing:-.02em;margin:10px 0 6px}
+.author{color:var(--muted);margin:0 0 18px;font-size:15px}
+.start-list{margin:0 0 22px;padding-left:20px;color:var(--muted);font-size:14.5px;display:grid;gap:6px}
+.field{display:grid;gap:6px;margin-bottom:14px}
+.field label{font-size:14px;font-weight:600}
+.field input{min-height:48px;border:1px solid var(--border);border-radius:12px;padding:0 14px;font-size:16px;background:#fff;color:var(--text);width:100%}
+.field input:focus{outline:3px solid rgba(0,113,227,.35);border-color:var(--accent)}
+.field input.bad{border-color:var(--danger);box-shadow:0 0 0 3px rgba(194,42,30,.12)}
+.err{color:var(--danger);font-size:13px;margin:0}
+
+.lesson-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:16px 0 10px}
+.lesson-head h1{font-size:20px;margin:0;letter-spacing:-.01em;flex:1 1 auto;min-width:160px}
+.chip-student{min-height:44px;display:inline-flex;align-items:center;gap:8px;border:1px solid var(--border);background:#fff;border-radius:999px;padding:0 16px;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer}
+.chip-student:hover{background:#f5f5f7}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{min-height:44px;padding:0 18px;border-radius:999px;border:1px solid var(--border);background:#fff;font-size:15px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap}
+.tab:hover{background:#f5f5f7}
+.tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.section-note{color:var(--muted);font-size:14.5px;margin:14px 0 18px;max-width:700px}
+
+.slide-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;margin-top:16px;min-width:0}
+.slide-top{display:flex;justify-content:space-between;align-items:center;gap:10px;color:var(--muted);font-size:13.5px;margin-bottom:8px}
+.slide-bar{height:6px;background:#e8e8ed;border-radius:999px;overflow:hidden;margin-bottom:18px}
+.slide-bar i{display:block;height:100%;background:linear-gradient(90deg,#37a0ff,var(--accent));border-radius:999px;transition:width .3s ease}
+.slide-card h2{margin:0 0 14px;font-size:clamp(21px,3.4vw,26px);letter-spacing:-.01em}
+.s-p{margin:0 0 12px;font-size:15.5px;line-height:1.6}
+.s-p b,.s-ul b,.call b,.keycard b{font-weight:700}
+.ic{font-family:var(--mono);font-size:.88em;background:rgba(0,113,227,.09);color:var(--accent-dark);border-radius:6px;padding:1px 6px;white-space:nowrap}
+.s-ul{list-style:none;padding:0;display:grid;gap:10px;margin:0 0 14px}
+.s-ul li{display:flex;gap:10px;align-items:flex-start;font-size:15px;line-height:1.55}
+.li-ic{flex:none;width:28px;height:28px;border-radius:9px;background:rgba(0,113,227,.1);display:grid;place-items:center;font-size:14px}
+.li-tx{min-width:0}
+.call{display:flex;gap:12px;align-items:flex-start;border-radius:14px;padding:14px 16px;margin:0 0 14px;border:1px solid}
+.call p{margin:0;font-size:14.5px;line-height:1.6;min-width:0}
+.call ul{margin:6px 0 0;padding-left:20px;display:grid;gap:4px;font-size:14px}
+.call>div{min-width:0}
+.call-ic{font-size:20px;line-height:1.4;flex:none}
+.call.info{background:rgba(0,113,227,.07);border-color:rgba(0,113,227,.25)}
+.call.warn{background:rgba(255,159,10,.1);border-color:rgba(255,159,10,.35)}
+.call.ok{background:rgba(52,199,89,.1);border-color:rgba(52,199,89,.35)}
+.keycard{background:var(--surface);border:1px solid var(--border);border-left:4px solid #34c759;border-radius:14px;padding:14px 16px;margin:0 0 14px;box-shadow:var(--shadow)}
+.key-title{margin:0 0 8px;font-weight:800;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--ok)}
+.keycard ul{margin:0;padding-left:20px;display:grid;gap:6px;font-size:14.5px}
+.code-window{background:#161617;border-radius:14px;overflow:hidden;margin:0 0 14px;box-shadow:var(--shadow);min-width:0}
+.code-bar{display:flex;align-items:center;gap:7px;padding:10px 14px;background:#1d1d1f}
+.dot{width:11px;height:11px;border-radius:50%;flex:none}
+.dot.r{background:#ff5f57}.dot.y{background:#febc2e}.dot.g{background:#28c840}
+.code-bar .file{margin-left:6px;color:#98989d;font-family:var(--mono);font-size:12px}
+pre.code{margin:0;padding:16px 18px;color:#f5f5f7;font-family:var(--mono);font-size:13.5px;line-height:1.7;overflow-x:auto;white-space:pre;max-width:100%}
+.tk-c{color:#83838a}.tk-k{color:#ff7ab2}.tk-s{color:#ffa740}.tk-n{color:#d9bf69}.tk-f{color:#6bdfff}
+.screen{background:rgba(52,199,89,.08);border:1px solid rgba(52,199,89,.35);border-radius:12px;padding:12px 14px;margin:0 0 14px;min-width:0}
+.screen-label{display:block;font-size:11.5px;font-weight:700;color:var(--ok);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em}
+.screen pre{margin:0;font-family:var(--mono);font-size:13.5px;line-height:1.6;white-space:pre-wrap;color:var(--text)}
+.tbl-wrap{overflow-x:auto;margin:0 0 14px;border:1px solid var(--border);border-radius:12px}
+table{border-collapse:collapse;width:100%;font-size:14px;background:#fff}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--border);vertical-align:top}
+th{background:#f5f5f7;font-weight:700}
+tr:last-child td{border-bottom:none}
+.slide-nav{display:flex;justify-content:space-between;gap:10px;margin-top:18px;flex-wrap:wrap}
+
+.q{border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);padding:16px 16px 10px;margin:0 0 14px;box-shadow:var(--shadow);min-width:0;max-width:100%}
+.q.invalid{border-color:var(--danger);box-shadow:0 0 0 3px rgba(194,42,30,.12)}
+.q-title{font-weight:700;font-size:15.5px;margin:0 0 8px;overflow-wrap:break-word}
+label.opt{display:flex;gap:10px;align-items:flex-start;min-height:44px;padding:8px 10px;border-radius:10px;cursor:pointer;font-size:15px}
+label.opt:hover{background:rgba(0,0,0,.04)}
+label.opt input{width:20px;height:20px;margin-top:2px;accent-color:var(--accent);flex:none}
+label.opt span{min-width:0;overflow-wrap:break-word}
+.test-err{background:rgba(194,42,30,.08);border:1px solid rgba(194,42,30,.35);color:var(--danger);border-radius:12px;padding:10px 14px;font-size:14px;margin:0 0 14px}
+.result-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;text-align:center;margin-top:16px;min-width:0}
+.score-big{font-size:46px;font-weight:800;letter-spacing:-.02em}
+.mark-line{font-size:17px;font-weight:700;margin:4px 0}
+.verdict{color:var(--muted);margin:0 0 18px}
+.result-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.review{margin-top:22px;text-align:left}
+.review h3{font-size:17px;margin:0 0 10px}
+.rev{border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:10px;background:#fff;font-size:14.5px;min-width:0}
+.rev.ok{border-left:4px solid #34c759}
+.rev.bad{border-left:4px solid #ff3b30}
+.rev .who{color:var(--muted);font-size:13.5px;margin:4px 0 0}
+.rev .who b{color:var(--text)}
+
+.task-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin-bottom:16px;min-width:0}
+.task-head{display:flex;gap:10px;align-items:center;margin-bottom:8px}
+.task-num{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--accent);background:rgba(0,113,227,.1);border-radius:8px;padding:4px 9px}
+.task-head h3{margin:0;font-size:18px}
+.task-text{margin:0 0 12px;font-size:15px}
+.label-sm{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:0 0 6px}
+textarea.code-input{width:100%;min-height:190px;resize:vertical;border:1px solid var(--border);border-radius:12px;padding:12px 14px;font-family:var(--mono);font-size:13.5px;line-height:1.6;background:#fff;color:var(--text)}
+textarea.code-input:focus{outline:3px solid rgba(0,113,227,.35);border-color:var(--accent)}
+.task-actions{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0 4px}
+.hint{display:flex;gap:12px;background:rgba(255,159,10,.09);border:1px solid rgba(255,159,10,.35);border-radius:14px;padding:14px 16px;margin:12px 0 4px}
+.hint>div{min-width:0;flex:1}
+.hint-ic{font-size:20px;flex:none;line-height:1.4}
+.hint p{margin:0;font-size:14.5px;line-height:1.6}
+.hint .code-window{margin:10px 0 0}
+.hint .code-bar{padding:8px 12px}
+.hint pre.code{padding:12px 14px;font-size:12.5px}
+
+.sum-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px;margin-top:16px;display:grid;gap:18px}
+.sum-row{display:flex;gap:14px;align-items:flex-start}
+.sum-ic{flex:none;width:44px;height:44px;border-radius:12px;background:rgba(0,113,227,.1);display:grid;place-items:center;font-size:20px}
+.sum-body{flex:1;min-width:0}
+.sum-top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:14.5px;margin-bottom:6px}
+.sum-top b{font-size:15px}
+.sum-bar{height:8px;background:#e8e8ed;border-radius:999px;overflow:hidden}
+.sum-bar i{display:block;height:100%;background:linear-gradient(90deg,#37a0ff,var(--accent));border-radius:999px;transition:width .3s ease}
+.sum-note{color:var(--muted);font-size:13px;margin:6px 0 0}
+.sum-actions{display:flex;justify-content:center;margin:22px 0 6px}
+
+.report{background:#fff;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px;max-width:820px;margin:16px auto 0;min-width:0}
+.report h2{margin:0 0 4px;font-size:24px}
+.report .meta{display:grid;gap:4px;font-size:14.5px;margin:12px 0 6px}
+.report h3{font-size:17px;margin:20px 0 8px}
+.report pre{background:#f5f5f7;border:1px solid var(--border);border-radius:10px;padding:12px;font-family:var(--mono);font-size:12.5px;line-height:1.55;white-space:pre-wrap;word-break:break-word;margin:0 0 12px}
+.report .rep-note{color:var(--muted);font-size:13px;margin:6px 0}
+.report-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:18px 0 4px}
+.hint-print{color:var(--muted);font-size:13.5px;text-align:center;margin:0 0 40px}
+
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(16px);background:#1d1d1f;color:#fff;padding:12px 20px;border-radius:999px;font-size:14.5px;opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease;z-index:100;box-shadow:var(--shadow-lift);max-width:calc(100vw - 40px);text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media print{
+  body{background:#fff}
+  .no-print{display:none !important}
+  .container{padding:0;max-width:100%}
+  .report{border:none;box-shadow:none;margin:0;padding:0;max-width:100%}
+  .report pre{white-space:pre-wrap;word-break:break-word}
+}
+@media (max-width:640px){
+  .slide-card{padding:18px}
+  .task-card{padding:18px}
+  pre.code{font-size:12.5px;padding:14px 14px 18px}
+  .sum-card{padding:16px}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{transition:none !important}
+}
+</style>
+</head>
+<body>
+<a class="skip no-print" href="#main">Перейти к содержимому</a>
+<div id="app"></div>
+<script>
+/* аварийный экран: если основной скрипт упадёт, покажем текст ошибки вместо пустоты */
+window.addEventListener("error", function(ev){
+  var a = document.getElementById("app");
+  if(a && !a.innerHTML.trim()){
+    a.innerHTML = '<div class="fatal">Ошибка скрипта: ' + (ev.message || "неизвестная") + '</div>';
+  }
+});
+</script>
+<script>
+"use strict";
+/* ================= CONSTANTS ================= */
+var META = { num:4, topic:"Массивы", author:"Масликов М.М." };
+
+var SLIDES = [
+  { t:"Понятие массива. Списки в Python", b:[
+    {k:"p", v:"**Массив** — совокупность пронумерованных величин одного типа, объединённых общим именем."},
+    {k:"p", v:"В языке Python нет такой структуры данных, как массив: для хранения группы однотипных объектов используют **списки** (тип данных `list`)."},
+    {k:"ul", v:[
+      {i:"🔢", t:"**Индекс** — порядковый номер элемента в массиве; нумерация элементов всегда **начинается с нуля**."},
+      {i:"🏷️", t:"Каждый элемент обозначается индексированным именем: `имя[индекс]`. Например, `A[1]` — второй элемент массива A (с индексом 1)."},
+      {i:"📏", t:"Массивы бывают **одномерные** (линейные) и **двумерные** (прямоугольные); далее рассматриваются одномерные."},
+      {i:"🧩", t:"Индексом может быть не только число, но и целое значение переменной или арифметического выражения: `A[2*i-1]` (при i = 1)."}]},
+    {k:"code", file:"massiv.py", v:"A = [-5, -2, -6, 1, 0, 4, 2, 3, 1, -3]\n# A[0] = -5, A[1] = -2, ..., A[9] = -3"},
+    {k:"call", icon:"⚠️", tone:"warn", v:"Перед использованием в программе массив необходимо **создать**. Обращение к несуществующему элементу вызовет **ошибку**."},
+    {k:"call", icon:"💡", tone:"info", v:"Количество элементов в массиве определяется с помощью функции **len** (length — «длина»): `N = len(A)`."}
+  ]},
+  { t:"Вывод массива на экран", b:[
+    {k:"p", v:"**1 способ.** Весь массив выводится как один объект в квадратных скобках, элементы разделяются запятыми."},
+    {k:"code", file:"vyvod_1.py", v:"print(A)"},
+    {k:"screen", v:"[1, 2, 3, 4, 5]"},
+    {k:"p", v:"**2 способ.** Вывод элементов с помощью цикла в одной строке через пробел."},
+    {k:"code", file:"vyvod_2.py", v:'for i in range(len(A)):\n    print(A[i], end=" ")\nprint()   # переход на новую строку'},
+    {k:"screen", v:"1 2 3 4 5"},
+    {k:"ul", v:[
+      {i:"📋", t:"**3 способ.** Вывод элементов с помощью цикла в столбик: `for i in range(len(A)): print(A[i])`."},
+      {i:"🔎", t:"**4 способ.** В столбик с указанием индексов: `print(\"A[\", i, \"]=\", A[i])` — на экране появится `A[ 0 ]= 1`, `A[ 1 ]= 2` и так далее."}]}
+  ]},
+  { t:"Заполнение массивов", b:[
+    {k:"p", v:"**1 способ.** Создание массива указанием значений элементов: перечислением через запятую в квадратных скобках. Если все элементы одинаковые — используется умножение списка."},
+    {k:"code", file:"sozdanie.py", v:"A = [1, -2, -3, 5, 7]   # перечисление значений\nB = [0] * 5             # массив из 5 элементов, заполненный нулями"},
+    {k:"p", v:"**2 способ.** Ввод с клавиатуры (при небольшом количестве элементов)."},
+    {k:"code", file:"vvod.py", v:'N = 5                          # размер массива в переменной\nB = [0] * N                    # заполнение массива нулями\nprint("Введите", N, "элементов массива:")\nfor i in range(N):             # перебор индексов\n    print("B[", i, "]=", end="")  # вывод подсказки\n    B[i] = int(input())        # ввод числа'},
+    {k:"screen", v:"Введите 5 элементов массива:\nB[ 0 ]=1\nB[ 1 ]=2\nB[ 2 ]=3\nB[ 3 ]=4\nB[ 4 ]=5"},
+    {k:"p", v:"**3 способ.** Вычисление элементов по формуле (в зависимости от индекса)."},
+    {k:"code", file:"formula.py", v:"N = 5\nC = [0] * N\nfor i in range(N):\n    C[i] = i ** 2   # индекс в квадрате\nprint(C)"},
+    {k:"screen", v:"[0, 1, 4, 9, 16]"},
+    {k:"p", v:"**4 способ.** Заполнение случайными числами: функция `randint(a, b)` создаёт случайное целое число из отрезка [a, b]."},
+    {k:"code", file:"sluchaynye.py", v:"N = 5\nD = [0] * N\nfrom random import randint   # подключаем функцию randint\nfor i in range(N):\n    D[i] = randint(-5, 5)    # случайные числа от -5 до 5\nprint(D)"},
+    {k:"screen", v:"Возможный результат:\n[0, -4, -2, 1, 5]"}
+  ]},
+  { t:"Сортировка массива методом пузырька", b:[
+    {k:"p", v:"Задача: упорядочить массив в порядке **возрастания** значений его элементов. Алгоритм сортировки **методом обмена** (метод «пузырька»): последовательно сравнивать пары соседних чисел и при необходимости менять их местами — для каждой пары."},
+    {k:"p", v:"За один проход самое большое число окажется на последнем месте. Затем проход повторяется до элемента, уже находящегося на своём месте, и так далее."},
+    {k:"table", head:["Шаг","Состояние массива"], rows:[
+      ["Исходные значения","5 4 2 3 1"],
+      ["1-й проход","4 2 3 1 5"],
+      ["2-й проход","2 3 1 4 5"],
+      ["3-й проход","2 1 3 4 5"],
+      ["4-й проход","1 2 3 4 5"]]},
+    {k:"code", file:"sortirovka.py", v:"# Сортировка элементов массива (метод пузырька по неубыванию)\nN = 10\nA = [0] * N                     # создание массива\nfrom random import randint      # подключение генератора случайных чисел\nfor i in range(N):              # заполнение массива\n    A[i] = randint(0, 99)       # случайными числами от 0 до 99\nprint(A)                        # вывод массива\nfor k in range(1, N - 1):       # номер прохода\n    for i in range(N - k):      # просмотр за один проход\n        if A[i] > A[i + 1]:     # если соседние не упорядочены\n            A[i], A[i + 1] = A[i + 1], A[i]   # меняем их местами\n    print(A)                    # вывод текущих значений массива"},
+    {k:"screen", v:"[92, 47, 84, 49, 24, 73, 98, 19, 65, 90]\n[47, 84, 49, 24, 73, 92, 19, 65, 90, 98]\n[47, 49, 24, 73, 84, 19, 65, 90, 92, 98]\n[47, 24, 49, 73, 19, 65, 84, 90, 92, 98]\n[24, 47, 49, 19, 65, 73, 84, 90, 92, 98]\n[24, 47, 19, 49, 65, 73, 84, 90, 92, 98]\n[24, 19, 47, 49, 65, 73, 84, 90, 92, 98]\n[19, 24, 47, 49, 65, 73, 84, 90, 92, 98]\n[19, 24, 47, 49, 65, 73, 84, 90, 92, 98]"},
+    {k:"call", icon:"💡", tone:"info", v:"Обратите внимание: после каждого прохода очередной наибольший элемент «всплывает» в конец массива, поэтому граница просмотра `N - k` уменьшается."}
+  ]},
+  { t:"Типовые приёмы обработки массивов", b:[
+    {k:"key", v:[
+      "**Сумма и среднее:** `s = 0`, затем в цикле `s = s + A[i]`; среднее — `sb = s / N`.",
+      "**Подсчёт по условию:** счётчик `k = 0`, затем в цикле `if A[i] > x: k = k + 1`.",
+      "**Минимальный элемент:** считаем первый элемент минимальным (`imin = 0`), просматриваем со второго: `if T[i] < T[imin]: imin = i`.",
+      "**Поиск по значению:** переменная-маркер `nx = -1` (несуществующий индекс); нашли совпадение — `nx = i`; после цикла `nx == -1` означает «не найдено»."]},
+    {k:"call", icon:"⚠️", tone:"warn", v:"В задачах курса эти алгоритмы нужно уметь писать **вручную**, без готовых функций: так отрабатывается понимание работы циклов и индексов."},
+    {k:"call", icon:"✅", tone:"ok", v:"В Python есть и встроенные средства: `min()`, `max()`, `sum()`, метод `sort()`. Они пригодятся для самопроверки. Впереди — тест и три задачи на обработку массивов!"}
+  ]}
+];
+
+var QUESTIONS = [
+  {q:"С какого индекса начинается нумерация элементов массива в Python?", opts:["С нуля","С единицы","С минус единицы","Зависит от способа создания массива"], c:0},
+  {q:"Как определить количество элементов массива A?", opts:["count(A)","size(A)","len(A)","n(A)"], c:2},
+  {q:"Что создаёт запись A = [0] * 5?", opts:["массив из пяти нулей","массив из чисел от 0 до 5","один элемент со значением 0","ошибку"], c:0},
+  {q:"Что произойдёт при обращении к несуществующему элементу массива?", opts:["вернётся 0","вернётся None","программа завершится с ошибкой","массив увеличится"], c:2},
+  {q:"Какая функция создаёт случайное целое число из отрезка [a, b]?", opts:["random()","randint(a, b)","rand(a, b)","int(a, b)"], c:1},
+  {q:"Как вывести элементы массива в одну строку через пробел?", opts:['print(A[i])','print(A[i], end=" ")','print(A[i], sep=" ")','print(A[i], end="\\n")'], c:1},
+  {q:"Чему равно A[1] для массива A = [-5, -2, -6, 1, 0]?", opts:["-5","-2","-6","1"], c:1},
+  {q:"Какой цикл переберёт все индексы массива из N элементов?", opts:["for i in range(1, N)","for i in range(N)","while i < N","for i in range(0, N, 2)"], c:1},
+  {q:"Куда попадает наибольший элемент после первого прохода сортировки пузырьком?", opts:["в начало массива","в середину массива","в конец массива","никуда, порядок не меняется"], c:2},
+  {q:"Каким значением удобно инициализировать переменную nx при поиске элемента по значению?", opts:["0","1","-1 (несуществующий индекс)","N"], c:2}
+];
+
+var TASKS = [
+  { id:1, title:"Средний балл",
+    text:"Составьте программу: вводятся 10 оценок учеников с клавиатуры, необходимо вычислить средний балл (сумму оценок разделить на их количество).",
+    screen:"Введите оценки:\n1 оценка: 3\n2 оценка: 4\n3 оценка: 4\n4 оценка: 3\n5 оценка: 3\n6 оценка: 5\n7 оценка: 4\n8 оценка: 5\n9 оценка: 5\n10 оценка: 3\nСредний балл: 3.9",
+    hint:{ text:"Сначала создайте массив нулей `A = [0] * N` и заполните его оценками в цикле. Затем вторым циклом наберите сумму `s = s + A[i]` и разделите её на количество оценок.",
+           code:"s = 0\nfor i in range(N):\n    s = s + A[i]\nsb = s / N" },
+    solution:'# Средний балл учеников\nN = 10                # размер массива\nA = [0] * N           # заполнение массива нулями\n# Ввод значений элементов массива с клавиатуры\nprint("Введите оценки:")\nfor i in range(N):\n    print(i + 1, "оценка:", end="")\n    A[i] = int(input())\ns = 0                 # нач. знач. суммы\nfor i in range(N):    # перебор индексов\n    s = s + A[i]      # добавление к сумме\nsb = s / 10           # среднее арифметическое\nprint("Средний балл:", sb)' },
+  { id:2, title:"Количество элементов больше заданного",
+    text:"Заполните массив из 10 элементов случайными числами от 0 до 99, выведите его. Подсчитайте количество элементов массива, которые больше заданного значения x.",
+    screen:"[30, 81, 28, 35, 35, 94, 9, 76, 25, 40]\nx=50\nКоличество элементов больше данного: 3",
+    hint:{ text:"Заведите счётчик `k = 0`. В цикле просматривайте все элементы: если очередной `A[i] > x`, увеличивайте счётчик на единицу.",
+           code:"k = 0\nfor i in range(N):\n    if A[i] > x:\n        k = k + 1" },
+    solution:'# Количество элементов массива, соответствующих условию\nN = 10\nA = [0] * N                    # создание массива\nfrom random import randint     # подключение функции randint\nfor i in range(N):             # заполнение массива\n    A[i] = randint(0, 99)      # случайными числами от 0 до 99\nprint(A)                       # вывод массива\nx = int(input("x="))           # ввод значения для условия\nk = 0                          # начальное значение счетчика\nfor i in range(N):             # просмотр всех элементов массива\n    if A[i] > x:               # если очередной соотв. условию\n        k = k + 1              # увеличиваем счетчик\nprint("Количество элементов больше данного:", k)' },
+  { id:3, title:"Самый холодный день",
+    text:"В таблице значений среднесуточной температуры за декаду (10 дней) найдите самый холодный день и укажите его номер. Задачу решите без использования функции min().",
+    screen:"Среднесуточная температура за декаду:\n[3, 5, 6, 4, 2, 9, 7, 5, 4, 7]\nМинимальная температура: 2\nДень номер: 5",
+    hint:{ text:"Считайте первый элемент минимальным (`imin = 0`). Просматривайте массив со второго элемента: если `T[i] < T[imin]`, запоминайте индекс `imin = i`. Номер дня — это `imin + 1`.",
+           code:"imin = 0\nfor i in range(1, 10):\n    if T[i] < T[imin]:\n        imin = i" },
+    solution:'# Минимальный элемент массива\nT = [3, 5, 6, 4, 2, 9, 7, 5, 4, 7]   # создание и вывод массива\nprint("Среднесуточная температура за декаду:")\nprint(T)\nimin = 0                # считаем первый элемент минимальным\nfor i in range(1, 10):  # просмотр элементов со второго\n    if T[i] < T[imin]:  # если очередной меньше минимального\n        imin = i        # сохраняем его индекс\n# Вывод минимального элемента и его номера\nprint("Минимальная температура:", T[imin])\nprint("День номер:", imin + 1)' }
+];
+
+var LS_STATE = "python-topic4-state-v1";
+var LS_PROGRESS = "python-trainer-progress-v1";
+
+/* ================= STATE ================= */
+var state = {
+  screen:"start",
+  tab:"theory",
+  slide:0,
+  viewed:{},
+  student:{last:"", first:"", cls:""},
+  startErrors:null,
+  testAnswers:{},
+  testInvalid:[],
+  testError:"",
+  testResult:null,
+  codes:{1:"", 2:"", 3:""},
+  hintShown:{},
+  hintUsed:{},
+  reportOpen:false
+};
+function loadSaved(){
+  try{
+    var raw = localStorage.getItem(LS_STATE);
+    if(!raw) return;
+    var s = JSON.parse(raw);
+    if(s.student) state.student = s.student;
+    if(s.codes) state.codes = Object.assign(state.codes, s.codes);
+    if(s.testAnswers) state.testAnswers = s.testAnswers;
+    if(s.testResult) state.testResult = s.testResult;
+    if(s.hintUsed) state.hintUsed = s.hintUsed;
+    if(s.viewed) state.viewed = s.viewed;
+    if(s.reportOpen) state.reportOpen = true;
+  }catch(e){}
+}
+function persist(){
+  try{
+    localStorage.setItem(LS_STATE, JSON.stringify({
+      student:state.student, codes:state.codes,
+      testAnswers:state.testAnswers, testResult:state.testResult,
+      hintUsed:state.hintUsed, viewed:state.viewed, reportOpen:state.reportOpen
+    }));
+  }catch(e){}
+}
+function setProgress(status){
+  try{
+    var raw = localStorage.getItem(LS_PROGRESS);
+    var p = raw ? JSON.parse(raw) : {topic:{}, task:{}};
+    p.topic = p.topic || {};
+    p.topic[String(META.num)] = status;
+    localStorage.setItem(LS_PROGRESS, JSON.stringify(p));
+  }catch(e){}
+}
+function markOf(score){ return score >= 9 ? 5 : score >= 7 ? 4 : score >= 5 ? 3 : 2; }
+function plural(n, forms){
+  var n10 = n % 10, n100 = n % 100;
+  if(n10 === 1 && n100 !== 11) return forms[0];
+  if(n10 >= 2 && n10 <= 4 && (n100 < 12 || n100 > 14)) return forms[1];
+  return forms[2];
+}
+function esc(s){
+  return String(s).replace(/[&<>"']/g, function(ch){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch];
+  });
+}
+function inline(s){
+  return esc(s)
+    .replace(/\*\*([^*]+?)\*\*/g, "<b>$1</b>")
+    .replace(/`([^`]+?)`/g, '<code class="ic">$1</code>');
+}
+function hlPy(src){
+  return esc(src).replace(
+    /(#.*$)|(&quot;(?:[^&\\]|\\.)*?&quot;|&#39;(?:[^&\\]|\\.)*?&#39;)|\b(from|import|def|return|if|elif|else|for|while|in|and|or|not|True|False|pass|break|continue|try|except|with|as|lambda|global|None)\b|\b(\d+(?:\.\d+)?)\b|([A-Za-z_][A-Za-z0-9_]*)(?=\s*\()/gm,
+    function(m, com, str, kw, num, fn){
+      if(com) return '<span class="tk-c">' + com + '</span>';
+      if(str) return '<span class="tk-s">' + str + '</span>';
+      if(kw)  return '<span class="tk-k">' + kw + '</span>';
+      if(num) return '<span class="tk-n">' + num + '</span>';
+      if(fn)  return '<span class="tk-f">' + fn + '</span>';
+      return m;
+    });
+}
+function codeWindow(src, file){
+  return '<div class="code-window"><div class="code-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="file">' + (file || "program.py") + '</span></div><pre class="code">' + hlPy(src) + '</pre></div>';
+}
+function viewedCount(){
+  return Object.keys(state.viewed).filter(function(k){ return SLIDES[Number(k)]; }).length;
+}
+function doneTasksCount(){
+  return TASKS.filter(function(t){ return (state.codes[t.id] || "").trim(); }).length;
+}
+function hintsUsedCount(){
+  return TASKS.filter(function(t){ return state.hintUsed[t.id]; }).length;
+}
+function markSlideViewed(i){
+  if(!state.viewed[i]){
+    state.viewed[i] = true;
+    persist();
+  }
+}
+
+/* ================= RENDER ================= */
+var app = document.getElementById("app");
+
+function blockHTML(b){
+  if(b.k === "p") return '<p class="s-p">' + inline(b.v) + '</p>';
+  if(b.k === "ul"){
+    return '<ul class="s-ul">' + b.v.map(function(item){
+      if(typeof item === "string") return '<li><span class="li-tx">' + inline(item) + '</span></li>';
+      return '<li><span class="li-ic" aria-hidden="true">' + item.i + '</span><span class="li-tx">' + inline(item.t) + '</span></li>';
+    }).join("") + '</ul>';
+  }
+  if(b.k === "call") return '<div class="call ' + b.tone + '"><span class="call-ic" aria-hidden="true">' + b.icon + '</span><div><p>' + inline(b.v) + '</p></div></div>';
+  if(b.k === "key") return '<div class="keycard"><p class="key-title">✅ Главное</p><ul>' + b.v.map(function(x){ return "<li>" + inline(x) + "</li>"; }).join("") + '</ul></div>';
+  if(b.k === "code") return codeWindow(b.v, b.file);
+  if(b.k === "screen") return '<div class="screen"><span class="screen-label">На экране</span><pre>' + esc(b.v) + '</pre></div>';
+  if(b.k === "table"){
+    return '<div class="tbl-wrap"><table><thead><tr>' +
+      b.head.map(function(h){ return "<th>" + inline(h) + "</th>"; }).join("") +
+      '</tr></thead><tbody>' +
+      b.rows.map(function(r){
+        return "<tr>" + r.map(function(c){ return "<td>" + inline(c).replace(/\n/g, "<br>") + "</td>"; }).join("") + "</tr>";
+      }).join("") + '</tbody></table></div>';
+  }
+  return "";
+}
+function renderStart(){
+  var e = state.startErrors || {};
+  var st = state.student;
+  return '<div class="container"><div class="start-card">' +
+    '<span class="eyebrow">Python · Теоретический блок ' + META.num + '</span>' +
+    '<h1>' + META.topic + '</h1>' +
+    '<p class="author">Автор урока: ' + META.author + '</p>' +
+    '<ul class="start-list"><li>Теория: 5 слайдов о массивах и списках.</li><li>Тест: 10 вопросов по теме.</li><li>Практика: 3 задачи с полем для кода и подсказками.</li><li>В конце — сводка «Итоги» и отчёт для сохранения в PDF.</li></ul>' +
+    '<form id="startForm" novalidate>' +
+      '<div class="field"><label for="fLast">Фамилия</label><input id="fLast" name="last" autocomplete="family-name" value="' + esc(st.last) + '" class="' + (e.last ? "bad" : "") + '" placeholder="Иванов">' + (e.last ? '<p class="err">' + e.last + '</p>' : '') + '</div>' +
+      '<div class="field"><label for="fFirst">Имя</label><input id="fFirst" name="first" autocomplete="given-name" value="' + esc(st.first) + '" class="' + (e.first ? "bad" : "") + '" placeholder="Иван">' + (e.first ? '<p class="err">' + e.first + '</p>' : '') + '</div>' +
+      '<div class="field"><label for="fCls">Класс</label><input id="fCls" name="cls" value="' + esc(st.cls) + '" class="' + (e.cls ? "bad" : "") + '" placeholder="9А">' + (e.cls ? '<p class="err">' + e.cls + '</p>' : '') + '</div>' +
+      '<button class="btn btn-primary" type="submit">Начать урок</button>' +
+    '</form></div></div>';
+}
+function renderTheory(){
+  var i = state.slide, s = SLIDES[i], n = SLIDES.length;
+  var last = i === n - 1;
+  return '<div class="container"><div class="slide-card">' +
+    '<div class="slide-top"><span>Слайд ' + (i + 1) + ' из ' + n + '</span><span>' + META.topic + '</span></div>' +
+    '<div class="slide-bar" aria-hidden="true"><i style="width:' + Math.round((i + 1) / n * 100) + '%"></i></div>' +
+    '<h2>' + s.t + '</h2>' +
+    s.b.map(blockHTML).join("") +
+    '<div class="slide-nav no-print">' +
+      '<button class="btn-small" type="button" data-act="slide-prev"' + (i === 0 ? ' disabled' : '') + '>← Назад</button>' +
+      (last
+        ? '<button class="btn btn-primary" type="button" data-tab="test">Перейти к тесту →</button>'
+        : '<button class="btn-small" type="button" data-act="slide-next">Далее →</button>') +
+    '</div></div></div>';
+}
+function renderTest(){
+  if(state.testResult){
+    var r = state.testResult;
+    var review = QUESTIONS.map(function(q, i){
+      var ua = r.answers[i], ok = ua === q.c;
+      return '<div class="rev ' + (ok ? "ok" : "bad") + '"><b>' + (i + 1) + '. ' + esc(q.q) + '</b>' +
+        '<p class="who">Ваш ответ: <b>' + (ua == null ? "—" : esc(q.opts[ua])) + '</b>' +
+        (ok ? "" : ' · Правильный ответ: <b>' + esc(q.opts[q.c]) + '</b>') + '</p></div>';
+    }).join("");
+    return '<div class="container"><div class="result-card">' +
+      '<span class="eyebrow">Тест по теме «' + META.topic + '»</span>' +
+      '<div class="score-big">' + r.score + ' / ' + QUESTIONS.length + '</div>' +
+      '<p class="mark-line">Оценка: ' + markOf(r.score) + '</p>' +
+      '<p class="verdict">' + (r.score >= 9 ? "Отлично! Массивы усвоены." : r.score >= 7 ? "Хорошо! Ещё немного практики — и материал закрепится." : r.score >= 5 ? "Удовлетворительно. Повторите слайды теории." : "Стоит повторить теорию и пройти тест ещё раз.") + '</p>' +
+      '<div class="result-actions"><button class="btn-small" type="button" data-act="test-retake">Пройти заново</button>' +
+      '<button class="btn btn-primary" type="button" data-tab="practice">К практике →</button></div>' +
+      '<div class="review"><h3>Разбор ответов</h3>' + review + '</div></div></div>';
+  }
+  var qs = QUESTIONS.map(function(q, i){
+    var inv = state.testInvalid.indexOf(i) !== -1;
+    var opts = q.opts.map(function(o, oi){
+      var ch = state.testAnswers[i] === oi;
+      return '<label class="opt"><input type="radio" name="q' + i + '" value="' + oi + '"' + (ch ? ' checked' : '') + '><span>' + esc(o) + '</span></label>';
+    }).join("");
+    return '<div class="q' + (inv ? ' invalid' : '') + '" role="radiogroup" aria-labelledby="qt' + i + '"><p class="q-title" id="qt' + i + '">' + (i + 1) + '. ' + esc(q.q) + '</p>' + opts + '</div>';
+  }).join("");
+  return '<div class="container"><p class="section-note">Выберите один вариант ответа в каждом вопросе и нажмите «Завершить тест». Всего вопросов: ' + QUESTIONS.length + '.</p>' +
+    (state.testError ? '<p class="test-err" role="alert">' + state.testError + '</p>' : '') +
+    qs +
+    '<div class="no-print" style="margin:6px 0 40px"><button class="btn btn-primary" type="button" data-act="test-submit">Завершить тест</button></div></div>';
+}
+function renderPractice(){
+  var cards = TASKS.map(function(t){
+    var shown = !!state.hintShown[t.id];
+    return '<div class="task-card"><div class="task-head"><span class="task-num">Задача ' + t.id + '</span><h3>' + esc(t.title) + '</h3></div>' +
+      '<p class="task-text">' + esc(t.text) + '</p>' +
+      '<div class="screen"><span class="screen-label">На экране</span><pre>' + esc(t.screen) + '</pre></div>' +
+      '<p class="label-sm" id="codeLbl' + t.id + '">Мой код</p>' +
+      '<textarea class="code-input" data-code="' + t.id + '" rows="8" spellcheck="false" aria-labelledby="codeLbl' + t.id + '" placeholder="Введите здесь свой код на Python">' + esc(state.codes[t.id]) + '</textarea>' +
+      '<div class="task-actions no-print"><button class="btn-small" type="button" data-act="toggle-hint" data-id="' + t.id + '">' + (shown ? "Скрыть подсказку" : "💡 Подсказка") + '</button></div>' +
+      (shown
+        ? '<div class="hint"><span class="hint-ic" aria-hidden="true">💡</span><div><p><b>Подсказка.</b> ' + inline(t.hint.text) + '</p>' + codeWindow(t.hint.code, "hint.py") + '</div></div>'
+        : "") +
+      '</div>';
+  }).join("");
+  return '<div class="container"><p class="section-note">Введите свой код в поле «Мой код». Если застряли — нажмите «Подсказку»: она покажет идею или ключевой кусочек кода, но не всё решение. Эталонные решения откроются только в отчёте после завершения урока. В примерах вывода значения могут быть округлены для наглядности.</p>' + cards + '</div>';
+}
+function sumRow(icon, label, value, pct, note){
+  return '<div class="sum-row"><span class="sum-ic" aria-hidden="true">' + icon + '</span><div class="sum-body">' +
+    '<div class="sum-top"><b>' + label + '</b><span>' + value + '</span></div>' +
+    '<div class="sum-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pct + '" aria-label="' + label + '"><i style="width:' + pct + '%"></i></div>' +
+    (note ? '<p class="sum-note">' + note + '</p>' : '') +
+    '</div></div>';
+}
+function renderSummary(){
+  var viewed = viewedCount();
+  var res = state.testResult;
+  var done = doneTasksCount();
+  var hints = hintsUsedCount();
+  var warns = [];
+  if(viewed < SLIDES.length) warns.push("Просмотрены не все слайды теории: " + viewed + " из " + SLIDES.length + ".");
+  if(!res) warns.push("Тест ещё не пройден.");
+  if(done === 0) warns.push("Пока нет кода ни к одной задаче практики.");
+  else if(done < TASKS.length) warns.push("Код написан не ко всем задачам: " + done + " из " + TASKS.length + ".");
+  return '<div class="container">' +
+    '<p class="section-note">Здесь собрана сводка вашей работы за урок. Проверьте её и нажмите «Завершить урок» — после этого откроется отчёт с эталонными решениями, который можно сохранить в PDF.</p>' +
+    '<div class="sum-card">' +
+      sumRow("📚", "Теория", "Слайды: " + viewed + " из " + SLIDES.length, Math.round(viewed / SLIDES.length * 100),
+        viewed === SLIDES.length ? "Все слайды просмотрены" : "Вернитесь во вкладку «Теория», чтобы досмотреть слайды.") +
+      sumRow("🧠", "Тест", res ? ("Результат: " + res.score + " из " + QUESTIONS.length + " · оценка " + markOf(res.score)) : "Ещё не пройден",
+        res ? Math.round(res.score / QUESTIONS.length * 100) : 0,
+        res ? "Разбор ответов доступен во вкладке «Тест»." : "Тест доступен во вкладке «Тест».") +
+      sumRow("💻", "Практика", "Код написан к " + done + " из " + TASKS.length + " задач", Math.round(done / TASKS.length * 100),
+        "Подсказки использованы: " + hints + " из " + TASKS.length + ".") +
+    '</div>' +
+    (warns.length
+      ? '<div class="call warn" style="margin-top:16px"><span class="call-ic" aria-hidden="true">⚠️</span><div><p><b>Обратите внимание:</b></p><ul>' + warns.map(function(w){ return "<li>" + w + "</li>"; }).join("") + '</ul></div></div>'
+      : '<div class="call ok" style="margin-top:16px"><span class="call-ic" aria-hidden="true">🎉</span><div><p>Все этапы урока выполнены — можно завершать урок и сохранять отчёт!</p></div></div>') +
+    '<div class="sum-actions"><button class="btn btn-primary" type="button" data-act="finish">Завершить урок и открыть отчёт</button></div>' +
+    '<p class="hint-print" style="margin:10px 0 40px">В отчёт попадут: ваши данные, количество просмотренных слайдов, результат теста, ваш код задач и эталонные решения.</p>' +
+  '</div>';
+}
+function renderReport(){
+  var st = state.student;
+  var date = new Date().toLocaleDateString("ru-RU");
+  var res = state.testResult;
+  var viewed = viewedCount();
+  var done = doneTasksCount();
+  var tasks = TASKS.map(function(t){
+    var code = (state.codes[t.id] || "").trim();
+    var used = !!state.hintUsed[t.id];
+    return '<h3>Задача ' + t.id + '. ' + esc(t.title) + '</h3>' +
+      '<p class="rep-note">' + esc(t.text) + '</p>' +
+      '<p class="label-sm">Мой код</p><pre>' + (code ? esc(state.codes[t.id]) : "— код не предоставлен —") + '</pre>' +
+      '<p class="rep-note">Использована подсказка: <b>' + (used ? "да" : "нет") + '</b></p>' +
+      '<p class="label-sm">Эталон решения</p><pre>' + esc(t.solution) + '</pre>';
+  }).join("");
+  return '<div class="container"><div class="report" id="reportSheet">' +
+    '<h2>Отчёт по уроку</h2>' +
+    '<div class="meta">' +
+      '<span><b>Тема:</b> ' + META.topic + ' (теоретический блок ' + META.num + ')</span>' +
+      '<span><b>Автор урока:</b> ' + META.author + '</span>' +
+      '<span><b>Ученик:</b> ' + esc(st.last) + ' ' + esc(st.first) + '</span>' +
+      '<span><b>Класс:</b> ' + esc(st.cls) + '</span>' +
+      '<span><b>Дата:</b> ' + date + '</span>' +
+      '<span><b>Теория:</b> просмотрено ' + viewed + ' из ' + SLIDES.length + ' слайдов</span>' +
+      '<span><b>Практика:</b> код написан к ' + done + ' из ' + TASKS.length + ' задач</span>' +
+    '</div>' +
+    '<h3>1. Тест</h3>' +
+    (res
+      ? '<p class="rep-note">Результат: ' + res.score + ' из ' + QUESTIONS.length + '. Оценка: ' + markOf(res.score) + '.</p>'
+      : '<p class="rep-note">Тест не пройден.</p>') +
+    '<h3>2. Практика</h3>' + tasks +
+    '</div>' +
+    '<div class="report-actions no-print"><button class="btn btn-primary" type="button" data-act="print">Сохранить отчёт в PDF</button></div>' +
+    '<p class="hint-print no-print">Откроется окно печати — выберите «Сохранить как PDF». В отчёт попадут ваши данные, результат теста, ваш код задач и эталонные решения.</p>' +
+    '</div>';
+}
+function renderLesson(){
+  var st = state.student;
+  var tabs = [
+    ["theory", "Теория"],
+    ["test", "Тест"],
+    ["practice", "Практика"],
+    ["report", state.reportOpen ? "Отчёт" : "Итоги"]
+  ];
+  var body = state.tab === "theory" ? renderTheory()
+    : state.tab === "test" ? renderTest()
+    : state.tab === "practice" ? renderPractice()
+    : (state.reportOpen ? renderReport() : renderSummary());
+  return '<div class="container no-print"><div class="lesson-head">' +
+    '<h1>' + META.topic + ' · Python</h1>' +
+    '<button class="chip-student" type="button" data-act="edit-student" title="Изменить данные ученика">' + esc(st.last) + ' ' + esc(st.first) + ' · ' + esc(st.cls) + ' ✎</button>' +
+    '</div>' +
+    '<div class="tabs" role="tablist" aria-label="Разделы урока">' +
+    tabs.map(function(t){
+      return '<button class="tab" role="tab" type="button" aria-selected="' + (state.tab === t[0]) + '" data-tab="' + t[0] + '">' + t[1] + '</button>';
+    }).join("") +
+    '</div></div>' + body;
+}
+function render(){
+  app.innerHTML = state.screen === "start" ? renderStart() : renderLesson();
+}
+
+/* ================= HANDLERS ================= */
+var toastEl = null, toastTimer = null;
+function showToast(msg){
+  toastEl.textContent = msg;
+  toastEl.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ toastEl.classList.remove("show"); }, 2600);
+}
+function onStartSubmit(e){
+  e.preventDefault();
+  var f = e.target;
+  var last = f.last.value.trim(), first = f.first.value.trim(), cls = f.cls.value.trim();
+  var errs = {};
+  if(last.length < 2) errs.last = "Введите фамилию (минимум 2 символа).";
+  if(first.length < 2) errs.first = "Введите имя (минимум 2 символа).";
+  if(!cls) errs.cls = "Введите класс, например 9А.";
+  state.student = {last:last, first:first, cls:cls};
+  if(Object.keys(errs).length){
+    state.startErrors = errs;
+    render();
+    var bad = app.querySelector("input.bad");
+    if(bad) bad.focus();
+    return;
+  }
+  state.startErrors = null;
+  state.screen = "lesson";
+  state.tab = "theory";
+  state.slide = 0;
+  markSlideViewed(0);
+  setProgress(state.testResult ? (state.testResult.score >= 6 ? "done" : "progress") : "progress");
+  persist();
+  render();
+  showToast("Удачи, " + first + "! Урок начат.");
+}
+function submitTest(){
+  var unanswered = [];
+  QUESTIONS.forEach(function(q, i){
+    if(state.testAnswers[i] == null) unanswered.push(i);
+  });
+  if(unanswered.length){
+    state.testInvalid = unanswered;
+    state.testError = "Осталось без ответа: " + unanswered.length + " " + plural(unanswered.length, ["вопрос", "вопроса", "вопросов"]) + ". Ответьте на все вопросы теста.";
+    render();
+    var inv = app.querySelector(".q.invalid");
+    if(inv) inv.scrollIntoView({block:"center", behavior:"smooth"});
+    return;
+  }
+  var score = 0;
+  QUESTIONS.forEach(function(q, i){ if(state.testAnswers[i] === q.c) score++; });
+  state.testResult = {score:score, answers:Object.assign({}, state.testAnswers)};
+  state.testError = "";
+  state.testInvalid = [];
+  setProgress(score >= 6 ? "done" : "progress");
+  persist();
+  render();
+  window.scrollTo(0, 0);
+  showToast("Тест завершён: " + score + " из " + QUESTIONS.length + ".");
+}
+function scrollToSlide(){
+  var card = app.querySelector(".slide-card");
+  if(!card) return;
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var y = card.getBoundingClientRect().top + window.pageYOffset - 10;
+  window.scrollTo({top: y < 0 ? 0 : y, behavior: reduce ? "auto" : "smooth"});
+}
+function onAppClick(e){
+  var tabBtn = e.target.closest("[data-tab]");
+  if(tabBtn){
+    state.tab = tabBtn.dataset.tab;
+    if(state.tab === "theory") markSlideViewed(state.slide);
+    render();
+    window.scrollTo(0, 0);
+    return;
+  }
+  var btn = e.target.closest("[data-act]");
+  if(!btn) return;
+  var act = btn.dataset.act;
+  if(act === "slide-prev"){
+    state.slide = Math.max(0, state.slide - 1);
+    markSlideViewed(state.slide);
+    render();
+    scrollToSlide();
+  }
+  else if(act === "slide-next"){
+    state.slide = Math.min(SLIDES.length - 1, state.slide + 1);
+    markSlideViewed(state.slide);
+    render();
+    scrollToSlide();
+  }
+  else if(act === "test-submit"){ submitTest(); }
+  else if(act === "test-retake"){
+    state.testAnswers = {}; state.testResult = null; state.testError = ""; state.testInvalid = [];
+    persist(); render(); window.scrollTo(0, 0);
+  }
+  else if(act === "toggle-hint"){
+    var id = Number(btn.dataset.id);
+    var now = !state.hintShown[id];
+    state.hintShown[id] = now;
+    if(now) state.hintUsed[id] = true;
+    persist();
+    render();
+  }
+  else if(act === "finish"){
+    state.reportOpen = true;
+    state.tab = "report";
+    persist();
+    render();
+    window.scrollTo(0, 0);
+    showToast("Урок завершён! Отчёт готов к сохранению в PDF.");
+  }
+  else if(act === "edit-student"){ state.screen = "start"; render(); window.scrollTo(0, 0); }
+  else if(act === "print"){ window.print(); }
+}
+function onAppInput(e){
+  var ta = e.target.closest("textarea[data-code]");
+  if(ta){
+    state.codes[Number(ta.dataset.code)] = ta.value;
+    persist();
+  }
+}
+function onAppChange(e){
+  var r = e.target.closest('input[type="radio"][name^="q"]');
+  if(r){
+    var qi = Number(r.name.slice(1));
+    state.testAnswers[qi] = Number(r.value);
+    var box = r.closest(".q");
+    if(box) box.classList.remove("invalid");
+    state.testInvalid = state.testInvalid.filter(function(i){ return i !== qi; });
+    if(state.testError){
+      var left = QUESTIONS.filter(function(q, i){ return state.testAnswers[i] == null; }).length;
+      var errEl = app.querySelector(".test-err");
+      if(left === 0){ if(errEl) errEl.remove(); state.testError = ""; }
+      else if(errEl){ errEl.textContent = "Осталось без ответа: " + left + " " + plural(left, ["вопрос", "вопроса", "вопросов"]) + ". Ответьте на все вопросы теста."; }
+    }
+    persist();
+  }
+}
+
+/* ================= INIT ================= */
+function init(){
+  loadSaved();
+  if(state.screen === "lesson" && state.tab === "theory") markSlideViewed(state.slide);
+  toastEl = document.createElement("div");
+  toastEl.className = "toast";
+  toastEl.setAttribute("role", "status");
+  toastEl.setAttribute("aria-live", "polite");
+  document.body.appendChild(toastEl);
+  render();
+  app.addEventListener("click", onAppClick);
+  app.addEventListener("input", onAppInput);
+  app.addEventListener("change", onAppChange);
+  app.addEventListener("submit", onStartSubmit);
+}
+try{
+  init();
+}catch(err){
+  app.innerHTML = '<div class="fatal">Ошибка при запуске: ' + err.message + '</div>';
+}
+</script>
+</body>
+</html>
