@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Python‑тренажёр — от основ к продвинутым задачам</title>
+<title>Python‑тренажер — от основ к продвинутым задачам</title>
 <style>
 /* ========== CSS: переменные темы (спокойный Apple-like) ========== */
 :root{
@@ -29,9 +29,10 @@ body{
   margin:0;background:var(--bg);color:var(--text);
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   line-height:1.5;-webkit-font-smoothing:antialiased;
-  overflow-x:clip; /* блоки не вылезают за экран и не прижимаются впритык */
+  overflow-x:clip; /* страховка от горизонтального вылезания */
 }
-.container{width:100%;max-width:1080px;margin:0 auto;padding:0 20px;min-width:0}
+/* ВАЖНО: горизонтальные отступы контейнера не должны переопределяться секциями */
+.container{width:100%;max-width:1080px;margin:0 auto;padding-left:20px;padding-right:20px;min-width:0}
 :focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:8px}
 .skip{position:absolute;left:-9999px;top:0;z-index:200;background:#fff;color:var(--accent);padding:12px 18px;border-radius:0 0 12px 0;font-weight:600;text-decoration:none}
 .skip:focus{left:0}
@@ -46,8 +47,8 @@ body{
 .nav a{display:inline-flex;align-items:center;min-height:44px;padding:0 12px;border-radius:10px;color:var(--muted);text-decoration:none;font-size:15px;white-space:nowrap}
 .nav a:hover{color:var(--text);background:rgba(0,0,0,.05)}
 
-/* ========== Layout: герой ========== */
-.hero{padding:52px 0 6px;text-align:center}
+/* ========== Layout: герой (отступы только сверху/снизу!) ========== */
+.hero{padding-top:52px;padding-bottom:6px;text-align:center}
 .eyebrow{color:var(--accent);font-weight:700;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase}
 .hero h1{font-size:clamp(30px,6vw,56px);font-weight:800;letter-spacing:-.02em;line-height:1.08;margin:12px 0 14px;overflow-wrap:break-word}
 .lead{max-width:660px;margin:0 auto;color:var(--muted);font-size:clamp(15.5px,2.4vw,19px)}
@@ -69,13 +70,13 @@ pre.code{margin:0;padding:18px 18px 22px;color:#f5f5f7;font-family:var(--mono);f
 .tok-c{color:#83838a}.tok-k{color:#ff7ab2}.tok-f{color:#6bdfff}.tok-s{color:#ffa740}.tok-n{color:#d9bf69}
 
 /* ========== Layout: статистика ========== */
-.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:44px}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:44px;min-width:0}
 .stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:18px 14px;text-align:center;box-shadow:var(--shadow);min-width:0}
 .stat b{display:block;font-size:30px;letter-spacing:-.02em}
 .stat span{color:var(--muted);font-size:13.5px}
 
-/* ========== Layout: секции и сетки ========== */
-.section{padding:56px 0 6px;scroll-margin-top:70px}
+/* ========== Layout: секции (отступы только сверху/снизу!) ========== */
+.section{padding-top:56px;padding-bottom:6px;scroll-margin-top:70px}
 .section-head{margin-bottom:22px}
 .section h2{font-size:clamp(24px,4vw,36px);font-weight:800;letter-spacing:-.02em;margin:6px 0 8px;overflow-wrap:break-word}
 .sub{color:var(--muted);max-width:660px;margin:0}
@@ -100,7 +101,7 @@ pre.code{margin:0;padding:18px 18px 22px;color:#f5f5f7;font-family:var(--mono);f
 
 /* ========== Компонент: панель прогресса ========== */
 .progress-panel{margin-top:18px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);display:grid;gap:14px;min-width:0}
-.prow{display:grid;gap:6px}
+.prow{display:grid;gap:6px;min-width:0}
 .plabel{display:flex;justify-content:space-between;gap:10px;font-size:14px;color:var(--muted)}
 .plabel b{color:var(--text)}
 .pbar{height:8px;background:#e8e8ed;border-radius:999px;overflow:hidden}
@@ -119,9 +120,10 @@ pre.code{margin:0;padding:18px 18px 22px;color:#f5f5f7;font-family:var(--mono);f
 .why p{margin:0;color:var(--muted);font-size:14px}
 
 /* ========== Компонент: шаги ========== */
-.steps{display:grid;gap:14px}
+.steps{display:grid;gap:14px;min-width:0}
 .step{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;display:flex;gap:16px;align-items:flex-start;box-shadow:var(--shadow);min-width:0}
 .step .n{font-family:var(--mono);font-size:26px;font-weight:700;color:var(--accent);line-height:1.1}
+.step div{min-width:0}
 .step h3{margin:0 0 6px;font-size:17px}
 .step p{margin:0;color:var(--muted);font-size:14.5px}
 
@@ -143,7 +145,7 @@ pre.code{margin:0;padding:18px 18px 22px;color:#f5f5f7;font-family:var(--mono);f
   .grid.cols-4{grid-template-columns:repeat(4,1fr)}
   .steps{grid-template-columns:repeat(3,1fr)}
 }
-/* мобильные доводки: больше воздуха, крупнее_TOUCH-зоны, компактнее код */
+/* мобильные доводки */
 @media (max-width:640px){
   .hero{padding-top:36px}
   .section{padding-top:44px}
@@ -154,10 +156,9 @@ pre.code{margin:0;padding:18px 18px 22px;color:#f5f5f7;font-family:var(--mono);f
   .stat{padding:14px 10px}
   .stat b{font-size:26px}
   .footer-row{flex-direction:column;gap:6px}
-  .slide-nav,.hero-actions{flex-direction:column}
+  .hero-actions{flex-direction:column}
   .hero-actions .btn{width:100%}
   .progress-panel{padding:16px}
-  .report,.slide-card{padding:18px}
 }
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
@@ -200,7 +201,7 @@ const WHY = [
    svg:'<path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/><path d="M10 12h5M10 16h5"/>'},
   {t:"Универсальность", d:"ОГЭ и ЕГЭ, олимпиады, анализ данных, веб, игры и автоматизация — один язык на все задачи.",
    svg:'<rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/>'},
-  {t:"Польза для экзаменов", d:"Python — один из языков ОГЭ и ЕГЭ по информатике: практика в тренажёре работает на формат экзамена.",
+  {t:"Польза для экзаменов", d:"Python — один из языков ОГЭ и ЕГЭ по информатике: практика в тренажере работает на формат экзамена.",
    svg:'<circle cx="12" cy="12" r="8.5"/><path d="M8.5 12.3l2.4 2.4 4.6-5.2"/>'},
   {t:"Огромная экосистема", d:"Тысячи библиотек, задач и сообщество любого уровня: пример и подсказка всегда найдутся.",
    svg:'<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12L4 7.5M12 12v9"/>'}
@@ -310,27 +311,27 @@ function render(){
   const totalTasks = PRACTICE.reduce(function(s,p){ return s + p.count; }, 0);
   app.innerHTML =
   '<header class="site-header"><div class="container header-row">' +
-    '<a class="logo" href="#top" aria-label="На главную"><span class="logo-badge">Py</span><span>Тренажёр Python</span></a>' +
+    '<a class="logo" href="#top" aria-label="На главную"><span class="logo-badge">Py</span><span>Тренажер Python</span></a>' +
     '<nav class="nav" aria-label="Разделы сайта"><a href="#theory">Теория</a><a href="#practice">Практика</a><a href="#why">Почему Python</a><a href="#how">Как заниматься</a></nav>' +
   "</div></header>" +
   '<main id="main">' +
     '<section class="hero container" id="top" aria-labelledby="hero-title">' +
-      '<span class="eyebrow">Тренажёр · 9–11 классы</span>' +
+      '<span class="eyebrow">Масликов Михаил Михайлович · учитель информатики</span>' +
       '<h1 id="hero-title">Python: от первых строк до продвинутых задач</h1>' +
-      '<p class="lead">Python — язык программирования с простым и понятным синтаксисом. На нём пишут веб‑сервисы, анализируют данные, создают игры и автоматизацию; его выбирают на ОГЭ, ЕГЭ и олимпиадах. Этот тренажёр проведёт вас от основ до 186 задач продвинутого уровня.</p>' +
+      '<p class="lead">Python — язык программирования с простым и понятным синтаксисом. На нём пишут веб‑сервисы, анализируют данные, создают игры и автоматизацию; его выбирают на ОГЭ, ЕГЭ и олимпиадах. Этот тренажер проведёт вас от основ до 186 задач продвинутого уровня.</p>' +
       '<div class="hero-actions"><a class="btn btn-primary" href="#theory">Начать обучение</a><a class="btn btn-ghost" href="#practice">Каталог практики</a></div>' +
       '<div class="code-window" aria-hidden="true"><div class="code-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="file">hello.py</span></div>' +
       '<pre class="code">' + CODE_LINES.join("\n") + '</pre></div>' +
       '<div class="stats" role="list">' +
         '<div class="stat" role="listitem"><b>' + THEORY.length + "</b><span>блоков теории</span></div>" +
         '<div class="stat" role="listitem"><b>' + PRACTICE.length + "</b><span>разделов практики</span></div>" +
-        '<div class="stat" role="listitem"><b>' + totalTasks + "</b><span>задач в тренажёре</span></div>" +
+        '<div class="stat" role="listitem"><b>' + totalTasks + "</b><span>задач в тренажере</span></div>" +
         '<div class="stat" role="listitem"><b>9–11</b><span>классы</span></div>' +
       "</div>" +
     "</section>" +
     '<section class="section container" id="progress" aria-labelledby="progress-title">' +
       '<div class="section-head"><span class="eyebrow">Продолжить обучение</span><h2 id="progress-title">Ваш прогресс</h2>' +
-      '<p class="sub">Тренажёр запоминает, какие разделы вы открыли и прошли, — прямо в этом браузере.</p></div>' +
+      '<p class="sub">Тренажер запоминает, какие разделы вы открыли и прошли, — прямо в этом браузере.</p></div>' +
       progressPanelHTML() +
     "</section>" +
     '<section class="section container" id="theory" aria-labelledby="theory-title">' +
@@ -349,13 +350,13 @@ function render(){
       '<div class="grid cols-4">' + WHY.map(whyCard).join("") + "</div>" +
     "</section>" +
     '<section class="section container" id="how" aria-labelledby="how-title">' +
-      '<div class="section-head"><span class="eyebrow">Маршрут</span><h2 id="how-title">Как заниматься в тренажёре</h2>' +
+      '<div class="section-head"><span class="eyebrow">Маршрут</span><h2 id="how-title">Как заниматься в тренажере</h2>' +
       '<p class="sub">Три шага одного цикла обучения. Повторяйте его для каждого раздела — и результат придёт.</p></div>' +
       '<div class="steps">' + STEPS.map(function(s,i){ return '<div class="step"><span class="n" aria-hidden="true">0' + (i+1) + '</span><div><h3>' + s.t + "</h3><p>" + s.d + "</p></div></div>"; }).join("") + "</div>" +
     "</section>" +
   "</main>" +
   '<footer class="site-footer"><div class="container footer-row">' +
-    "<span>Учебный тренажёр по Python · 9–11 классы · базовый и продвинутый уровни</span>" +
+    "<span>Учебный тренажер по Python · 9–11 классы · базовый и продвинутый уровни</span>" +
     "<span>Практика — по книге Б. Стивенсона «Python. Сборник упражнений» (186 задач)</span>" +
   "</div></footer>";
 }
