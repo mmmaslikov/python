@@ -15,8 +15,6 @@
   --accent-dark:#005bb9;
   --danger:#c22a1e;
   --ok:#1c7c3c;
-  --code-bg:#1d1d1f;
-  --code-tx:#f5f5f7;
   --radius:18px;
   --radius-sm:12px;
   --shadow:0 8px 24px rgba(0,0,0,.06);
@@ -30,11 +28,13 @@ body{
   margin:0;background:var(--bg);color:var(--text);
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   line-height:1.5;-webkit-font-smoothing:antialiased;
+  overflow-x:clip; /* страховка от горизонтального вылезания блоков */
 }
-.container{width:100%;max-width:960px;margin:0 auto;padding:0 20px}
+.container{width:100%;max-width:960px;margin:0 auto;padding:0 20px;min-width:0}
 :focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:8px}
 .skip{position:absolute;left:-9999px;top:0;z-index:200;background:#fff;color:var(--accent);padding:12px 18px;border-radius:0 0 12px 0;font-weight:600;text-decoration:none}
 .skip:focus{left:0}
+b{font-weight:700}
 
 /* ========== Компоненты: кнопки ========== */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 24px;border-radius:999px;border:none;font-size:16px;font-weight:600;cursor:pointer;text-decoration:none;transition:background .15s ease,transform .15s ease}
@@ -73,19 +73,44 @@ body{
 .section-note{color:var(--muted);font-size:14.5px;margin:14px 0 18px;max-width:700px}
 
 /* ========== Теория: слайды ========== */
-.slide-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;margin-top:16px}
+.slide-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;margin-top:16px;min-width:0}
 .slide-top{display:flex;justify-content:space-between;align-items:center;gap:10px;color:var(--muted);font-size:13.5px;margin-bottom:8px}
 .slide-bar{height:6px;background:#e8e8ed;border-radius:999px;overflow:hidden;margin-bottom:18px}
 .slide-bar i{display:block;height:100%;background:linear-gradient(90deg,#37a0ff,var(--accent));border-radius:999px;transition:width .3s ease}
 .slide-card h2{margin:0 0 14px;font-size:clamp(21px,3.4vw,26px);letter-spacing:-.01em}
-.s-p{margin:0 0 12px;font-size:15.5px}
-.s-ul{margin:0 0 12px;padding-left:20px;display:grid;gap:6px;font-size:15px}
-pre.code{background:var(--code-bg);color:var(--code-tx);border-radius:12px;padding:14px 16px;font-family:var(--mono);font-size:13.5px;line-height:1.65;overflow-x:auto;margin:0 0 12px;white-space:pre}
-.screen{background:rgba(52,199,89,.08);border:1px solid rgba(52,199,89,.35);border-radius:12px;padding:12px 14px;margin:0 0 12px}
+.s-p{margin:0 0 12px;font-size:15.5px;line-height:1.6}
+.s-p b,.s-ul b,.call b,.keycard b{font-weight:700}
+.ic{font-family:var(--mono);font-size:.88em;background:rgba(0,113,227,.09);color:var(--accent-dark);border-radius:6px;padding:1px 6px;white-space:nowrap}
+/* списки с иконками */
+.s-ul{list-style:none;padding:0;display:grid;gap:10px;margin:0 0 14px}
+.s-ul li{display:flex;gap:10px;align-items:flex-start;font-size:15px;line-height:1.55}
+.li-ic{flex:none;width:28px;height:28px;border-radius:9px;background:rgba(0,113,227,.1);display:grid;place-items:center;font-size:14px}
+.li-tx{min-width:0}
+/* плашки-выноски с эмодзи */
+.call{display:flex;gap:12px;align-items:flex-start;border-radius:14px;padding:14px 16px;margin:0 0 14px;border:1px solid}
+.call p{margin:0;font-size:14.5px;line-height:1.6;min-width:0}
+.call-ic{font-size:20px;line-height:1.4;flex:none}
+.call.info{background:rgba(0,113,227,.07);border-color:rgba(0,113,227,.25)}
+.call.warn{background:rgba(255,159,10,.1);border-color:rgba(255,159,10,.35)}
+.call.ok{background:rgba(52,199,89,.1);border-color:rgba(52,199,89,.35)}
+/* карточка «Главное» */
+.keycard{background:var(--surface);border:1px solid var(--border);border-left:4px solid #34c759;border-radius:14px;padding:14px 16px;margin:0 0 14px;box-shadow:var(--shadow)}
+.key-title{margin:0 0 8px;font-weight:800;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--ok)}
+.keycard ul{margin:0;padding-left:20px;display:grid;gap:6px;font-size:14.5px}
+/* окно кода в стиле главной страницы */
+.code-window{background:#161617;border-radius:14px;overflow:hidden;margin:0 0 14px;box-shadow:var(--shadow);min-width:0}
+.code-bar{display:flex;align-items:center;gap:7px;padding:10px 14px;background:#1d1d1f}
+.dot{width:11px;height:11px;border-radius:50%;flex:none}
+.dot.r{background:#ff5f57}.dot.y{background:#febc2e}.dot.g{background:#28c840}
+.code-bar .file{margin-left:6px;color:#98989d;font-family:var(--mono);font-size:12px}
+pre.code{margin:0;padding:16px 18px;color:#f5f5f7;font-family:var(--mono);font-size:13.5px;line-height:1.7;overflow-x:auto;white-space:pre}
+.tk-c{color:#83838a}.tk-k{color:#ff7ab2}.tk-s{color:#ffa740}.tk-n{color:#d9bf69}.tk-f{color:#6bdfff}
+/* блок «На экране» */
+.screen{background:rgba(52,199,89,.08);border:1px solid rgba(52,199,89,.35);border-radius:12px;padding:12px 14px;margin:0 0 14px;min-width:0}
 .screen-label{display:block;font-size:11.5px;font-weight:700;color:var(--ok);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em}
 .screen pre{margin:0;font-family:var(--mono);font-size:13.5px;line-height:1.6;white-space:pre-wrap;color:var(--text)}
-.note{background:rgba(0,113,227,.07);border-left:3px solid var(--accent);padding:10px 14px;border-radius:0 10px 10px 0;color:var(--muted);font-size:14px;margin:0 0 12px}
-.tbl-wrap{overflow-x:auto;margin:0 0 12px;border:1px solid var(--border);border-radius:12px}
+/* таблицы */
+.tbl-wrap{overflow-x:auto;margin:0 0 14px;border:1px solid var(--border);border-radius:12px}
 table{border-collapse:collapse;width:100%;font-size:14px;background:#fff}
 th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--border);vertical-align:top}
 th{background:#f5f5f7;font-weight:700}
@@ -93,28 +118,29 @@ tr:last-child td{border-bottom:none}
 .slide-nav{display:flex;justify-content:space-between;gap:10px;margin-top:18px;flex-wrap:wrap}
 
 /* ========== Тест ========== */
-fieldset.q{border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);padding:16px 16px 10px;margin:0 0 14px;box-shadow:var(--shadow)}
-fieldset.q.invalid{border-color:var(--danger);box-shadow:0 0 0 3px rgba(194,42,30,.12)}
-fieldset.q legend{padding:0 6px;font-weight:700;font-size:15.5px}
+.q{border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);padding:16px 16px 10px;margin:0 0 14px;box-shadow:var(--shadow);min-width:0;max-width:100%}
+.q.invalid{border-color:var(--danger);box-shadow:0 0 0 3px rgba(194,42,30,.12)}
+.q-title{font-weight:700;font-size:15.5px;margin:0 0 8px;overflow-wrap:break-word}
 label.opt{display:flex;gap:10px;align-items:flex-start;min-height:44px;padding:8px 10px;border-radius:10px;cursor:pointer;font-size:15px}
 label.opt:hover{background:rgba(0,0,0,.04)}
 label.opt input{width:20px;height:20px;margin-top:2px;accent-color:var(--accent);flex:none}
+label.opt span{min-width:0;overflow-wrap:break-word}
 .test-err{background:rgba(194,42,30,.08);border:1px solid rgba(194,42,30,.35);color:var(--danger);border-radius:12px;padding:10px 14px;font-size:14px;margin:0 0 14px}
-.result-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;text-align:center;margin-top:16px}
+.result-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;text-align:center;margin-top:16px;min-width:0}
 .score-big{font-size:46px;font-weight:800;letter-spacing:-.02em}
 .mark-line{font-size:17px;font-weight:700;margin:4px 0}
 .verdict{color:var(--muted);margin:0 0 18px}
 .result-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 .review{margin-top:22px;text-align:left}
 .review h3{font-size:17px;margin:0 0 10px}
-.rev{border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:10px;background:#fff;font-size:14.5px}
+.rev{border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:10px;background:#fff;font-size:14.5px;min-width:0}
 .rev.ok{border-left:4px solid #34c759}
 .rev.bad{border-left:4px solid #ff3b30}
 .rev .who{color:var(--muted);font-size:13.5px;margin:4px 0 0}
 .rev .who b{color:var(--text)}
 
 /* ========== Практика ========== */
-.task-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin-bottom:16px}
+.task-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin-bottom:16px;min-width:0}
 .task-head{display:flex;gap:10px;align-items:center;margin-bottom:8px}
 .task-num{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--accent);background:rgba(0,113,227,.1);border-radius:8px;padding:4px 9px}
 .task-head h3{margin:0;font-size:18px}
@@ -123,16 +149,23 @@ label.opt input{width:20px;height:20px;margin-top:2px;accent-color:var(--accent)
 textarea.code-input{width:100%;min-height:190px;resize:vertical;border:1px solid var(--border);border-radius:12px;padding:12px 14px;font-family:var(--mono);font-size:13.5px;line-height:1.6;background:#fff;color:var(--text)}
 textarea.code-input:focus{outline:3px solid rgba(0,113,227,.35);border-color:var(--accent)}
 .task-actions{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0 4px}
+/* подсказка */
+.hint{display:flex;gap:12px;background:rgba(255,159,10,.09);border:1px solid rgba(255,159,10,.35);border-radius:14px;padding:14px 16px;margin:12px 0 4px}
+.hint>div{min-width:0;flex:1}
+.hint-ic{font-size:20px;flex:none;line-height:1.4}
+.hint p{margin:0;font-size:14.5px;line-height:1.6}
+.hint .code-window{margin:10px 0 0}
+.hint .code-bar{padding:8px 12px}
+.hint pre.code{padding:12px 14px;font-size:12.5px}
 
 /* ========== Отчёт ========== */
-.report{background:#fff;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px;max-width:820px;margin:16px auto 0}
+.report{background:#fff;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px;max-width:820px;margin:16px auto 0;min-width:0}
 .report h2{margin:0 0 4px;font-size:24px}
 .report .meta{display:grid;gap:4px;font-size:14.5px;margin:12px 0 6px}
-.report .meta span b{font-weight:700}
 .report h3{font-size:17px;margin:20px 0 8px}
 .report pre{background:#f5f5f7;border:1px solid var(--border);border-radius:10px;padding:12px;font-family:var(--mono);font-size:12.5px;line-height:1.55;white-space:pre-wrap;word-break:break-word;margin:0 0 12px}
-.report .rep-note{color:var(--muted);font-size:13px;margin:6px 0 0}
-.report-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:18px 0 40px}
+.report .rep-note{color:var(--muted);font-size:13px;margin:6px 0}
+.report-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:18px 0 4px}
 .hint-print{color:var(--muted);font-size:13.5px;text-align:center;margin:0 0 40px}
 
 /* ========== Тост ========== */
@@ -161,102 +194,105 @@ textarea.code-input:focus{outline:3px solid rgba(0,113,227,.35);border-color:var
 /* ================= CONSTANTS ================= */
 const META = { num:1, topic:"Основы языка", author:"Масликов М.М." };
 
-/* Теория: слайды по материалам конспекта «Основы языка Python» */
+/* Теория: слайды по конспекту «Основы языка Python» (термины — **жирный**, `код` — вставки) */
 const SLIDES = [
   { t:"Язык Python. Линейные программы", b:[
-    {k:"p", v:"Языки программирования — это формальные языки, предназначенные для записи алгоритмов, исполнителем которых является компьютер. Алгоритмы, записанные на этих языках, называют программами."},
-    {k:"p", v:"Одним из самых популярных современных языков программирования является Python (произносится «пайтон» или «питон»). Его разработал в 1991 году нидерландский программист Гвидо ван Россум. Язык непрерывно совершенствуется, сейчас используется версия Python 3.9.5."},
+    {k:"p", v:"**Языки программирования** — это формальные языки, предназначенные для записи алгоритмов, исполнителем которых является компьютер. Алгоритмы, записанные на этих языках, называют **программами**."},
+    {k:"p", v:"Один из самых популярных современных языков — **Python** (произносится «пайтон» или «питон»). Его разработал в **1991 году** нидерландский программист **Гвидо ван Россум**. Язык непрерывно совершенствуется: сейчас используется версия Python 3.9.5."},
     {k:"p", v:"Python применяется для обработки различных данных, математических вычислений, создания изображений, работы с базами данных, разработки веб-сайтов и игр."},
     {k:"ul", v:[
-      "Установка в Windows: скачать программу-установщик с сайта www.python.org, запустить её, отметить флажок Add Python 3.8 to PATH и нажать Install Now.",
-      "Интерпретатор работает в двух режимах: командном (введённая команда сразу выполняется) и программном (программа записывается в файл с расширением .py и при запуске выполняется целиком).",
-      "Запуск интерпретатора: Пуск → Программы → Python 3.8 → IDLE. В окне Python Shell символы >>> означают приглашение ввести команду; ввод завершается нажатием Enter, результат отображается на следующей строке.",
-      "Файл с программой: File → New File, набрать текст, сохранить File → Save As, запустить Run → Run Module или клавишей F5. Результат работы отображается в окне Python Shell."]},
-    {k:"note", v:"PyCharm — кроссплатформенная интегрированная среда разработки (IDE) для Python, созданная компанией JetBrains на основе IntelliJ IDEA. Предоставляет комплекс средств для написания кода и визуальный отладчик."}
+      {i:"💿", t:"**Установка в Windows:** скачать установщик с сайта www.python.org, запустить его, отметить флажок `Add Python 3.8 to PATH` и нажать Install Now."},
+      {i:"🔄", t:"**Два режима интерпретатора:** командный (введённая команда сразу выполняется) и программный (программа записывается в файл с расширением `.py` и при запуске выполняется целиком)."},
+      {i:"▶️", t:"**Запуск интерпретатора:** Пуск → Программы → Python 3.8 → IDLE. Символы `>>>` в окне Python Shell — приглашение ввести команду; ввод завершается клавишей Enter, результат появляется на следующей строке."},
+      {i:"📄", t:"**Файл программы:** File → New File, набрать текст, сохранить File → Save As, запустить Run → Run Module или клавишей F5. Результат работы отображается в окне Python Shell."}]},
+    {k:"call", icon:"💡", tone:"info", v:"**PyCharm** — кроссплатформенная интегрированная среда разработки (IDE) для Python, созданная компанией JetBrains на основе IntelliJ IDEA: комплекс средств для написания кода и визуальный отладчик."}
   ]},
   { t:"Общие сведения о языке", b:[
     {k:"ul", v:[
-      "Алфавит состоит из букв латинского алфавита (заглавные и строчные различаются), цифр и специальных знаков. Русские буквы могут использоваться только при выводе текста на экран и в комментариях.",
-      "Служебные слова — последовательности символов, имеющие фиксированное смысловое значение.",
-      "Константы — величины, не изменяющие своего значения при выполнении программы. Переменные — величины, которые могут изменяться; каждая переменная имеет имя, тип и значение.",
-      "Идентификатор (имя переменной) — любая отличная от служебных слов последовательность латинских букв, цифр и символа подчёркивания «_», не начинающаяся с цифры."]},
-    {k:"code", v:"N, N1, massa, massa_tela    # правильные идентификаторы\n1N, Масса, massa tela     # неправильные"},
-    {k:"p", v:"Значения переменных хранятся в ячейках оперативной памяти. Тип переменной определяет способ хранения данных и допустимые операции над ними; тип определяется автоматически в момент присваивания значения и может меняться по ходу программы."},
+      {i:"🔤", t:"**Алфавит языка:** буквы латинского алфавита (заглавные и строчные различаются), цифры и специальные знаки. Русские буквы — только при выводе текста на экран и в комментариях."},
+      {i:"🔑", t:"**Служебные слова** — последовательности символов, имеющие фиксированное смысловое значение."},
+      {i:"📌", t:"**Константы** — величины, не изменяющие своего значения при выполнении программы. **Переменные** — величины, которые могут изменяться; каждая переменная имеет имя, тип и значение."},
+      {i:"🏷️", t:"**Идентификатор** (имя переменной) — любая отличная от служебных слов последовательность латинских букв, цифр и символа `_`, не начинающаяся с цифры."}]},
+    {k:"code", file:"names.py", v:"N, N1, massa, massa_tela    # правильные идентификаторы\n1N, Масса, massa tela     # неправильные"},
+    {k:"p", v:"Значения переменных хранятся в **ячейках оперативной памяти**. **Тип переменной** определяет способ хранения данных и допустимые операции над ними; тип определяется автоматически в момент присваивания значения и может меняться по ходу выполнения программы."},
     {k:"table", head:["Название","Обозначение","Допустимые значения"], rows:[
       ["Целочисленный","int","Сколько угодно большие целые числа (размер ограничен оперативной памятью)"],
       ["Вещественный","float","Любые числа с дробной частью (с плавающей точкой)"],
       ["Строковый","str","Произвольная последовательность символов из таблицы Unicode"],
       ["Логический","bool","False («ложь») или True («истина»)"]]},
-    {k:"ul", v:[
-      "Целая часть числа от дробной отделяется точкой.",
-      "Строковое значение заключается в двойные или одинарные кавычки."]}
+    {k:"call", icon:"✅", tone:"ok", v:"Целая часть числа от дробной отделяется **точкой**. Строковое значение заключается в **двойные или одинарные кавычки**."}
   ]},
   { t:"Выражения и операции", b:[
-    {k:"p", v:"Выражение — это конструкция, возвращающая значение некоторого типа. Простые выражения — переменные и константы; сложные строятся из простых с помощью операций, функций и скобок. Данные, к которым применяют операции, называются операндами. Используется линейная форма записи выражений (в одну строку)."},
+    {k:"p", v:"**Выражение** — это конструкция, возвращающая значение некоторого типа. Простые выражения — переменные и константы; сложные строятся из простых с помощью операций, функций и скобок. Данные, к которым применяют операции, называются **операндами**. Используется линейная форма записи (в одну строку)."},
     {k:"table", head:["Операция","Обозначение","Пример"], rows:[
       ["Сложение","+","3 + 4 = 7"],["Вычитание","-","7 - 2 = 5"],["Умножение","*","2 * 2 = 4"],
       ["Деление","/","8 / 2 = 4"],["Целочисленное деление","//","9 // 2 = 4"],
       ["Остаток от деления","%","9 % 2 = 1"],["Возведение в степень","**","2 ** 3 = 8"]]},
-    {k:"p", v:"Логические выражения сравнивают величины с помощью операций сравнения и принимают лишь два значения: «истина» или «ложь»."},
+    {k:"p", v:"**Логические выражения** сравнивают величины или выражения с помощью операций сравнения и принимают лишь два значения: «истина» или «ложь»."},
     {k:"table", head:["Операция сравнения","Символы","Пример"], rows:[
       ["Равно","==","x == 0"],["Неравно","!=","x != 0"],["Больше",">","x > 0"],
       ["Меньше","<","x < 0"],["Больше или равно",">=","x >= 0"],["Меньше или равно","<=","x <= 0"]]},
-    {k:"p", v:"Приоритет выполнения операций: 1) операции в скобках; 2) возведение в степень; 3) умножение и деление (в том числе // и %); 4) сложение и вычитание. Операции одинакового приоритета выполняются в порядке записи слева направо."},
-    {k:"note", v:"Если выражение слишком длинное и не помещается в одной строке, его заключают в скобки — перенос внутри скобок разрешён. Пример записи: дробь (a+b)·h/2 в линейной форме — (a+b)*h/2, а v + a·t²/2 — v+a*t**2/2."}
+    {k:"key", v:[
+      "Сначала выполняются **операции в скобках**.",
+      "Затем — **возведение в степень**.",
+      "Затем — **умножение и деление** (в том числе // и %).",
+      "В конце — **сложение и вычитание**. Операции одинакового приоритета выполняются слева направо."]},
+    {k:"call", icon:"⚠️", tone:"warn", v:"Если выражение слишком длинное и не помещается в одной строке, заключите его в скобки: перенос внутри скобок разрешён. Пример линейной записи: `(a+b)*h/2`, `v+a*t**2/2`."}
   ]},
   { t:"Оператор присваивания", b:[
-    {k:"p", v:"Оператор присваивания записывает в переменную, имя которой находится слева от знака «=», значение выражения, находящегося справа. Старое значение переменной при этом стирается. Общий вид: имя_переменной = выражение."},
-    {k:"code", v:"a = 5\nb = a\nc = a + b\nc = c + 1\n# в памяти: a = 5, b = 5, c = 11"},
-    {k:"p", v:"В языке Python допускается множественное присваивание:"},
+    {k:"p", v:"**Оператор присваивания** записывает в переменную, имя которой находится слева от знака `=`, значение выражения, находящегося справа. Старое значение переменной при этом стирается. Общий вид: имя_переменной = выражение."},
+    {k:"code", file:"assign.py", v:"a = 5\nb = a\nc = a + b\nc = c + 1\n# в памяти: a = 5, b = 5, c = 11"},
+    {k:"p", v:"В языке Python допускается **множественное присваивание**:"},
     {k:"table", head:["Запись оператора","Равносильная запись"], rows:[
       ["a, b = 0, 1","a = 0\nb = 1"],
-      ["a = b = 0","a = 0\nb = 0"]]}
+      ["a = b = 0","a = 0\nb = 0"]]},
+    {k:"call", icon:"💡", tone:"info", v:"Обратите внимание: после выполнения `c = c + 1` прежнее значение переменной c стирается — в памяти остаётся только новое."}
   ]},
   { t:"Оператор вывода", b:[
-    {k:"p", v:"Вывод данных на экран осуществляется с помощью функции print («печать»): print(выражение1, выражение2, ..., выражениеN). На экран выводятся значения переменных и выражений, строковые значения — без кавычек; значения разделяются пробелом (по умолчанию); после выполнения оператора происходит автоматический переход на новую строку."},
-    {k:"code", v:'print("Масса равна", m, "кг")   # при m = 15 на экране: Масса равна 15 кг'},
-    {k:"p", v:"Вместо пробела можно использовать другие символы-разделители, указав их после слова sep (separator). Чтобы убрать переход на новую строку после вывода, используется параметр end."},
+    {k:"p", v:"Вывод данных на экран осуществляется с помощью функции **print**: print(выражение1, выражение2, ..., выражениеN). Значения переменных и выражений выводятся на экран, строки — без кавычек; значения разделяются пробелом (по умолчанию); после выполнения происходит автоматический переход на новую строку."},
+    {k:"code", file:"print_demo.py", v:'print("Масса равна", m, "кг")   # при m = 15 на экране: Масса равна 15 кг'},
+    {k:"p", v:"Вместо пробела можно использовать другие символы-разделители, указав их после слова **sep** (separator). Чтобы убрать переход на новую строку после вывода, используется параметр **end**."},
     {k:"table", head:["Вариант вывода","Оператор","На экране"], rows:[
       ["По умолчанию","print(1, 20, 300)","1 20 300"],
       ["Без разделителя",'print(1, 20, 300, sep="")',"120300"],
       ["Через запятую и пробел",'print(1, 20, 300, sep=", ")',"1, 20, 300"],
       ["Каждое с новой строки",'print(1, 20, 300, sep="\\n")',"1\n20\n300"],
       ["Без перехода на новую строку",'print(1, end="") и print(20)',"120"]]},
-    {k:"p", v:"Форматный вывод с помощью символьной строки позволяет задать количество позиций на экране, занимаемых выводимой величиной. В фигурных скобках задаётся формат вывода очередного элемента: для целых чисел — количество позиций (d), для вещественных — общее количество позиций, через точку — количество позиций в дробной части (f) или экспоненциальный формат (e). Если цифр в числе меньше, слева выводятся пробелы."},
-    {k:"code", v:'print("{:3}{:3}{:3}".format(13, 7, 22))     #   13  7 22\na = 7\nprint("{:4d}{:4d}".format(a, a * a))    #    7  49\na = 1 / 3\nb = 1 / 9\nprint("{:7.3f}{:7.4f}".format(a, b))   #   0.333 0.1111\nprint("{:10.3e}".format(a))            #  3.333e-01'}
+    {k:"p", v:"**Форматный вывод** с помощью символьной строки позволяет задать количество позиций на экране, занимаемых выводимой величиной. В фигурных скобках задаётся формат очередного элемента: для целых — количество позиций (d), для вещественных — общее количество позиций, через точку — количество позиций в дробной части (f) или экспоненциальный формат (e). Если цифр в числе меньше, слева выводятся пробелы."},
+    {k:"code", file:"format.py", v:'print("{:3}{:3}{:3}".format(13, 7, 22))     #   13  7 22\na = 7\nprint("{:4d}{:4d}".format(a, a * a))    #    7  49\na = 1 / 3\nb = 1 / 9\nprint("{:7.3f}{:7.4f}".format(a, b))   #   0.333 0.1111\nprint("{:10.3e}".format(a))            #  3.333e-01'}
   ]},
   { t:"Оператор ввода", b:[
-    {k:"p", v:"Для ввода значений переменных с клавиатуры в процессе выполнения программы используется функция input («ввод»): имя_переменной = input(). Компьютер переходит в режим ожидания данных; пользователь вводит данные с клавиатуры в виде строки символов и нажимает Enter; введённая строка записывается в указанную переменную."},
-    {k:"note", v:"input() всегда возвращает строку. Если вводится число, необходимо выполнить преобразование типов: int() — для целых, float() — для вещественных."},
-    {k:"code", v:'print("Введите слово и два числа:")\nx = input()\ny = int(input())\nz = float(input())\nprint(x, y, z)'},
+    {k:"p", v:"Для ввода значений переменных с клавиатуры используется функция **input**: имя_переменной = input(). Компьютер переходит в режим ожидания данных; пользователь вводит строку символов и нажимает Enter; введённая строка записывается в указанную переменную."},
+    {k:"call", icon:"⚠️", tone:"warn", v:"`input()` всегда возвращает **строку**. Если вводится число, необходимо преобразование типов: `int()` — для целых, `float()` — для вещественных."},
+    {k:"code", file:"input_demo.py", v:'print("Введите слово и два числа:")\nx = input()\ny = int(input())\nz = float(input())\nprint(x, y, z)'},
     {k:"screen", v:"Введите слово и два числа:\nноль\n1\n2\nноль 1 2.0"},
-    {k:"p", v:"В скобках функции input можно указать текст подсказки для пользователя. Несколько значений можно ввести в одной строке через пробел — для этого используется функция split(); затем данные преобразуются к нужному типу по отдельности."},
-    {k:"code", v:'a, b, c = input("Введите a, b, c через пробел: ").split()\na, b, c = int(a), int(b), int(c)\nprint(a, b, c)'},
+    {k:"p", v:"В скобках функции можно указать **текст подсказки** для пользователя. Несколько значений можно ввести в одной строке через пробел — для этого используется функция **split()**; затем данные преобразуются к нужному типу по отдельности."},
+    {k:"code", file:"split_demo.py", v:'a, b, c = input("Введите a, b, c через пробел: ").split()\na, b, c = int(a), int(b), int(c)\nprint(a, b, c)'},
     {k:"screen", v:"Введите a, b, c через пробел: 1 2 3\n1 2 3"}
   ]},
   { t:"Оператор комментария", b:[
-    {k:"p", v:"Комментарии используются для включения в программу любых пояснений, предназначенных человеку. Комментарием считается любой текст после символа # до конца строки. При выполнении программы комментарии игнорируются."},
-    {k:"code", v:'# Длина окружности и площадь круга\nr = float(input("Введите радиус: "))\nc = 2 * 3.14 * r      # длина окружности\ns = 3.14 * r ** 2     # площадь круга\nprint("C=", c)\nprint("S=", s)'},
+    {k:"p", v:"**Комментарий** — любой текст после символа `#` до конца строки. Комментарии предназначены человеку и игнорируются при выполнении программы."},
+    {k:"code", file:"circle.py", v:'# Длина окружности и площадь круга\nr = float(input("Введите радиус: "))\nc = 2 * 3.14 * r      # длина окружности\ns = 3.14 * r ** 2     # площадь круга\nprint("C=", c)\nprint("S=", s)'},
     {k:"screen", v:"Введите радиус: 10\nC= 62.80\nS= 314.00"},
-    {k:"note", v:"В примере значения вывода округлены до двух знаков после запятой для наглядности."}
+    {k:"call", icon:"💡", tone:"info", v:"Комментарий может занимать всю строку целиком или её часть — во втором случае символ `#` ставится после кода. В примере выше значения вывода округлены для наглядности."}
   ]},
   { t:"Стандартные функции", b:[
-    {k:"p", v:"Функции имеют определённое имя и один или несколько аргументов в скобках. Функция возвращает своё значение в то место программы, из которого она вызывается."},
+    {k:"p", v:"**Функция** имеет определённое имя и один или несколько аргументов в скобках. Функция возвращает своё значение в то место программы, из которого она вызывается."},
     {k:"table", head:["Функция","Назначение","Тип аргумента","Тип результата"], rows:[
       ["abs(x)","Абсолютная величина (модуль числа x)","int, float","Как у аргумента"],
       ["int(x)","Преобразование вещественного числа к целому (отбрасывание дробной части)","float","int"],
       ["round(x)","Округление вещественного числа до заданного количества знаков (по умолчанию — до ближайшего целого)","float","int, float"]]},
-    {k:"p", v:"Большинство стандартных функций разбиты на группы по назначению; каждая группа записана в отдельном файле — модуле. Подключение модуля осуществляется командой import. Например: from math import *"},
+    {k:"p", v:"Большинство стандартных функций разбиты на группы по назначению; каждая группа записана в отдельном файле — **модуле**. Подключение модуля осуществляется командой import. Например: `from math import *`"},
     {k:"table", head:["Функция модуля math","Назначение","Тип аргумента","Тип результата"], rows:[
       ["sqrt(x)","Квадратный корень из x","int, float","float"],
       ["sin(x)","Синус угла x в радианах","int, float","float"],
       ["cos(x)","Косинус угла x в радианах","int, float","float"]]},
-    {k:"p", v:"Можно подключить не все функции, а только необходимую. Например: from random import randint"},
+    {k:"p", v:"Можно подключить не все функции, а только необходимую. Например: `from random import randint`"},
     {k:"table", head:["Функция модуля random","Назначение","Тип аргумента","Тип результата"], rows:[
       ["random()","Случайное число из полуинтервала [0, 1)","—","float"],
       ["randint(a, b)","Случайное число из отрезка [a, b]","int","int"]]},
-    {k:"code", v:"a = 3.56\nprint(a)            # 3.56\nprint(round(a))     # 4\nprint(round(a, 1))  # 3.6\nprint(int(a))       # 3\nfrom math import *\nb = 16\nprint(sqrt(b))      # 4.0\nfrom random import randint\nx = randint(1, 10)  # случайное число от 1 до 10\nprint(x)"},
-    {k:"note", v:"С функциями модуля math можно вычислять, например, корень квадратного уравнения: (-b+sqrt(b**2-4*a*c))/(2*a)."}
+    {k:"code", file:"std_functions.py", v:"a = 3.56\nprint(a)            # 3.56\nprint(round(a))     # 4\nprint(round(a, 1))  # 3.6\nprint(int(a))       # 3\nfrom math import *\nb = 16\nprint(sqrt(b))      # 4.0\nfrom random import randint\nx = randint(1, 10)  # случайное число от 1 до 10\nprint(x)"},
+    {k:"call", icon:"💡", tone:"info", v:"После подключения модуля к функциям можно обращаться так же, как к встроенным. Пример: корень квадратного уравнения — `(-b+sqrt(b**2-4*a*c))/(2*a)`."}
   ]}
 ];
 
@@ -274,23 +310,29 @@ const QUESTIONS = [
   {q:"Какой символ начинает комментарий в Python?", opts:["//","/*","#","%"], c:2}
 ];
 
-/* Практика: задачи из конспекта с эталонными решениями */
+/* Практика: задачи с подсказками и эталонами (эталон уходит только в отчёт) */
 const TASKS = [
   { id:1, title:"Обмен значений переменных",
     text:"Составьте программу, меняющую местами значения двух переменных a и b, введённых с клавиатуры.",
     screen:"a=5\nb=7\na= 7\nb= 5",
+    hint:{ text:"До присваивания сохрани одно из значений во временной переменной, иначе оно сотрётся. А в Python есть обмен в одну строку:",
+           code:"a, b = b, a" },
     solution:'# Обмен значений переменных\n# Классическое решение\na = int(input("a="))\nb = int(input("b="))\nt = a        # временная переменная\na = b\nb = t\nprint("a=", a)\nprint("b=", b)\n\n# Возможности языка Python\na = int(input("a="))\nb = int(input("b="))\na, b = b, a\nprint("a=", a)\nprint("b=", b)' },
   { id:2, title:"Площадь треугольника",
     text:"Составьте программу для вычисления площади треугольника по известным длинам его сторон по формуле Герона: S = √(p·(p−a)·(p−b)·(p−c)), где p — полупериметр треугольника.",
     screen:"Введите длины сторон треугольника:\na=5\nb=6\nc=7\nПлощадь треугольника 14.70",
+    hint:{ text:"Сначала найдите полупериметр p, затем подключите модуль math и соберите формулу Герона из четырёх множителей под корнем:",
+           code:"p = (a + b + c) / 2\ns = sqrt(p*(p-a)*(p-b)*(p-c))" },
     solution:'# Площадь треугольника\nprint("Введите длины сторон треугольника:")\na = float(input("a="))\nb = float(input("b="))\nc = float(input("c="))\np = (a + b + c) / 2            # полупериметр\nfrom math import *             # подключаем модуль math\ns = sqrt(p*(p-a)*(p-b)*(p-c))  # формула Герона\nprint("Площадь треугольника %.2f" % s)' },
   { id:3, title:"Сумма цифр трёхзначного числа",
     text:"Составьте программу, вычисляющую сумму цифр введённого с клавиатуры целого трёхзначного числа.",
     screen:"Введите трёхзначное число: 345\nСумма цифр равна 12",
+    hint:{ text:"Цифры числа извлекаются целочисленным делением и остатком от деления: сотни «срезаются» делением на 100, десятки — остатком по модулю 100 и делением на 10:",
+           code:"a = x // 100        # сотни\nb = x % 100 // 10   # десятки\nc = x % 10          # единицы" },
     solution:'# Сумма цифр трёхзначного числа\n# Трёхзначное число x = a·100 + b·10 + c,\n# где a, b, c - цифры этого числа\nx = int(input("Введите трёхзначное число: "))\na = x // 100         # сотни\nb = x % 100 // 10    # десятки\nc = x % 10           # единицы\ns = a + b + c\nprint("Сумма цифр равна", s)' }
 ];
 
-const LS_STATE = "python-topic1-state-v1";
+const LS_STATE = "python-topic1-state-v2";
 const LS_PROGRESS = "python-trainer-progress-v1"; // общий ключ прогресса с главной страницей
 
 /* ================= STATE ================= */
@@ -300,29 +342,32 @@ const state = {
   slide:0,
   student:{last:"", first:"", cls:""},
   startErrors:null,
-  testAnswers:{},            // {idВопроса: индексВыбора}
-  testInvalid:[],            // ids неотвеченных при попытке сдать
+  testAnswers:{},            // {индекс вопроса: индекс выбора}
+  testInvalid:[],
   testError:"",
   testResult:null,           // {score, answers}
   codes:{1:"", 2:"", 3:""},  // код ученика к задачам
-  shown:{}                   // показан ли эталон {id: bool}
+  hintShown:{},              // открыта ли подсказка сейчас
+  hintUsed:{}                // была ли подсказка использована (попадает в отчёт)
 };
 function loadSaved(){
   try{
     const raw = localStorage.getItem(LS_STATE);
     if(!raw) return;
-    const s = JSON.parse(s);
+    const s = JSON.parse(raw);
     if(s.student) state.student = s.student;
     if(s.codes) state.codes = Object.assign(state.codes, s.codes);
     if(s.testAnswers) state.testAnswers = s.testAnswers;
     if(s.testResult) state.testResult = s.testResult;
+    if(s.hintUsed) state.hintUsed = s.hintUsed;
   }catch(e){}
 }
 function persist(){
   try{
     localStorage.setItem(LS_STATE, JSON.stringify({
       student:state.student, codes:state.codes,
-      testAnswers:state.testAnswers, testResult:state.testResult
+      testAnswers:state.testAnswers, testResult:state.testResult,
+      hintUsed:state.hintUsed
     }));
   }catch(e){}
 }
@@ -349,22 +394,50 @@ function esc(s){
     return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch];
   });
 }
+/* мини-разметка констант: **термин** -> жирный, `код` -> вставка кода */
+function inline(s){
+  return esc(s)
+    .replace(/\*\*([^*]+?)\*\*/g, "<b>$1</b>")
+    .replace(/`([^`]+?)`/g, '<code class="ic">$1</code>');
+}
+/* подсветка Python в окнах кода (стиль главной страницы) */
+function hlPy(src){
+  return esc(src).replace(
+    /(#.*$)|(&quot;(?:[^&\\]|\\.)*?&quot;|&#39;(?:[^&\\]|\\.)*?&#39;)|\b(from|import|def|return|if|elif|else|for|while|in|and|or|not|True|False|pass|break|continue|try|except|with|as|lambda|global|None)\b|\b(\d+(?:\.\d+)?)\b|([A-Za-z_][A-Za-z0-9_]*)(?=\s*\()/gm,
+    function(m, com, str, kw, num, fn){
+      if(com) return '<span class="tk-c">' + com + '</span>';
+      if(str) return '<span class="tk-s">' + str + '</span>';
+      if(kw)  return '<span class="tk-k">' + kw + '</span>';
+      if(num) return '<span class="tk-n">' + num + '</span>';
+      if(fn)  return '<span class="tk-f">' + fn + '</span>';
+      return m;
+    });
+}
+function codeWindow(src, file){
+  return '<div class="code-window"><div class="code-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="file">' + (file || "program.py") + '</span></div><pre class="code">' + hlPy(src) + "</pre></div>";
+}
 
 /* ================= RENDER ================= */
 const app = document.getElementById("app");
 
 function blockHTML(b){
-  if(b.k === "p") return '<p class="s-p">' + b.v + "</p>";
-  if(b.k === "ul") return '<ul class="s-ul">' + b.v.map(function(x){ return "<li>" + x + "</li>"; }).join("") + "</ul>";
-  if(b.k === "code") return '<pre class="code">' + esc(b.v) + "</pre>";
+  if(b.k === "p") return '<p class="s-p">' + inline(b.v) + "</p>";
+  if(b.k === "ul"){
+    return '<ul class="s-ul">' + b.v.map(function(item){
+      if(typeof item === "string") return '<li><span class="li-tx">' + inline(item) + "</span></li>";
+      return '<li><span class="li-ic" aria-hidden="true">' + item.i + '</span><span class="li-tx">' + inline(item.t) + "</span></li>";
+    }).join("") + "</ul>";
+  }
+  if(b.k === "call") return '<div class="call ' + b.tone + '"><span class="call-ic" aria-hidden="true">' + b.icon + "</span><p>" + inline(b.v) + "</p></div>";
+  if(b.k === "key") return '<div class="keycard"><p class="key-title">✅ Главное</p><ul>' + b.v.map(function(x){ return "<li>" + inline(x) + "</li>"; }).join("") + "</ul></div>";
+  if(b.k === "code") return codeWindow(b.v, b.file);
   if(b.k === "screen") return '<div class="screen"><span class="screen-label">На экране</span><pre>' + esc(b.v) + "</pre></div>";
-  if(b.k === "note") return '<p class="note">' + b.v + "</p>";
   if(b.k === "table"){
     return '<div class="tbl-wrap"><table><thead><tr>' +
-      b.head.map(function(h){ return "<th>" + h + "</th>"; }).join("") +
+      b.head.map(function(h){ return "<th>" + inline(h) + "</th>"; }).join("") +
       "</tr></thead><tbody>" +
       b.rows.map(function(r){
-        return "<tr>" + r.map(function(c){ return "<td>" + esc(c).replace(/\n/g, "<br>") + "</td>"; }).join("") + "</tr>";
+        return "<tr>" + r.map(function(c){ return "<td>" + inline(c).replace(/\n/g, "<br>") + "</td>"; }).join("") + "</tr>";
       }).join("") + "</tbody></table></div>";
   }
   return "";
@@ -376,11 +449,11 @@ function renderStart(){
     '<span class="eyebrow">Python · Теоретический блок ' + META.num + "</span>" +
     "<h1>" + META.topic + "</h1>" +
     '<p class="author">Автор урока: ' + META.author + "</p>" +
-    '<ul class="start-list"><li>Теория: 8 слайдов с примерами программ.</li><li>Тест: 10 вопросов по теме.</li><li>Практика: 3 задачи с полем для кода и эталонным решением.</li><li>В конце — отчёт, который можно сохранить в PDF.</li></ul>' +
+    '<ul class="start-list"><li>Теория: 8 слайдов с примерами программ.</li><li>Тест: 10 вопросов по теме.</li><li>Практика: 3 задачи с полем для кода и подсказками.</li><li>В конце — отчёт, который можно сохранить в PDF.</li></ul>' +
     '<form id="startForm" novalidate>' +
       '<div class="field"><label for="fLast">Фамилия</label><input id="fLast" name="last" autocomplete="family-name" value="' + esc(st.last) + '" class="' + (e.last ? "bad" : "") + '" placeholder="Иванов">' + (e.last ? '<p class="err">' + e.last + "</p>" : "") + "</div>" +
       '<div class="field"><label for="fFirst">Имя</label><input id="fFirst" name="first" autocomplete="given-name" value="' + esc(st.first) + '" class="' + (e.first ? "bad" : "") + '" placeholder="Иван">' + (e.first ? '<p class="err">' + e.first + "</p>" : "") + "</div>" +
-      '<div class="field"><label for="fCls">Класс</label><input id="fCls" name="cls" value="' + esc(st.cls) + '" class="' + (e.cls ? "bad" : "") + '" placeholder="9">' + (e.cls ? '<p class="err">' + e.cls + "</p>" : "") + "</div>" +
+      '<div class="field"><label for="fCls">Класс</label><input id="fCls" name="cls" value="' + esc(st.cls) + '" class="' + (e.cls ? "bad" : "") + '" placeholder="9А">' + (e.cls ? '<p class="err">' + e.cls + "</p>" : "") + "</div>" +
       '<button class="btn btn-primary" type="submit">Начать урок</button>' +
     "</form></div></div>";
 }
@@ -404,7 +477,7 @@ function renderTest(){
     const r = state.testResult;
     const review = QUESTIONS.map(function(q, i){
       const ua = r.answers[i], ok = ua === q.c;
-      return '<div class="rev ' + (ok ? "ok" : "bad") + '"><b>' + (i + 1) + ". " + q.q + "</b>" +
+      return '<div class="rev ' + (ok ? "ok" : "bad") + '"><b>' + (i + 1) + ". " + esc(q.q) + "</b>" +
         '<p class="who">Ваш ответ: <b>' + (ua == null ? "—" : esc(q.opts[ua])) + "</b>" +
         (ok ? "" : ' · Правильный ответ: <b>' + esc(q.opts[q.c]) + "</b>") + "</p></div>";
     }).join("");
@@ -421,9 +494,9 @@ function renderTest(){
     const inv = state.testInvalid.indexOf(i) !== -1;
     const opts = q.opts.map(function(o, oi){
       const ch = state.testAnswers[i] === oi;
-      return '<label class="opt"><input type="radio" name="q' + i + '" value="' + oi + '"' + (ch ? " checked" : "") + "><span>" + o + "</span></label>";
+      return '<label class="opt"><input type="radio" name="q' + i + '" value="' + oi + '"' + (ch ? " checked" : "") + "><span>" + esc(o) + "</span></label>";
     }).join("");
-    return '<fieldset class="q' + (inv ? " invalid" : "") + '" data-q="' + i + '"><legend>' + (i + 1) + ". " + q.q + "</legend>" + opts + "</fieldset>";
+    return '<div class="q' + (inv ? " invalid" : "") + '" role="radiogroup" aria-labelledby="qt' + i + '"><p class="q-title" id="qt' + i + '">' + (i + 1) + ". " + esc(q.q) + "</p>" + opts + "</div>";
   }).join("");
   return '<div class="container"><p class="section-note">Выберите один вариант ответа в каждом вопросе и нажмите «Завершить тест». Всего вопросов: ' + QUESTIONS.length + ".</p>" +
     (state.testError ? '<p class="test-err" role="alert">' + state.testError + "</p>" : "") +
@@ -432,17 +505,19 @@ function renderTest(){
 }
 function renderPractice(){
   const cards = TASKS.map(function(t){
-    const shown = !!state.shown[t.id];
-    return '<div class="task-card"><div class="task-head"><span class="task-num">Задача ' + t.id + "</span><h3>" + t.title + "</h3></div>" +
-      '<p class="task-text">' + t.text + "</p>" +
+    const shown = !!state.hintShown[t.id];
+    return '<div class="task-card"><div class="task-head"><span class="task-num">Задача ' + t.id + "</span><h3>" + esc(t.title) + "</h3></div>" +
+      '<p class="task-text">' + esc(t.text) + "</p>" +
       '<div class="screen"><span class="screen-label">На экране</span><pre>' + esc(t.screen) + "</pre></div>" +
       '<p class="label-sm" id="codeLbl' + t.id + '">Мой код</p>' +
       '<textarea class="code-input" data-code="' + t.id + '" rows="8" spellcheck="false" aria-labelledby="codeLbl' + t.id + '" placeholder="Введите здесь свой код на Python…">' + esc(state.codes[t.id]) + "</textarea>" +
-      '<div class="task-actions no-print"><button class="btn-small" type="button" data-act="toggle-ans" data-id="' + t.id + '">' + (shown ? "Скрыть ответ" : "Показать ответ") + "</button></div>" +
-      (shown ? '<p class="label-sm">Эталон решения</p><pre class="code">' + esc(t.solution) + "</pre>" : "") +
+      '<div class="task-actions no-print"><button class="btn-small" type="button" data-act="toggle-hint" data-id="' + t.id + '">' + (shown ? "Скрыть подсказку" : "💡 Подсказка") + "</button></div>" +
+      (shown
+        ? '<div class="hint"><span class="hint-ic" aria-hidden="true">💡</span><div><p><b>Подсказка.</b> ' + inline(t.hint.text) + "</p>" + codeWindow(t.hint.code, "hint.py") + "</div></div>"
+        : "") +
       "</div>";
   }).join("");
-  return '<div class="container"><p class="section-note">Введите свой код в поле «Мой код», затем сравните его с эталоном (кнопка «Показать ответ»). В примерах вывода значения могут быть округлены для наглядности. Весь код попадёт в итоговый отчёт.</p>' + cards + "</div>";
+  return '<div class="container"><p class="section-note">Введите свой код в поле «Мой код». Если застряли — нажмите «Подсказка»: она покажет идею или ключевой кусочек кода, но не всё решение. Отметка об использовании подсказки попадёт в отчёт, а эталонное решение учитель увидит там же.</p>' + cards + "</div>";
 }
 function renderReport(){
   const st = state.student;
@@ -450,9 +525,11 @@ function renderReport(){
   const res = state.testResult;
   const tasks = TASKS.map(function(t){
     const code = (state.codes[t.id] || "").trim();
-    return "<h3>Задача " + t.id + ". " + t.title + "</h3>" +
-      '<p class="rep-note">' + t.text + "</p>" +
+    const used = !!state.hintUsed[t.id];
+    return "<h3>Задача " + t.id + ". " + esc(t.title) + "</h3>" +
+      '<p class="rep-note">' + esc(t.text) + "</p>" +
       '<p class="label-sm">Мой код</p><pre>' + (code ? esc(state.codes[t.id]) : "— код не предоставлен —") + "</pre>" +
+      '<p class="rep-note">Использована подсказка: <b>' + (used ? "да" : "нет") + "</b></p>" +
       '<p class="label-sm">Эталон решения</p><pre>' + esc(t.solution) + "</pre>";
   }).join("");
   return '<div class="container"><div class="report" id="reportSheet">' +
@@ -471,7 +548,7 @@ function renderReport(){
     "<h3>2. Практика</h3>" + tasks +
     "</div>" +
     '<div class="report-actions no-print"><button class="btn btn-primary" type="button" data-act="print">Сохранить отчёт в PDF</button></div>' +
-    '<p class="hint-print no-print">Откроется окно печати — выберите «Сохранить как PDF». В отчёт попадут ваши данные, результат теста и код задач.</p>' +
+    '<p class="hint-print no-print">Откроется окно печати — выберите «Сохранить как PDF». В отчёт попадут ваши данные, результат теста, ваш код задач и отметки об использовании подсказок.</p>' +
     "</div>";
 }
 function renderLesson(){
@@ -511,7 +588,7 @@ function onStartSubmit(e){
   const errs = {};
   if(last.length < 2) errs.last = "Введите фамилию (минимум 2 символа).";
   if(first.length < 2) errs.first = "Введите имя (минимум 2 символа).";
-  if(!cls) errs.cls = "Введите класс, например 10.2.";
+  if(!cls) errs.cls = "Введите класс, например 9А.";
   state.student = {last:last, first:first, cls:cls};
   if(Object.keys(errs).length){
     state.startErrors = errs;
@@ -539,7 +616,7 @@ function submitTest(){
     state.testInvalid = unanswered;
     state.testError = "Осталось без ответа: " + unanswered.length + " " + plural(unanswered.length, ["вопрос", "вопроса", "вопросов"]) + ". Ответьте на все вопросы теста.";
     render();
-    const inv = app.querySelector("fieldset.invalid");
+    const inv = app.querySelector(".q.invalid");
     if(inv) inv.scrollIntoView({block:"center", behavior:"smooth"});
     return;
   }
@@ -572,9 +649,12 @@ function onAppClick(e){
     state.testAnswers = {}; state.testResult = null; state.testError = ""; state.testInvalid = [];
     persist(); render(); window.scrollTo(0, 0);
   }
-  else if(act === "toggle-ans"){
+  else if(act === "toggle-hint"){
     const id = Number(btn.dataset.id);
-    state.shown[id] = !state.shown[id];
+    const now = !state.hintShown[id];
+    state.hintShown[id] = now;
+    if(now) state.hintUsed[id] = true; // подсказка засчитывается как использованная
+    persist();
     render();
   }
   else if(act === "edit-student"){ state.screen = "start"; render(); window.scrollTo(0, 0); }
@@ -593,8 +673,8 @@ function onAppChange(e){
   if(r){
     const qi = Number(r.name.slice(1));
     state.testAnswers[qi] = Number(r.value);
-    const fs = r.closest("fieldset.q");
-    if(fs) fs.classList.remove("invalid");
+    const box = r.closest(".q");
+    if(box) box.classList.remove("invalid");
     state.testInvalid = state.testInvalid.filter(function(i){ return i !== qi; });
     if(state.testError){
       const left = QUESTIONS.filter(function(q, i){ return state.testAnswers[i] == null; }).length;
