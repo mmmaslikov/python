@@ -31,7 +31,7 @@ body{
   line-height:1.5;-webkit-font-smoothing:antialiased;
   overflow-x:clip; /* страховка от горизонтального вылезания */
 }
-/* ВАЖНО: горизонтальные отступы контейнера не должны переопределяться секциями */
+/* ВАЖНО: горизонтальные отступы контейнера не переопределяются секциями */
 .container{width:100%;max-width:1080px;margin:0 auto;padding-left:20px;padding-right:20px;min-width:0}
 :focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:8px}
 .skip{position:absolute;left:-9999px;top:0;z-index:200;background:#fff;color:var(--accent);padding:12px 18px;border-radius:0 0 12px 0;font-weight:600;text-decoration:none}
@@ -47,7 +47,7 @@ body{
 .nav a{display:inline-flex;align-items:center;min-height:44px;padding:0 12px;border-radius:10px;color:var(--muted);text-decoration:none;font-size:15px;white-space:nowrap}
 .nav a:hover{color:var(--text);background:rgba(0,0,0,.05)}
 
-/* ========== Layout: герой (отступы только сверху/снизу!) ========== */
+/* ========== Layout: герой (отступы только сверху/снизу) ========== */
 .hero{padding-top:52px;padding-bottom:6px;text-align:center}
 .eyebrow{color:var(--accent);font-weight:700;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase}
 .hero h1{font-size:clamp(30px,6vw,56px);font-weight:800;letter-spacing:-.02em;line-height:1.08;margin:12px 0 14px;overflow-wrap:break-word}
@@ -75,7 +75,7 @@ pre.code{margin:0;padding:18px 18px 22px;color:#f5f5f7;font-family:var(--mono);f
 .stat b{display:block;font-size:30px;letter-spacing:-.02em}
 .stat span{color:var(--muted);font-size:13.5px}
 
-/* ========== Layout: секции (отступы только сверху/снизу!) ========== */
+/* ========== Layout: секции (отступы только сверху/снизу) ========== */
 .section{padding-top:56px;padding-bottom:6px;scroll-margin-top:70px}
 .section-head{margin-bottom:22px}
 .section h2{font-size:clamp(24px,4vw,36px);font-weight:800;letter-spacing:-.02em;margin:6px 0 8px;overflow-wrap:break-word}
@@ -192,9 +192,6 @@ const PRACTICE = [
   {id:7, title:"Файлы и исключения", count:24, desc:"Чтение и запись, аргументы командной строки, try / except: head, tail, cat и анализ текстов."},
   {id:8, title:"Рекурсия", count:14, desc:"Базовый и рекурсивный случаи: числа Фибоначчи, палиндромы, редакционное расстояние и выравнивание списков."}
 ];
-/* Страницы, которые уже опубликованы и открываются по клику.
-   По мере выхода уроков добавляйте номера сюда (topic1.html уже на сайте). */
-const BUILT = { topic: [1], task: [] };
 /* Причины «почему Python» */
 const WHY = [
   {t:"Читаемый синтаксис", d:"Код на Python похож на псевдокод: минимум лишнего шума, максимум смысла. Идеально для старта с нуля.",
@@ -229,6 +226,9 @@ const state = {
   progress: loadProgress(),
   confirmReset: false
 };
+/* кэш проверки существования страниц: {href: true/false}, чтобы не дёргать сеть повторно */
+const pageExistsCache = {};
+
 function loadProgress(){
   try{
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -254,6 +254,19 @@ function plural(n, forms){
   if(n10 === 1 && n100 !== 11) return forms[0];
   if(n10 >= 2 && n10 <= 4 && (n100 < 12 || n100 > 14)) return forms[1];
   return forms[2];
+}
+/* существует ли страница раздела: HEAD-запрос к своему же сайту (без сторонних сервисов).
+   Благодаря этому новые страницы уроков открываются по клику без правок главной. */
+function checkPageExists(href){
+  if(href in pageExistsCache) return Promise.resolve(pageExistsCache[href]);
+  return fetch(href, {method:"HEAD"}).then(function(r){
+    pageExistsCache[href] = r.ok;
+    return r.ok;
+  }).catch(function(){
+    /* проверку выполнить не удалось (например, локальный запуск) — ведём себя как обычная ссылка */
+    pageExistsCache[href] = true;
+    return true;
+  });
 }
 
 /* ================= RENDER ================= */
@@ -373,15 +386,19 @@ function showToast(msg){
 function onAppClick(e){
   const card = e.target.closest("a[data-group]");
   if(card){
-    const group = card.dataset.group, id = Number(card.dataset.id);
-    const built = BUILT[group].indexOf(id) !== -1;
-    /* обычные клики по неопубликованным разделам заменяем тостом;
-       ctrl/meta/shift/средняя кнопка всегда работают как нативные (открыть в новой вкладке) */
+    const href = card.getAttribute("href");
+    /* ctrl/meta/shift/средняя кнопка — нативное поведение (открыть в новой вкладке) */
     const plainLeftClick = e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey;
-    if(!built && plainLeftClick){
-      e.preventDefault();
-      showToast("Раздел уже в плане курса и скоро появится.");
-    }
+    if(!plainLeftClick) return;
+    e.preventDefault();
+    /* сами проверяем, загружена ли страница раздела: новые уроки открываются без правок главной */
+    checkPageExists(href).then(function(exists){
+      if(exists){
+        window.location.href = href;
+      }else{
+        showToast("Раздел уже в плане курса и скоро появится.");
+      }
+    });
     return;
   }
   const btn = e.target.closest("button[data-action]");
