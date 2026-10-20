@@ -704,6 +704,13 @@ function submitTest(){
   window.scrollTo(0, 0);
   showToast("Тест завершён: " + score + " из " + QUESTIONS.length + ".");
 }
+function scrollToSlide(){
+  var card = app.querySelector(".slide-card");
+  if(!card) return;
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var y = card.getBoundingClientRect().top + window.pageYOffset - 10;
+  window.scrollTo({top: y < 0 ? 0 : y, behavior: reduce ? "auto" : "smooth"});
+}
 function onAppClick(e){
   const tabBtn = e.target.closest("[data-tab]");
   if(tabBtn){
@@ -720,11 +727,13 @@ function onAppClick(e){
     state.slide = Math.max(0, state.slide - 1);
     markSlideViewed(state.slide);
     render();
+    scrollToSlide();
   }
   else if(act === "slide-next"){
     state.slide = Math.min(SLIDES.length - 1, state.slide + 1);
     markSlideViewed(state.slide);
     render();
+    scrollToSlide();
   }
   else if(act === "test-submit"){ submitTest(); }
   else if(act === "test-retake"){
