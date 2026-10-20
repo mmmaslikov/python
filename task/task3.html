@@ -580,7 +580,8 @@ function renderReport(){
     ? touchedList.map(function(t){
         return '<h3>Задача ' + t.id + '. ' + esc(t.title) + '</h3>' +
           '<p class="rep-note">Решена: <b>' + (state.solved[t.id] ? "да" : "нет") + '</b> · Подсказка: <b>' + (state.hintUsed[t.id] ? "да" : "нет") + '</b> · Эталон: <b>' + (state.etalonViewed[t.id] ? (state.etalonNoAttempt[t.id] ? "да, без своей попытки" : "да") : "нет") + '</b></p>' +
-          '<p class="label-sm">Мой код</p><pre>' + ((state.codes[t.id] || "").trim() ? esc(state.codes[t.id]) : "— код не предоставлен —") + '</pre>';
+          '<p class="label-sm">Мой код</p><pre>' + ((state.codes[t.id] || "").trim() ? esc(state.codes[t.id]) : "— код не предоставлен —") + '</pre>' +
+          '<p class="label-sm">Эталон решения</p><pre>' + esc(t.solution) + '</pre>';
       }).join("")
     : '<p class="rep-note">Работ с задачами не зафиксировано.</p>';
   return '<div class="container"><div class="report" id="reportSheet">' +
