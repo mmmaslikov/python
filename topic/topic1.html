@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Основы языка — Python‑тренажёр</title>
+<style>
+/* ========== CSS: переменные темы (спокойный Apple-like) ========== */
+:root{
+  --bg:#f5f5f7;
+  --surface:#ffffff;
+  --text:#1d1d1f;
+  --muted:#6e6e73;
+  --accent:#0071e3;
+  --accent-dark:#005bb9;
+  --danger:#c22a1e;
+  --ok:#1c7c3c;
+  --code-bg:#1d1d1f;
+  --code-tx:#f5f5f7;
+  --radius:18px;
+  --radius-sm:12px;
+  --shadow:0 8px 24px rgba(0,0,0,.06);
+  --shadow-lift:0 14px 34px rgba(0,0,0,.10);
+  --border:rgba(0,0,0,.07);
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  line-height:1.5;-webkit-font-smoothing:antialiased;
+}
+.container{width:100%;max-width:960px;margin:0 auto;padding:0 20px}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:8px}
+.skip{position:absolute;left:-9999px;top:0;z-index:200;background:#fff;color:var(--accent);padding:12px 18px;border-radius:0 0 12px 0;font-weight:600;text-decoration:none}
+.skip:focus{left:0}
+
+/* ========== Компоненты: кнопки ========== */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 24px;border-radius:999px;border:none;font-size:16px;font-weight:600;cursor:pointer;text-decoration:none;transition:background .15s ease,transform .15s ease}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:var(--accent-dark)}
+.btn-ghost{background:transparent;color:var(--accent);box-shadow:inset 0 0 0 1.5px rgba(0,113,227,.4)}
+.btn-ghost:hover{background:rgba(0,113,227,.08)}
+.btn-small{min-height:44px;padding:0 18px;border-radius:999px;font-size:14px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--text)}
+.btn-small:hover{background:#f5f5f7}
+.btn-small[disabled]{opacity:.45;cursor:default}
+
+/* ========== Экран старта ========== */
+.start-card{max-width:560px;margin:44px auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px}
+.eyebrow{color:var(--accent);font-weight:700;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase}
+.start-card h1{font-size:clamp(28px,5vw,40px);font-weight:800;letter-spacing:-.02em;margin:10px 0 6px}
+.author{color:var(--muted);margin:0 0 18px;font-size:15px}
+.start-list{margin:0 0 22px;padding-left:20px;color:var(--muted);font-size:14.5px;display:grid;gap:6px}
+.field{display:grid;gap:6px;margin-bottom:14px}
+.field label{font-size:14px;font-weight:600}
+.field input{min-height:48px;border:1px solid var(--border);border-radius:12px;padding:0 14px;font-size:16px;background:#fff;color:var(--text);width:100%}
+.field input:focus{outline:3px solid rgba(0,113,227,.35);border-color:var(--accent)}
+.field input.bad{border-color:var(--danger);box-shadow:0 0 0 3px rgba(194,42,30,.12)}
+.err{color:var(--danger);font-size:13px;margin:0}
+
+/* ========== Шапка урока и вкладки ========== */
+.lesson-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:16px 0 10px}
+.lesson-head h1{font-size:20px;margin:0;letter-spacing:-.01em;flex:1 1 auto;min-width:160px}
+.chip-student{min-height:44px;display:inline-flex;align-items:center;gap:8px;border:1px solid var(--border);background:#fff;border-radius:999px;padding:0 16px;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer}
+.chip-student:hover{background:#f5f5f7}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{min-height:44px;padding:0 18px;border-radius:999px;border:1px solid var(--border);background:#fff;font-size:15px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap}
+.tab:hover{background:#f5f5f7}
+.tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.section-note{color:var(--muted);font-size:14.5px;margin:14px 0 18px;max-width:700px}
+
+/* ========== Теория: слайды ========== */
+.slide-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;margin-top:16px}
+.slide-top{display:flex;justify-content:space-between;align-items:center;gap:10px;color:var(--muted);font-size:13.5px;margin-bottom:8px}
+.slide-bar{height:6px;background:#e8e8ed;border-radius:999px;overflow:hidden;margin-bottom:18px}
+.slide-bar i{display:block;height:100%;background:linear-gradient(90deg,#37a0ff,var(--accent));border-radius:999px;transition:width .3s ease}
+.slide-card h2{margin:0 0 14px;font-size:clamp(21px,3.4vw,26px);letter-spacing:-.01em}
+.s-p{margin:0 0 12px;font-size:15.5px}
+.s-ul{margin:0 0 12px;padding-left:20px;display:grid;gap:6px;font-size:15px}
+pre.code{background:var(--code-bg);color:var(--code-tx);border-radius:12px;padding:14px 16px;font-family:var(--mono);font-size:13.5px;line-height:1.65;overflow-x:auto;margin:0 0 12px;white-space:pre}
+.screen{background:rgba(52,199,89,.08);border:1px solid rgba(52,199,89,.35);border-radius:12px;padding:12px 14px;margin:0 0 12px}
+.screen-label{display:block;font-size:11.5px;font-weight:700;color:var(--ok);margin-bottom:6px;text-transform:uppercase;letter-spacing:.08em}
+.screen pre{margin:0;font-family:var(--mono);font-size:13.5px;line-height:1.6;white-space:pre-wrap;color:var(--text)}
+.note{background:rgba(0,113,227,.07);border-left:3px solid var(--accent);padding:10px 14px;border-radius:0 10px 10px 0;color:var(--muted);font-size:14px;margin:0 0 12px}
+.tbl-wrap{overflow-x:auto;margin:0 0 12px;border:1px solid var(--border);border-radius:12px}
+table{border-collapse:collapse;width:100%;font-size:14px;background:#fff}
+th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--border);vertical-align:top}
+th{background:#f5f5f7;font-weight:700}
+tr:last-child td{border-bottom:none}
+.slide-nav{display:flex;justify-content:space-between;gap:10px;margin-top:18px;flex-wrap:wrap}
+
+/* ========== Тест ========== */
+fieldset.q{border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);padding:16px 16px 10px;margin:0 0 14px;box-shadow:var(--shadow)}
+fieldset.q.invalid{border-color:var(--danger);box-shadow:0 0 0 3px rgba(194,42,30,.12)}
+fieldset.q legend{padding:0 6px;font-weight:700;font-size:15.5px}
+label.opt{display:flex;gap:10px;align-items:flex-start;min-height:44px;padding:8px 10px;border-radius:10px;cursor:pointer;font-size:15px}
+label.opt:hover{background:rgba(0,0,0,.04)}
+label.opt input{width:20px;height:20px;margin-top:2px;accent-color:var(--accent);flex:none}
+.test-err{background:rgba(194,42,30,.08);border:1px solid rgba(194,42,30,.35);color:var(--danger);border-radius:12px;padding:10px 14px;font-size:14px;margin:0 0 14px}
+.result-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;text-align:center;margin-top:16px}
+.score-big{font-size:46px;font-weight:800;letter-spacing:-.02em}
+.mark-line{font-size:17px;font-weight:700;margin:4px 0}
+.verdict{color:var(--muted);margin:0 0 18px}
+.result-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.review{margin-top:22px;text-align:left}
+.review h3{font-size:17px;margin:0 0 10px}
+.rev{border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:10px;background:#fff;font-size:14.5px}
+.rev.ok{border-left:4px solid #34c759}
+.rev.bad{border-left:4px solid #ff3b30}
+.rev .who{color:var(--muted);font-size:13.5px;margin:4px 0 0}
+.rev .who b{color:var(--text)}
+
+/* ========== Практика ========== */
+.task-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin-bottom:16px}
+.task-head{display:flex;gap:10px;align-items:center;margin-bottom:8px}
+.task-num{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--accent);background:rgba(0,113,227,.1);border-radius:8px;padding:4px 9px}
+.task-head h3{margin:0;font-size:18px}
+.task-text{margin:0 0 12px;font-size:15px}
+.label-sm{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:0 0 6px}
+textarea.code-input{width:100%;min-height:190px;resize:vertical;border:1px solid var(--border);border-radius:12px;padding:12px 14px;font-family:var(--mono);font-size:13.5px;line-height:1.6;background:#fff;color:var(--text)}
+textarea.code-input:focus{outline:3px solid rgba(0,113,227,.35);border-color:var(--accent)}
+.task-actions{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0 4px}
+
+/* ========== Отчёт ========== */
+.report{background:#fff;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px;max-width:820px;margin:16px auto 0}
+.report h2{margin:0 0 4px;font-size:24px}
+.report .meta{display:grid;gap:4px;font-size:14.5px;margin:12px 0 6px}
+.report .meta span b{font-weight:700}
+.report h3{font-size:17px;margin:20px 0 8px}
+.report pre{background:#f5f5f7;border:1px solid var(--border);border-radius:10px;padding:12px;font-family:var(--mono);font-size:12.5px;line-height:1.55;white-space:pre-wrap;word-break:break-word;margin:0 0 12px}
+.report .rep-note{color:var(--muted);font-size:13px;margin:6px 0 0}
+.report-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:18px 0 40px}
+.hint-print{color:var(--muted);font-size:13.5px;text-align:center;margin:0 0 40px}
+
+/* ========== Тост ========== */
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(16px);background:#1d1d1f;color:#fff;padding:12px 20px;border-radius:999px;font-size:14.5px;opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease;z-index:100;box-shadow:var(--shadow-lift);max-width:calc(100vw - 40px);text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ========== Печать (сохранение отчёта в PDF) ========== */
+@media print{
+  body{background:#fff}
+  .no-print{display:none !important}
+  .container{padding:0;max-width:100%}
+  .report{border:none;box-shadow:none;margin:0;padding:0;max-width:100%}
+  .report pre{white-space:pre-wrap;word-break:break-word}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{transition:none !important}
+}
+</style>
+</head>
+<body>
+<a class="skip no-print" href="#main">Перейти к содержимому</a>
+<div id="app"><!-- основной UI рендерится из JS --></div>
+<script>
+"use strict";
+/* ================= CONSTANTS ================= */
+const META = { num:1, topic:"Основы языка", author:"Масликов М.М." };
+
+/* Теория: слайды по материалам конспекта «Основы языка Python» */
+const SLIDES = [
+  { t:"Язык Python. Линейные программы", b:[
+    {k:"p", v:"Языки программирования — это формальные языки, предназначенные для записи алгоритмов, исполнителем которых является компьютер. Алгоритмы, записанные на этих языках, называют программами."},
+    {k:"p", v:"Одним из самых популярных современных языков программирования является Python (произносится «пайтон» или «питон»). Его разработал в 1991 году нидерландский программист Гвидо ван Россум. Язык непрерывно совершенствуется, сейчас используется версия Python 3.9.5."},
+    {k:"p", v:"Python применяется для обработки различных данных, математических вычислений, создания изображений, работы с базами данных, разработки веб-сайтов и игр."},
+    {k:"ul", v:[
+      "Установка в Windows: скачать программу-установщик с сайта www.python.org, запустить её, отметить флажок Add Python 3.8 to PATH и нажать Install Now.",
+      "Интерпретатор работает в двух режимах: командном (введённая команда сразу выполняется) и программном (программа записывается в файл с расширением .py и при запуске выполняется целиком).",
+      "Запуск интерпретатора: Пуск → Программы → Python 3.8 → IDLE. В окне Python Shell символы >>> означают приглашение ввести команду; ввод завершается нажатием Enter, результат отображается на следующей строке.",
+      "Файл с программой: File → New File, набрать текст, сохранить File → Save As, запустить Run → Run Module или клавишей F5. Результат работы отображается в окне Python Shell."]},
+    {k:"note", v:"PyCharm — кроссплатформенная интегрированная среда разработки (IDE) для Python, созданная компанией JetBrains на основе IntelliJ IDEA. Предоставляет комплекс средств для написания кода и визуальный отладчик."}
+  ]},
+  { t:"Общие сведения о языке", b:[
+    {k:"ul", v:[
+      "Алфавит состоит из букв латинского алфавита (заглавные и строчные различаются), цифр и специальных знаков. Русские буквы могут использоваться только при выводе текста на экран и в комментариях.",
+      "Служебные слова — последовательности символов, имеющие фиксированное смысловое значение.",
+      "Константы — величины, не изменяющие своего значения при выполнении программы. Переменные — величины, которые могут изменяться; каждая переменная имеет имя, тип и значение.",
+      "Идентификатор (имя переменной) — любая отличная от служебных слов последовательность латинских букв, цифр и символа подчёркивания «_», не начинающаяся с цифры."]},
+    {k:"code", v:"N, N1, massa, massa_tela    # правильные идентификаторы\n1N, Масса, massa tela     # неправильные"},
+    {k:"p", v:"Значения переменных хранятся в ячейках оперативной памяти. Тип переменной определяет способ хранения данных и допустимые операции над ними; тип определяется автоматически в момент присваивания значения и может меняться по ходу программы."},
+    {k:"table", head:["Название","Обозначение","Допустимые значения"], rows:[
+      ["Целочисленный","int","Сколько угодно большие целые числа (размер ограничен оперативной памятью)"],
+      ["Вещественный","float","Любые числа с дробной частью (с плавающей точкой)"],
+      ["Строковый","str","Произвольная последовательность символов из таблицы Unicode"],
+      ["Логический","bool","False («ложь») или True («истина»)"]]},
+    {k:"ul", v:[
+      "Целая часть числа от дробной отделяется точкой.",
+      "Строковое значение заключается в двойные или одинарные кавычки."]}
+  ]},
+  { t:"Выражения и операции", b:[
+    {k:"p", v:"Выражение — это конструкция, возвращающая значение некоторого типа. Простые выражения — переменные и константы; сложные строятся из простых с помощью операций, функций и скобок. Данные, к которым применяют операции, называются операндами. Используется линейная форма записи выражений (в одну строку)."},
+    {k:"table", head:["Операция","Обозначение","Пример"], rows:[
+      ["Сложение","+","3 + 4 = 7"],["Вычитание","-","7 - 2 = 5"],["Умножение","*","2 * 2 = 4"],
+      ["Деление","/","8 / 2 = 4"],["Целочисленное деление","//","9 // 2 = 4"],
+      ["Остаток от деления","%","9 % 2 = 1"],["Возведение в степень","**","2 ** 3 = 8"]]},
+    {k:"p", v:"Логические выражения сравнивают величины с помощью операций сравнения и принимают лишь два значения: «истина» или «ложь»."},
+    {k:"table", head:["Операция сравнения","Символы","Пример"], rows:[
+      ["Равно","==","x == 0"],["Неравно","!=","x != 0"],["Больше",">","x > 0"],
+      ["Меньше","<","x < 0"],["Больше или равно",">=","x >= 0"],["Меньше или равно","<=","x <= 0"]]},
+    {k:"p", v:"Приоритет выполнения операций: 1) операции в скобках; 2) возведение в степень; 3) умножение и деление (в том числе // и %); 4) сложение и вычитание. Операции одинакового приоритета выполняются в порядке записи слева направо."},
+    {k:"note", v:"Если выражение слишком длинное и не помещается в одной строке, его заключают в скобки — перенос внутри скобок разрешён. Пример записи: дробь (a+b)·h/2 в линейной форме — (a+b)*h/2, а v + a·t²/2 — v+a*t**2/2."}
+  ]},
+  { t:"Оператор присваивания", b:[
+    {k:"p", v:"Оператор присваивания записывает в переменную, имя которой находится слева от знака «=», значение выражения, находящегося справа. Старое значение переменной при этом стирается. Общий вид: имя_переменной = выражение."},
+    {k:"code", v:"a = 5\nb = a\nc = a + b\nc = c + 1\n# в памяти: a = 5, b = 5, c = 11"},
+    {k:"p", v:"В языке Python допускается множественное присваивание:"},
+    {k:"table", head:["Запись оператора","Равносильная запись"], rows:[
+      ["a, b = 0, 1","a = 0\nb = 1"],
+      ["a = b = 0","a = 0\nb = 0"]]}
+  ]},
+  { t:"Оператор вывода", b:[
+    {k:"p", v:"Вывод данных на экран осуществляется с помощью функции print («печать»): print(выражение1, выражение2, ..., выражениеN). На экран выводятся значения переменных и выражений, строковые значения — без кавычек; значения разделяются пробелом (по умолчанию); после выполнения оператора происходит автоматический переход на новую строку."},
+    {k:"code", v:'print("Масса равна", m, "кг")   # при m = 15 на экране: Масса равна 15 кг'},
+    {k:"p", v:"Вместо пробела можно использовать другие символы-разделители, указав их после слова sep (separator). Чтобы убрать переход на новую строку после вывода, используется параметр end."},
+    {k:"table", head:["Вариант вывода","Оператор","На экране"], rows:[
+      ["По умолчанию","print(1, 20, 300)","1 20 300"],
+      ["Без разделителя",'print(1, 20, 300, sep="")',"120300"],
+      ["Через запятую и пробел",'print(1, 20, 300, sep=", ")',"1, 20, 300"],
+      ["Каждое с новой строки",'print(1, 20, 300, sep="\\n")',"1\n20\n300"],
+      ["Без перехода на новую строку",'print(1, end="") и print(20)',"120"]]},
+    {k:"p", v:"Форматный вывод с помощью символьной строки позволяет задать количество позиций на экране, занимаемых выводимой величиной. В фигурных скобках задаётся формат вывода очередного элемента: для целых чисел — количество позиций (d), для вещественных — общее количество позиций, через точку — количество позиций в дробной части (f) или экспоненциальный формат (e). Если цифр в числе меньше, слева выводятся пробелы."},
+    {k:"code", v:'print("{:3}{:3}{:3}".format(13, 7, 22))     #   13  7 22\na = 7\nprint("{:4d}{:4d}".format(a, a * a))    #    7  49\na = 1 / 3\nb = 1 / 9\nprint("{:7.3f}{:7.4f}".format(a, b))   #   0.333 0.1111\nprint("{:10.3e}".format(a))            #  3.333e-01'}
+  ]},
+  { t:"Оператор ввода", b:[
+    {k:"p", v:"Для ввода значений переменных с клавиатуры в процессе выполнения программы используется функция input («ввод»): имя_переменной = input(). Компьютер переходит в режим ожидания данных; пользователь вводит данные с клавиатуры в виде строки символов и нажимает Enter; введённая строка записывается в указанную переменную."},
+    {k:"note", v:"input() всегда возвращает строку. Если вводится число, необходимо выполнить преобразование типов: int() — для целых, float() — для вещественных."},
+    {k:"code", v:'print("Введите слово и два числа:")\nx = input()\ny = int(input())\nz = float(input())\nprint(x, y, z)'},
+    {k:"screen", v:"Введите слово и два числа:\nноль\n1\n2\nноль 1 2.0"},
+    {k:"p", v:"В скобках функции input можно указать текст подсказки для пользователя. Несколько значений можно ввести в одной строке через пробел — для этого используется функция split(); затем данные преобразуются к нужному типу по отдельности."},
+    {k:"code", v:'a, b, c = input("Введите a, b, c через пробел: ").split()\na, b, c = int(a), int(b), int(c)\nprint(a, b, c)'},
+    {k:"screen", v:"Введите a, b, c через пробел: 1 2 3\n1 2 3"}
+  ]},
+  { t:"Оператор комментария", b:[
+    {k:"p", v:"Комментарии используются для включения в программу любых пояснений, предназначенных человеку. Комментарием считается любой текст после символа # до конца строки. При выполнении программы комментарии игнорируются."},
+    {k:"code", v:'# Длина окружности и площадь круга\nr = float(input("Введите радиус: "))\nc = 2 * 3.14 * r      # длина окружности\ns = 3.14 * r ** 2     # площадь круга\nprint("C=", c)\nprint("S=", s)'},
+    {k:"screen", v:"Введите радиус: 10\nC= 62.80\nS= 314.00"},
+    {k:"note", v:"В примере значения вывода округлены до двух знаков после запятой для наглядности."}
+  ]},
+  { t:"Стандартные функции", b:[
+    {k:"p", v:"Функции имеют определённое имя и один или несколько аргументов в скобках. Функция возвращает своё значение в то место программы, из которого она вызывается."},
+    {k:"table", head:["Функция","Назначение","Тип аргумента","Тип результата"], rows:[
+      ["abs(x)","Абсолютная величина (модуль числа x)","int, float","Как у аргумента"],
+      ["int(x)","Преобразование вещественного числа к целому (отбрасывание дробной части)","float","int"],
+      ["round(x)","Округление вещественного числа до заданного количества знаков (по умолчанию — до ближайшего целого)","float","int, float"]]},
+    {k:"p", v:"Большинство стандартных функций разбиты на группы по назначению; каждая группа записана в отдельном файле — модуле. Подключение модуля осуществляется командой import. Например: from math import *"},
+    {k:"table", head:["Функция модуля math","Назначение","Тип аргумента","Тип результата"], rows:[
+      ["sqrt(x)","Квадратный корень из x","int, float","float"],
+      ["sin(x)","Синус угла x в радианах","int, float","float"],
+      ["cos(x)","Косинус угла x в радианах","int, float","float"]]},
+    {k:"p", v:"Можно подключить не все функции, а только необходимую. Например: from random import randint"},
+    {k:"table", head:["Функция модуля random","Назначение","Тип аргумента","Тип результата"], rows:[
+      ["random()","Случайное число из полуинтервала [0, 1)","—","float"],
+      ["randint(a, b)","Случайное число из отрезка [a, b]","int","int"]]},
+    {k:"code", v:"a = 3.56\nprint(a)            # 3.56\nprint(round(a))     # 4\nprint(round(a, 1))  # 3.6\nprint(int(a))       # 3\nfrom math import *\nb = 16\nprint(sqrt(b))      # 4.0\nfrom random import randint\nx = randint(1, 10)  # случайное число от 1 до 10\nprint(x)"},
+    {k:"note", v:"С функциями модуля math можно вычислять, например, корень квадратного уравнения: (-b+sqrt(b**2-4*a*c))/(2*a)."}
+  ]}
+];
+
+/* Тест: 10 вопросов по теории */
+const QUESTIONS = [
+  {q:"Кто является разработчиком языка Python?", opts:["Джеймс Гослинг","Гвидо ван Россум","Бьёрн Страуструп","Деннис Ритчи"], c:1},
+  {q:"В каком году был создан язык Python?", opts:["1972","1985","1991","2001"], c:2},
+  {q:"Какой из идентификаторов (имён переменной) записан правильно?", opts:["1N","Масса","massa tela","massa_tela"], c:3},
+  {q:"Какое значение по умолчанию возвращает функция input()?", opts:["целое число (int)","вещественное число (float)","строку (str)","логическое значение (bool)"], c:2},
+  {q:"Каков результат выполнения выражения 9 // 2?", opts:["4.5","4","1","0"], c:1},
+  {q:"Каков результат выполнения выражения 9 % 2?", opts:["4","4.5","2","1"], c:3},
+  {q:"Каков результат выполнения выражения 2 + 3 * 4 ** 2?", opts:["400","100","50","26"], c:2},
+  {q:"Какой параметр функции print() задаёт разделитель между выводимыми значениями?", opts:["end","sep","format","split"], c:1},
+  {q:"Какая команда подключит только функцию sqrt из модуля math?", opts:["import sqrt","from math import sqrt","include math.sqrt","using math"], c:1},
+  {q:"Какой символ начинает комментарий в Python?", opts:["//","/*","#","%"], c:2}
+];
+
+/* Практика: задачи из конспекта с эталонными решениями */
+const TASKS = [
+  { id:1, title:"Обмен значений переменных",
+    text:"Составьте программу, меняющую местами значения двух переменных a и b, введённых с клавиатуры.",
+    screen:"a=5\nb=7\na= 7\nb= 5",
+    solution:'# Обмен значений переменных\n# Классическое решение\na = int(input("a="))\nb = int(input("b="))\nt = a        # временная переменная\na = b\nb = t\nprint("a=", a)\nprint("b=", b)\n\n# Возможности языка Python\na = int(input("a="))\nb = int(input("b="))\na, b = b, a\nprint("a=", a)\nprint("b=", b)' },
+  { id:2, title:"Площадь треугольника",
+    text:"Составьте программу для вычисления площади треугольника по известным длинам его сторон по формуле Герона: S = √(p·(p−a)·(p−b)·(p−c)), где p — полупериметр треугольника.",
+    screen:"Введите длины сторон треугольника:\na=5\nb=6\nc=7\nПлощадь треугольника 14.70",
+    solution:'# Площадь треугольника\nprint("Введите длины сторон треугольника:")\na = float(input("a="))\nb = float(input("b="))\nc = float(input("c="))\np = (a + b + c) / 2            # полупериметр\nfrom math import *             # подключаем модуль math\ns = sqrt(p*(p-a)*(p-b)*(p-c))  # формула Герона\nprint("Площадь треугольника %.2f" % s)' },
+  { id:3, title:"Сумма цифр трёхзначного числа",
+    text:"Составьте программу, вычисляющую сумму цифр введённого с клавиатуры целого трёхзначного числа.",
+    screen:"Введите трёхзначное число: 345\nСумма цифр равна 12",
+    solution:'# Сумма цифр трёхзначного числа\n# Трёхзначное число x = a·100 + b·10 + c,\n# где a, b, c - цифры этого числа\nx = int(input("Введите трёхзначное число: "))\na = x // 100         # сотни\nb = x % 100 // 10    # десятки\nc = x % 10           # единицы\ns = a + b + c\nprint("Сумма цифр равна", s)' }
+];
+
+const LS_STATE = "python-topic1-state-v1";
+const LS_PROGRESS = "python-trainer-progress-v1"; // общий ключ прогресса с главной страницей
+
+/* ================= STATE ================= */
+const state = {
+  screen:"start",            // start | lesson
+  tab:"theory",              // theory | test | practice | report
+  slide:0,
+  student:{last:"", first:"", cls:""},
+  startErrors:null,
+  testAnswers:{},            // {idВопроса: индексВыбора}
+  testInvalid:[],            // ids неотвеченных при попытке сдать
+  testError:"",
+  testResult:null,           // {score, answers}
+  codes:{1:"", 2:"", 3:""},  // код ученика к задачам
+  shown:{}                   // показан ли эталон {id: bool}
+};
+function loadSaved(){
+  try{
+    const raw = localStorage.getItem(LS_STATE);
+    if(!raw) return;
+    const s = JSON.parse(s);
+    if(s.student) state.student = s.student;
+    if(s.codes) state.codes = Object.assign(state.codes, s.codes);
+    if(s.testAnswers) state.testAnswers = s.testAnswers;
+    if(s.testResult) state.testResult = s.testResult;
+  }catch(e){}
+}
+function persist(){
+  try{
+    localStorage.setItem(LS_STATE, JSON.stringify({
+      student:state.student, codes:state.codes,
+      testAnswers:state.testAnswers, testResult:state.testResult
+    }));
+  }catch(e){}
+}
+/* отметка прогресса для главной страницы сайта */
+function setProgress(status){
+  try{
+    const raw = localStorage.getItem(LS_PROGRESS);
+    const p = raw ? JSON.parse(raw) : {topic:{}, task:{}};
+    p.topic = p.topic || {};
+    p.topic[String(META.num)] = status;
+    localStorage.setItem(LS_PROGRESS, JSON.stringify(p));
+  }catch(e){}
+}
+function markOf(score){ return score >= 9 ? 5 : score >= 7 ? 4 : score >= 5 ? 3 : 2; }
+function plural(n, forms){
+  const n10 = n % 10, n100 = n % 100;
+  if(n10 === 1 && n100 !== 11) return forms[0];
+  if(n10 >= 2 && n10 <= 4 && (n100 < 12 || n100 > 14)) return forms[1];
+  return forms[2];
+}
+/* экранирование пользовательского ввода перед вставкой в разметку */
+function esc(s){
+  return String(s).replace(/[&<>"']/g, function(ch){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch];
+  });
+}
+
+/* ================= RENDER ================= */
+const app = document.getElementById("app");
+
+function blockHTML(b){
+  if(b.k === "p") return '<p class="s-p">' + b.v + "</p>";
+  if(b.k === "ul") return '<ul class="s-ul">' + b.v.map(function(x){ return "<li>" + x + "</li>"; }).join("") + "</ul>";
+  if(b.k === "code") return '<pre class="code">' + esc(b.v) + "</pre>";
+  if(b.k === "screen") return '<div class="screen"><span class="screen-label">На экране</span><pre>' + esc(b.v) + "</pre></div>";
+  if(b.k === "note") return '<p class="note">' + b.v + "</p>";
+  if(b.k === "table"){
+    return '<div class="tbl-wrap"><table><thead><tr>' +
+      b.head.map(function(h){ return "<th>" + h + "</th>"; }).join("") +
+      "</tr></thead><tbody>" +
+      b.rows.map(function(r){
+        return "<tr>" + r.map(function(c){ return "<td>" + esc(c).replace(/\n/g, "<br>") + "</td>"; }).join("") + "</tr>";
+      }).join("") + "</tbody></table></div>";
+  }
+  return "";
+}
+function renderStart(){
+  const e = state.startErrors || {};
+  const st = state.student;
+  return '<div class="container"><div class="start-card">' +
+    '<span class="eyebrow">Python · Теоретический блок ' + META.num + "</span>" +
+    "<h1>" + META.topic + "</h1>" +
+    '<p class="author">Автор урока: ' + META.author + "</p>" +
+    '<ul class="start-list"><li>Теория: 8 слайдов с примерами программ.</li><li>Тест: 10 вопросов по теме.</li><li>Практика: 3 задачи с полем для кода и эталонным решением.</li><li>В конце — отчёт, который можно сохранить в PDF.</li></ul>' +
+    '<form id="startForm" novalidate>' +
+      '<div class="field"><label for="fLast">Фамилия</label><input id="fLast" name="last" autocomplete="family-name" value="' + esc(st.last) + '" class="' + (e.last ? "bad" : "") + '" placeholder="Иванов">' + (e.last ? '<p class="err">' + e.last + "</p>" : "") + "</div>" +
+      '<div class="field"><label for="fFirst">Имя</label><input id="fFirst" name="first" autocomplete="given-name" value="' + esc(st.first) + '" class="' + (e.first ? "bad" : "") + '" placeholder="Иван">' + (e.first ? '<p class="err">' + e.first + "</p>" : "") + "</div>" +
+      '<div class="field"><label for="fCls">Класс</label><input id="fCls" name="cls" value="' + esc(st.cls) + '" class="' + (e.cls ? "bad" : "") + '" placeholder="9">' + (e.cls ? '<p class="err">' + e.cls + "</p>" : "") + "</div>" +
+      '<button class="btn btn-primary" type="submit">Начать урок</button>' +
+    "</form></div></div>";
+}
+function renderTheory(){
+  const i = state.slide, s = SLIDES[i], n = SLIDES.length;
+  const last = i === n - 1;
+  return '<div class="container"><div class="slide-card">' +
+    '<div class="slide-top"><span>Слайд ' + (i + 1) + " из " + n + '</span><span>' + META.topic + "</span></div>" +
+    '<div class="slide-bar" aria-hidden="true"><i style="width:' + Math.round((i + 1) / n * 100) + '%"></i></div>' +
+    "<h2>" + s.t + "</h2>" +
+    s.b.map(blockHTML).join("") +
+    '<div class="slide-nav no-print">' +
+      '<button class="btn-small" type="button" data-act="slide-prev"' + (i === 0 ? " disabled" : "") + ">← Назад</button>" +
+      (last
+        ? '<button class="btn btn-primary" type="button" data-tab="test">Перейти к тесту →</button>'
+        : '<button class="btn-small" type="button" data-act="slide-next">Далее →</button>') +
+    "</div></div></div>";
+}
+function renderTest(){
+  if(state.testResult){
+    const r = state.testResult;
+    const review = QUESTIONS.map(function(q, i){
+      const ua = r.answers[i], ok = ua === q.c;
+      return '<div class="rev ' + (ok ? "ok" : "bad") + '"><b>' + (i + 1) + ". " + q.q + "</b>" +
+        '<p class="who">Ваш ответ: <b>' + (ua == null ? "—" : esc(q.opts[ua])) + "</b>" +
+        (ok ? "" : ' · Правильный ответ: <b>' + esc(q.opts[q.c]) + "</b>") + "</p></div>";
+    }).join("");
+    return '<div class="container"><div class="result-card">' +
+      '<span class="eyebrow">Тест по теме «' + META.topic + '»</span>' +
+      '<div class="score-big">' + r.score + " / " + QUESTIONS.length + "</div>" +
+      '<p class="mark-line">Оценка: ' + markOf(r.score) + "</p>" +
+      '<p class="verdict">' + (r.score >= 9 ? "Отлично! Основы языка усвоены." : r.score >= 7 ? "Хорошо! Ещё немного практики — и материал закрепится." : r.score >= 5 ? "Удовлетворительно. Повторите слайды теории." : "Стоит повторить теорию и пройти тест ещё раз.") + "</p>" +
+      '<div class="result-actions"><button class="btn-small" type="button" data-act="test-retake">Пройти заново</button>' +
+      '<button class="btn btn-primary" type="button" data-tab="practice">К практике →</button></div>' +
+      '<div class="review"><h3>Разбор ответов</h3>' + review + "</div></div></div>";
+  }
+  const qs = QUESTIONS.map(function(q, i){
+    const inv = state.testInvalid.indexOf(i) !== -1;
+    const opts = q.opts.map(function(o, oi){
+      const ch = state.testAnswers[i] === oi;
+      return '<label class="opt"><input type="radio" name="q' + i + '" value="' + oi + '"' + (ch ? " checked" : "") + "><span>" + o + "</span></label>";
+    }).join("");
+    return '<fieldset class="q' + (inv ? " invalid" : "") + '" data-q="' + i + '"><legend>' + (i + 1) + ". " + q.q + "</legend>" + opts + "</fieldset>";
+  }).join("");
+  return '<div class="container"><p class="section-note">Выберите один вариант ответа в каждом вопросе и нажмите «Завершить тест». Всего вопросов: ' + QUESTIONS.length + ".</p>" +
+    (state.testError ? '<p class="test-err" role="alert">' + state.testError + "</p>" : "") +
+    qs +
+    '<div class="no-print" style="margin:6px 0 40px"><button class="btn btn-primary" type="button" data-act="test-submit">Завершить тест</button></div></div>';
+}
+function renderPractice(){
+  const cards = TASKS.map(function(t){
+    const shown = !!state.shown[t.id];
+    return '<div class="task-card"><div class="task-head"><span class="task-num">Задача ' + t.id + "</span><h3>" + t.title + "</h3></div>" +
+      '<p class="task-text">' + t.text + "</p>" +
+      '<div class="screen"><span class="screen-label">На экране</span><pre>' + esc(t.screen) + "</pre></div>" +
+      '<p class="label-sm" id="codeLbl' + t.id + '">Мой код</p>' +
+      '<textarea class="code-input" data-code="' + t.id + '" rows="8" spellcheck="false" aria-labelledby="codeLbl' + t.id + '" placeholder="Введите здесь свой код на Python…">' + esc(state.codes[t.id]) + "</textarea>" +
+      '<div class="task-actions no-print"><button class="btn-small" type="button" data-act="toggle-ans" data-id="' + t.id + '">' + (shown ? "Скрыть ответ" : "Показать ответ") + "</button></div>" +
+      (shown ? '<p class="label-sm">Эталон решения</p><pre class="code">' + esc(t.solution) + "</pre>" : "") +
+      "</div>";
+  }).join("");
+  return '<div class="container"><p class="section-note">Введите свой код в поле «Мой код», затем сравните его с эталоном (кнопка «Показать ответ»). В примерах вывода значения могут быть округлены для наглядности. Весь код попадёт в итоговый отчёт.</p>' + cards + "</div>";
+}
+function renderReport(){
+  const st = state.student;
+  const date = new Date().toLocaleDateString("ru-RU");
+  const res = state.testResult;
+  const tasks = TASKS.map(function(t){
+    const code = (state.codes[t.id] || "").trim();
+    return "<h3>Задача " + t.id + ". " + t.title + "</h3>" +
+      '<p class="rep-note">' + t.text + "</p>" +
+      '<p class="label-sm">Мой код</p><pre>' + (code ? esc(state.codes[t.id]) : "— код не предоставлен —") + "</pre>" +
+      '<p class="label-sm">Эталон решения</p><pre>' + esc(t.solution) + "</pre>";
+  }).join("");
+  return '<div class="container"><div class="report" id="reportSheet">' +
+    "<h2>Отчёт по уроку</h2>" +
+    '<div class="meta">' +
+      "<span><b>Тема:</b> " + META.topic + " (теоретический блок " + META.num + ")</span>" +
+      "<span><b>Автор урока:</b> " + META.author + "</span>" +
+      "<span><b>Ученик:</b> " + esc(st.last) + " " + esc(st.first) + "</span>" +
+      "<span><b>Класс:</b> " + esc(st.cls) + "</span>" +
+      "<span><b>Дата:</b> " + date + "</span>" +
+    "</div>" +
+    "<h3>1. Тест</h3>" +
+    (res
+      ? '<p class="rep-note">Результат: ' + res.score + " из " + QUESTIONS.length + ". Оценка: " + markOf(res.score) + ".</p>"
+      : '<p class="rep-note">Тест не пройден.</p>') +
+    "<h3>2. Практика</h3>" + tasks +
+    "</div>" +
+    '<div class="report-actions no-print"><button class="btn btn-primary" type="button" data-act="print">Сохранить отчёт в PDF</button></div>' +
+    '<p class="hint-print no-print">Откроется окно печати — выберите «Сохранить как PDF». В отчёт попадут ваши данные, результат теста и код задач.</p>' +
+    "</div>";
+}
+function renderLesson(){
+  const st = state.student;
+  const tabs = [["theory","Теория"],["test","Тест"],["practice","Практика"],["report","Отчёт"]];
+  const body = state.tab === "theory" ? renderTheory()
+    : state.tab === "test" ? renderTest()
+    : state.tab === "practice" ? renderPractice()
+    : renderReport();
+  return '<div class="container no-print"><div class="lesson-head">' +
+    "<h1>" + META.topic + " · Python</h1>" +
+    '<button class="chip-student" type="button" data-act="edit-student" title="Изменить данные ученика">' + esc(st.last) + " " + esc(st.first) + " · " + esc(st.cls) + " ✎</button>" +
+    "</div>" +
+    '<div class="tabs" role="tablist" aria-label="Разделы урока">' +
+    tabs.map(function(t){
+      return '<button class="tab" role="tab" type="button" aria-selected="' + (state.tab === t[0]) + '" data-tab="' + t[0] + '">' + t[1] + "</button>";
+    }).join("") +
+    "</div></div>" + body;
+}
+function render(){
+  app.innerHTML = state.screen === "start" ? renderStart() : renderLesson();
+}
+
+/* ================= HANDLERS ================= */
+let toastEl = null, toastTimer = null;
+function showToast(msg){
+  toastEl.textContent = msg;
+  toastEl.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ toastEl.classList.remove("show"); }, 2600);
+}
+/* старт: валидация формы и переход к уроку */
+function onStartSubmit(e){
+  e.preventDefault();
+  const f = e.target;
+  const last = f.last.value.trim(), first = f.first.value.trim(), cls = f.cls.value.trim();
+  const errs = {};
+  if(last.length < 2) errs.last = "Введите фамилию (минимум 2 символа).";
+  if(first.length < 2) errs.first = "Введите имя (минимум 2 символа).";
+  if(!cls) errs.cls = "Введите класс, например 10.2.";
+  state.student = {last:last, first:first, cls:cls};
+  if(Object.keys(errs).length){
+    state.startErrors = errs;
+    render();
+    const bad = app.querySelector("input.bad");
+    if(bad) bad.focus();
+    return;
+  }
+  state.startErrors = null;
+  state.screen = "lesson";
+  state.tab = "theory";
+  state.slide = 0;
+  setProgress(state.testResult ? (state.testResult.score >= 6 ? "done" : "progress") : "progress");
+  persist();
+  render();
+  showToast("Удачи, " + first + "! Урок начат.");
+}
+/* тест: проверка ответов и подсчёт баллов */
+function submitTest(){
+  const unanswered = [];
+  QUESTIONS.forEach(function(q, i){
+    if(state.testAnswers[i] == null) unanswered.push(i);
+  });
+  if(unanswered.length){
+    state.testInvalid = unanswered;
+    state.testError = "Осталось без ответа: " + unanswered.length + " " + plural(unanswered.length, ["вопрос", "вопроса", "вопросов"]) + ". Ответьте на все вопросы теста.";
+    render();
+    const inv = app.querySelector("fieldset.invalid");
+    if(inv) inv.scrollIntoView({block:"center", behavior:"smooth"});
+    return;
+  }
+  let score = 0;
+  QUESTIONS.forEach(function(q, i){ if(state.testAnswers[i] === q.c) score++; });
+  state.testResult = {score:score, answers:Object.assign({}, state.testAnswers)};
+  state.testError = "";
+  state.testInvalid = [];
+  setProgress(score >= 6 ? "done" : "progress");
+  persist();
+  render();
+  window.scrollTo(0, 0);
+  showToast("Тест завершён: " + score + " из " + QUESTIONS.length + ".");
+}
+function onAppClick(e){
+  const tabBtn = e.target.closest("[data-tab]");
+  if(tabBtn){
+    state.tab = tabBtn.dataset.tab;
+    render();
+    window.scrollTo(0, 0);
+    return;
+  }
+  const btn = e.target.closest("[data-act]");
+  if(!btn) return;
+  const act = btn.dataset.act;
+  if(act === "slide-prev"){ state.slide = Math.max(0, state.slide - 1); render(); }
+  else if(act === "slide-next"){ state.slide = Math.min(SLIDES.length - 1, state.slide + 1); render(); }
+  else if(act === "test-submit"){ submitTest(); }
+  else if(act === "test-retake"){
+    state.testAnswers = {}; state.testResult = null; state.testError = ""; state.testInvalid = [];
+    persist(); render(); window.scrollTo(0, 0);
+  }
+  else if(act === "toggle-ans"){
+    const id = Number(btn.dataset.id);
+    state.shown[id] = !state.shown[id];
+    render();
+  }
+  else if(act === "edit-student"){ state.screen = "start"; render(); window.scrollTo(0, 0); }
+  else if(act === "print"){ window.print(); }
+}
+/* ввод кода и выбор ответов — без перерисовки, чтобы не терять фокус */
+function onAppInput(e){
+  const ta = e.target.closest("textarea[data-code]");
+  if(ta){
+    state.codes[Number(ta.dataset.code)] = ta.value;
+    persist();
+  }
+}
+function onAppChange(e){
+  const r = e.target.closest('input[type="radio"][name^="q"]');
+  if(r){
+    const qi = Number(r.name.slice(1));
+    state.testAnswers[qi] = Number(r.value);
+    const fs = r.closest("fieldset.q");
+    if(fs) fs.classList.remove("invalid");
+    state.testInvalid = state.testInvalid.filter(function(i){ return i !== qi; });
+    if(state.testError){
+      const left = QUESTIONS.filter(function(q, i){ return state.testAnswers[i] == null; }).length;
+      const errEl = app.querySelector(".test-err");
+      if(left === 0){ if(errEl) errEl.remove(); state.testError = ""; }
+      else if(errEl){ errEl.textContent = "Осталось без ответа: " + left + " " + plural(left, ["вопрос", "вопроса", "вопросов"]) + ". Ответьте на все вопросы теста."; }
+    }
+    persist();
+  }
+}
+
+/* ================= INIT ================= */
+function init(){
+  loadSaved();
+  toastEl = document.createElement("div");
+  toastEl.className = "toast";
+  toastEl.setAttribute("role", "status");
+  toastEl.setAttribute("aria-live", "polite");
+  document.body.appendChild(toastEl);
+  render();
+  app.addEventListener("click", onAppClick);
+  app.addEventListener("input", onAppInput);
+  app.addEventListener("change", onAppChange);
+  app.addEventListener("submit", onStartSubmit);
+}
+init();
+</script>
+</body>
+</html>
