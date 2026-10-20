@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python‑тренажёр — от основ к продвинутым задачам</title>
+<style>
+/* ========== CSS: переменные темы (спокойный Apple-like) ========== */
+:root{
+  --bg:#f5f5f7;
+  --surface:#ffffff;
+  --text:#1d1d1f;
+  --muted:#6e6e73;
+  --accent:#0071e3;
+  --accent-dark:#005bb9;
+  --chip-idle-bg:#e8e8ed;   --chip-idle-tx:#48484a;
+  --chip-prog-bg:rgba(255,159,10,.16); --chip-prog-tx:#8a5a00;
+  --chip-done-bg:rgba(52,199,89,.16);  --chip-done-tx:#1c7c3c;
+  --radius:18px;
+  --radius-sm:12px;
+  --shadow:0 8px 24px rgba(0,0,0,.06);
+  --shadow-lift:0 14px 34px rgba(0,0,0,.10);
+  --border:rgba(0,0,0,.07);
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  line-height:1.5;-webkit-font-smoothing:antialiased;
+}
+.container{width:100%;max-width:1080px;margin:0 auto;padding:0 20px}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:8px}
+.skip{position:absolute;left:-9999px;top:0;z-index:200;background:#fff;color:var(--accent);padding:12px 18px;border-radius:0 0 12px 0;font-weight:600;text-decoration:none}
+.skip:focus{left:0}
+
+/* ========== Layout: шапка ========== */
+.site-header{position:sticky;top:0;z-index:50;background:rgba(245,245,247,.85);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.header-row{display:flex;align-items:center;gap:12px;min-height:56px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text);font-weight:700;font-size:16px;letter-spacing:-.01em}
+.logo-badge{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#37a0ff,#0071e3);color:#fff;display:grid;place-items:center;font-weight:800;font-size:14px;font-family:var(--mono)}
+.nav{margin-left:auto;display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav a{display:inline-flex;align-items:center;min-height:44px;padding:0 12px;border-radius:10px;color:var(--muted);text-decoration:none;font-size:15px;white-space:nowrap}
+.nav a:hover{color:var(--text);background:rgba(0,0,0,.05)}
+
+/* ========== Layout: герой ========== */
+.hero{padding:52px 0 6px;text-align:center}
+.eyebrow{color:var(--accent);font-weight:700;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase}
+.hero h1{font-size:clamp(34px,6vw,56px);font-weight:800;letter-spacing:-.02em;line-height:1.06;margin:12px 0 14px}
+.lead{max-width:660px;margin:0 auto;color:var(--muted);font-size:clamp(16px,2.4vw,19px)}
+.hero-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:26px 0 30px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 24px;border-radius:999px;border:none;font-size:16px;font-weight:600;cursor:pointer;text-decoration:none;transition:background .15s ease,transform .15s ease}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:var(--accent-dark)}
+.btn-ghost{background:transparent;color:var(--accent);box-shadow:inset 0 0 0 1.5px rgba(0,113,227,.4)}
+.btn-ghost:hover{background:rgba(0,113,227,.08)}
+
+/* ========== Компонент: окно кода ========== */
+.code-window{max-width:680px;margin:0 auto;background:#161617;border-radius:var(--radius);box-shadow:var(--shadow-lift);overflow:hidden;text-align:left}
+.code-bar{display:flex;align-items:center;gap:7px;padding:12px 14px;background:#1d1d1f}
+.dot{width:11px;height:11px;border-radius:50%}
+.dot.r{background:#ff5f57}.dot.y{background:#febc2e}.dot.g{background:#28c840}
+.code-bar .file{margin-left:8px;color:#98989d;font-family:var(--mono);font-size:12.5px}
+pre.code{margin:0;padding:18px 18px 22px;color:#f5f5f7;font-family:var(--mono);font-size:13.5px;line-height:1.75;overflow-x:auto}
+.tok-c{color:#83838a}.tok-k{color:#ff7ab2}.tok-f{color:#6bdfff}.tok-s{color:#ffa740}.tok-n{color:#d9bf69}
+
+/* ========== Layout: статистика ========== */
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:44px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:18px 14px;text-align:center;box-shadow:var(--shadow)}
+.stat b{display:block;font-size:30px;letter-spacing:-.02em}
+.stat span{color:var(--muted);font-size:13.5px}
+
+/* ========== Layout: секции и сетки ========== */
+.section{padding:56px 0 6px;scroll-margin-top:70px}
+.section-head{margin-bottom:22px}
+.section h2{font-size:clamp(26px,4vw,36px);font-weight:800;letter-spacing:-.02em;margin:6px 0 8px}
+.sub{color:var(--muted);max-width:660px;margin:0}
+.grid{display:grid;gap:14px;grid-template-columns:1fr}
+
+/* ========== Компонент: карточка модуля ========== */
+.card{display:flex;flex-direction:column;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-decoration:none;color:var(--text);box-shadow:var(--shadow);transition:transform .18s ease,box-shadow .18s ease}
+.card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lift)}
+.card-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.num{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--accent);background:rgba(0,113,227,.1);border-radius:8px;padding:4px 9px}
+.card h3{margin:0;font-size:18px;letter-spacing:-.01em}
+.card .desc{margin:0;color:var(--muted);font-size:14.5px;flex:1 1 auto}
+.meta{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-size:12px;color:var(--chip-idle-tx);background:var(--chip-idle-bg);border-radius:999px;padding:4px 10px}
+.card-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:2px;font-size:14px;font-weight:600;color:var(--accent)}
+.arrow{transition:transform .18s ease}
+.card:hover .arrow{transform:translateX(3px)}
+.chip{font-size:12px;font-weight:600;border-radius:999px;padding:4px 10px;white-space:nowrap}
+.chip.idle{background:var(--chip-idle-bg);color:var(--chip-idle-tx)}
+.chip.progress{background:var(--chip-prog-bg);color:var(--chip-prog-tx)}
+.chip.done{background:var(--chip-done-bg);color:var(--chip-done-tx)}
+
+/* ========== Компонент: панель прогресса ========== */
+.progress-panel{margin-top:18px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);display:grid;gap:14px}
+.prow{display:grid;gap:6px}
+.plabel{display:flex;justify-content:space-between;gap:10px;font-size:14px;color:var(--muted)}
+.plabel b{color:var(--text)}
+.pbar{height:8px;background:#e8e8ed;border-radius:999px;overflow:hidden}
+.pbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#37a0ff,var(--accent));border-radius:999px;transition:width .35s ease}
+.panel-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn-small{min-height:44px;padding:0 18px;border-radius:999px;font-size:14px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--text)}
+.btn-small:hover{background:#f5f5f7}
+.btn-small.danger{color:#c22a1e;border-color:rgba(194,42,30,.35)}
+.btn-small.danger:hover{background:rgba(194,42,30,.06)}
+.btn-small.link{display:inline-flex;align-items:center;text-decoration:none}
+.empty-note{color:var(--muted);font-size:15px;margin:0}
+
+/* ========== Компонент: «почему Python» ========== */
+.why .icon{width:44px;height:44px;border-radius:12px;background:rgba(0,113,227,.1);color:var(--accent);display:grid;place-items:center;margin-bottom:4px}
+.why h3{margin:0 0 6px;font-size:16.5px}
+.why p{margin:0;color:var(--muted);font-size:14px}
+
+/* ========== Компонент: шаги ========== */
+.steps{display:grid;gap:14px}
+.step{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;display:flex;gap:16px;align-items:flex-start;box-shadow:var(--shadow)}
+.step .n{font-family:var(--mono);font-size:26px;font-weight:700;color:var(--accent);line-height:1.1}
+.step h3{margin:0 0 6px;font-size:17px}
+.step p{margin:0;color:var(--muted);font-size:14.5px}
+
+/* ========== Layout: подвал ========== */
+.site-footer{margin-top:64px;border-top:1px solid var(--border);padding:26px 0 42px;color:var(--muted);font-size:13.5px}
+.footer-row{display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between}
+
+/* ========== Компонент: тост ========== */
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(16px);background:#1d1d1f;color:#fff;padding:12px 20px;border-radius:999px;font-size:14.5px;opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease;z-index:100;box-shadow:var(--shadow-lift);max-width:calc(100vw - 40px);text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ========== Адаптив ========== */
+@media (min-width:640px){
+  .grid{grid-template-columns:repeat(2,1fr)}
+  .stats{grid-template-columns:repeat(4,1fr)}
+}
+@media (min-width:980px){
+  .grid.cols-3{grid-template-columns:repeat(3,1fr)}
+  .grid.cols-4{grid-template-columns:repeat(4,1fr)}
+  .steps{grid-template-columns:repeat(3,1fr)}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{transition:none !important}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Перейти к содержимому</a>
+<div id="app"><!-- основной UI рендерится из JS --></div>
+<script>
+"use strict";
+/* ================= CONSTANTS ================= */
+/* Теория: 6 блоков (блок 5 включает дополнение 5.1 «Методы строк и списков») */
+const THEORY = [
+  {id:1, title:"Основы языка", desc:"Что такое программа, переменные, типы данных, ввод и вывод, арифметика и форматирование значений.", tags:["Теория","Тест","Разбор задач"]},
+  {id:2, title:"Ветвление", desc:"Условия if, if‑else, if‑elif‑else, вложенные ветвления и булева логика — как программа принимает решения.", tags:["Теория","Тест","Разбор задач"]},
+  {id:3, title:"Циклы", desc:"Циклы while и for, функция range, вложенные циклы: повторяем действия без копирования кода.", tags:["Теория","Тест","Разбор задач"]},
+  {id:4, title:"Массивы", desc:"Списки: доступ к элементам по индексу, циклы, добавление и удаление, сортировка и поиск.", tags:["Теория","Тест","Разбор задач"]},
+  {id:5, title:"Строковые величины", desc:"Строки: конкатенация, длина, срезы и поиск символов. Дополнение 5.1 — методы строк и списков.", tags:["Теория","Тест","Разбор задач"]},
+  {id:6, title:"Процедуры и функции", desc:"def, параметры и аргументы, возвращаемые значения, локальные переменные и импорт функций.", tags:["Теория","Тест","Разбор задач"]}
+];
+/* Практика: 8 разделов книги Б. Стивенсона «Python. Сборник упражнений» (всего 186 задач) */
+const PRACTICE = [
+  {id:1, title:"Введение в программирование", count:34, desc:"Переменные, ввод‑вывод, форматирование и формулы: от почтового адреса до размена монет и теплоёмкости."},
+  {id:2, title:"Принятие решений", count:28, desc:"if / elif / else на практике: месяцы и сезоны, знаки зодиака, рейтинги, рулетка и банкноты."},
+  {id:3, title:"Повторения", count:22, desc:"Циклы while и for: средние значения, таблицы скидок, код Цезаря, палиндромы и гипотеза Коллатца."},
+  {id:4, title:"Функции", count:25, desc:"Параметры и возвращаемые значения: медиана, плата за такси, перевод мер и магические даты."},
+  {id:5, title:"Списки", count:26, desc:"Сортировка и выбросы, дубликаты, лексемы, решето Эратосфена и подсписки."},
+  {id:6, title:"Словари", count:13, desc:"Пары «ключ‑значение»: клавиатура телефона, азбука Морзе, анаграммы, эрудит и карточка лото."},
+  {id:7, title:"Файлы и исключения", count:24, desc:"Чтение и запись, аргументы командной строки, try / except: head, tail, cat и анализ текстов."},
+  {id:8, title:"Рекурсия", count:14, desc:"Базовый и рекурсивный случаи: числа Фибоначчи, палиндромы, редакционное расстояние и выравнивание списков."}
+];
+/* Страницы, которые уже опубликованы (по мере выхода уроков список пополняется) */
+const BUILT = { topic: [], task: [] };
+/* Причины «почему Python» */
+const WHY = [
+  {t:"Читаемый синтаксис", d:"Код на Python похож на псевдокод: минимум лишнего шума, максимум смысла. Идеально для старта с нуля.",
+   svg:'<path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4"/><path d="M10 12h5M10 16h5"/>'},
+  {t:"Универсальность", d:"ОГЭ и ЕГЭ, олимпиады, анализ данных, веб, игры и автоматизация — один язык на все задачи.",
+   svg:'<rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/>'},
+  {t:"Польза для экзаменов", d:"Python — один из языков ОГЭ и ЕГЭ по информатике: практика в тренажёре работает на формат экзамена.",
+   svg:'<circle cx="12" cy="12" r="8.5"/><path d="M8.5 12.3l2.4 2.4 4.6-5.2"/>'},
+  {t:"Огромная экосистема", d:"Тысячи библиотек, задач и сообщество любого уровня: пример и подсказка всегда найдутся.",
+   svg:'<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12L4 7.5M12 12v9"/>'}
+];
+const STEPS = [
+  {t:"Изучи теорию", d:"Каждая тема — короткий конспект с живыми примерами кода. Ничего лишнего: только то, что нужно для практики."},
+  {t:"Пройди тест", d:"Небольшой тест в конце темы покажет, всё ли понятно. Ошибки здесь — нормальная и полезная часть обучения."},
+  {t:"Реши задачи", d:"Разбор типовых задач с решениями, затем 186 задач практики: от разминки первого уровня до рекурсии."}
+];
+/* строки примера кода для окна в герое */
+const CODE_LINES = [
+  '<span class="tok-c"># Ваша первая программа на Python</span>',
+  '<span class="tok-k">name</span> = <span class="tok-f">input</span>(<span class="tok-s">"Как тебя зовут? "</span>)',
+  '<span class="tok-f">print</span>(<span class="tok-s">"Привет,"</span>, name + <span class="tok-s">"!"</span>)',
+  '',
+  '<span class="tok-k">for</span> i <span class="tok-k">in</span> <span class="tok-f">range</span>(<span class="tok-n">3</span>):',
+  '    <span class="tok-f">print</span>(<span class="tok-s">"Учим Python — шаг"</span>, i + <span class="tok-n">1</span>)'
+];
+const STORAGE_KEY = "python-trainer-progress-v1";
+const CHIP_LABEL = { idle:"Не начато", progress:"В процессе", done:"Пройдено" };
+
+/* ================= STATE ================= */
+/* progress: {topic:{id:status}, task:{id:status}} — пишется страницами уроков, здесь читается */
+const state = {
+  progress: loadProgress(),
+  confirmReset: false
+};
+function loadProgress(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return {topic:{}, task:{}};
+    const p = JSON.parse(raw);
+    return { topic:(p && p.topic) || {}, task:(p && p.task) || {} };
+  }catch(e){ return {topic:{}, task:{}}; } // приватный режим или битые данные
+}
+function statusOf(group, id){
+  const s = state.progress[group][String(id)];
+  return (s === "done" || s === "progress") ? s : "idle";
+}
+function doneCount(group, list){
+  return list.filter(function(it){ return statusOf(group, it.id) === "done"; }).length;
+}
+function hasData(){
+  return THEORY.some(function(t){ return statusOf("topic", t.id) !== "idle"; }) ||
+         PRACTICE.some(function(p){ return statusOf("task", p.id) !== "idle"; });
+}
+/* русские формы множественного числа: plural(28, ["задача","задачи","задач"]) */
+function plural(n, forms){
+  const n10 = n % 10, n100 = n % 100;
+  if(n10 === 1 && n100 !== 11) return forms[0];
+  if(n10 >= 2 && n10 <= 4 && (n100 < 12 || n100 > 14)) return forms[1];
+  return forms[2];
+}
+
+/* ================= RENDER ================= */
+const app = document.getElementById("app");
+
+function chipHTML(group, id){
+  const s = statusOf(group, id);
+  return '<span class="chip ' + s + '">' + CHIP_LABEL[s] + '</span>';
+}
+function theoryCard(t){
+  const href = "topic/topic" + t.id + ".html";
+  return '<a class="card" href="' + href + '" data-group="topic" data-id="' + t.id + '">' +
+    '<div class="card-top"><span class="num">0' + t.id + '</span>' + chipHTML("topic", t.id) + '</div>' +
+    '<h3>' + t.title + '</h3>' +
+    '<p class="desc">' + t.desc + '</p>' +
+    '<div class="meta">' + t.tags.map(function(x){ return '<span class="tag">' + x + '</span>'; }).join("") + '</div>' +
+    '<div class="card-foot"><span>Открыть раздел</span><span class="arrow" aria-hidden="true">→</span></div></a>';
+}
+function practiceCard(p){
+  const href = "task/task" + p.id + ".html";
+  const nn = p.id < 10 ? "0" + p.id : String(p.id);
+  return '<a class="card" href="' + href + '" data-group="task" data-id="' + p.id + '">' +
+    '<div class="card-top"><span class="num">' + nn + '</span>' + chipHTML("task", p.id) + '</div>' +
+    '<h3>' + p.title + '</h3>' +
+    '<p class="desc">' + p.desc + '</p>' +
+    '<div class="meta"><span class="tag">' + p.count + " " + plural(p.count, ["задача","задачи","задач"]) + '</span><span class="tag">Продвинутый уровень</span></div>' +
+    '<div class="card-foot"><span>Открыть раздел</span><span class="arrow" aria-hidden="true">→</span></div></a>';
+}
+function whyCard(w){
+  return '<div class="card why"><div class="icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + w.svg + '</svg></div>' +
+    '<h3>' + w.t + '</h3><p>' + w.d + '</p></div>';
+}
+function progressPanelHTML(){
+  /* пустое состояние: прогресса ещё нет */
+  if(!hasData()){
+    return '<div class="progress-panel" role="group" aria-label="Ваш прогресс">' +
+      '<p class="empty-note">Пока нет сохранённого прогресса: вы ещё не открывали разделы. Начните с теории — прогресс появится здесь автоматически.</p>' +
+      '<div class="panel-actions"><a class="btn-small link" href="#theory">К каталогу теории</a></div></div>';
+  }
+  const td = doneCount("topic", THEORY), pd = doneCount("task", PRACTICE);
+  const tp = Math.round(td / THEORY.length * 100), pp = Math.round(pd / PRACTICE.length * 100);
+  const actions = state.confirmReset
+    ? '<button class="btn-small danger" data-action="reset-confirm" type="button">Да, сбросить</button>' +
+      '<button class="btn-small" data-action="reset-cancel" type="button">Отмена</button>'
+    : '<button class="btn-small danger" data-action="reset-toggle" type="button">Сбросить прогресс</button>';
+  return '<div class="progress-panel" role="group" aria-label="Ваш прогресс">' +
+    '<div class="prow"><div class="plabel"><span>Теория</span><b>' + td + " из " + THEORY.length + " · " + tp + '%</b></div>' +
+    '<div class="pbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + tp + '" aria-label="Прогресс теории"><i style="width:' + tp + '%"></i></div></div>' +
+    '<div class="prow"><div class="plabel"><span>Практика</span><b>' + pd + " из " + PRACTICE.length + " · " + pp + '%</b></div>' +
+    '<div class="pbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pp + '" aria-label="Прогресс практики"><i style="width:' + pp + '%"></i></div></div>' +
+    '<div class="panel-actions">' + actions + '</div></div>';
+}
+function render(){
+  /* собираем страницу целиком из констант; пользовательского ввода в разметке нет */
+  const totalTasks = PRACTICE.reduce(function(s,p){ return s + p.count; }, 0);
+  app.innerHTML =
+  '<header class="site-header"><div class="container header-row">' +
+    '<a class="logo" href="#top" aria-label="На главную"><span class="logo-badge">Py</span><span>Тренажёр Python</span></a>' +
+    '<nav class="nav" aria-label="Разделы сайта"><a href="#theory">Теория</a><a href="#practice">Практика</a><a href="#why">Почему Python</a><a href="#how">Как заниматься</a></nav>' +
+  '</div></header>' +
+  '<main id="main">' +
+    '<section class="hero container" id="top" aria-labelledby="hero-title">' +
+      '<span class="eyebrow">Масликов Михаил Михайлович · учитель информатики</span>' +
+      '<h1 id="hero-title">Python: от первых строк до продвинутых задач</h1>' +
+      '<p class="lead">Python — язык программирования с простым и понятным синтаксисом. На нём пишут веб‑сервисы, анализируют данные, создают игры и автоматизацию; его выбирают на ОГЭ, ЕГЭ и олимпиадах. Этот тренажёр проведёт вас от основ до 186 задач продвинутого уровня.</p>' +
+      '<div class="hero-actions"><a class="btn btn-primary" href="#theory">Начать обучение</a><a class="btn btn-ghost" href="#practice">Каталог практики</a></div>' +
+      '<div class="code-window" aria-hidden="true"><div class="code-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="file">hello.py</span></div>' +
+      '<pre class="code">' + CODE_LINES.join("\n") + '</pre></div>' +
+      '<div class="stats" role="list">' +
+        '<div class="stat" role="listitem"><b>' + THEORY.length + '</b><span>блоков теории</span></div>' +
+        '<div class="stat" role="listitem"><b>' + PRACTICE.length + '</b><span>разделов практики</span></div>' +
+        '<div class="stat" role="listitem"><b>' + totalTasks + '</b><span>задач в тренажёре</span></div>' +
+        '<div class="stat" role="listitem"><b>9–11</b><span>классы и экзамены</span></div>' +
+      '</div>' +
+    '</section>' +
+    '<section class="section container" id="progress" aria-labelledby="progress-title">' +
+      '<div class="section-head"><span class="eyebrow">Продолжить обучение</span><h2 id="progress-title">Ваш прогресс</h2>' +
+      '<p class="sub">Тренажёр запоминает, какие разделы вы открыли и прошли, — прямо в этом браузере.</p></div>' +
+      progressPanelHTML() +
+    '</section>' +
+    '<section class="section container" id="theory" aria-labelledby="theory-title">' +
+      '<div class="section-head"><span class="eyebrow">База</span><h2 id="theory-title">Теория: 6 блоков</h2>' +
+      '<p class="sub">Последовательный курс основ: конспект, тест и разобранные задачи в каждом блоке.</p></div>' +
+      '<div class="grid cols-3">' + THEORY.map(theoryCard).join("") + '</div>' +
+    '</section>' +
+    '<section class="section container" id="practice" aria-labelledby="practice-title">' +
+      '<div class="section-head"><span class="eyebrow">Продвинутый уровень</span><h2 id="practice-title">Практика: 8 разделов</h2>' +
+      '<p class="sub">186 задач по материалам книги Бена Стивенсона «Python. Сборник упражнений»: от разминки до рекурсии.</p></div>' +
+      '<div class="grid cols-4">' + PRACTICE.map(practiceCard).join("") + '</div>' +
+    '</section>' +
+    '<section class="section container" id="why" aria-labelledby="why-title">' +
+      '<div class="section-head"><span class="eyebrow">Мотивация</span><h2 id="why-title">Почему именно Python</h2>' +
+      '<p class="sub">Четыре причины, по которым Python стал языком номер один в обучении и индустрии.</p></div>' +
+      '<div class="grid cols-4">' + WHY.map(whyCard).join("") + '</div>' +
+    '</section>' +
+    '<section class="section container" id="how" aria-labelledby="how-title">' +
+      '<div class="section-head"><span class="eyebrow">Маршрут</span><h2 id="how-title">Как заниматься в тренажёре</h2>' +
+      '<p class="sub">Три шага одного цикла обучения. Повторяйте его для каждого раздела — и результат придёт.</p></div>' +
+      '<div class="steps">' + STEPS.map(function(s,i){ return '<div class="step"><span class="n" aria-hidden="true">0' + (i+1) + '</span><div><h3>' + s.t + '</h3><p>' + s.d + '</p></div></div>'; }).join("") + '</div>' +
+    '</section>' +
+  '</main>' +
+  '<footer class="site-footer"><div class="container footer-row">' +
+    '<span>Учебный тренажёр по Python · 9–11 классы · базовый и продвинутый уровни</span>' +
+    '<span>Практика — по книге Б. Стивенсона «Python. Сборник упражнений» (186 задач)</span>' +
+  '</div></footer>';
+}
+
+/* ================= HANDLERS ================= */
+let toastEl = null, toastTimer = null;
+function showToast(msg){
+  toastEl.textContent = msg;
+  toastEl.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ toastEl.classList.remove("show"); }, 2600);
+}
+function clearProgress(){
+  try{ localStorage.removeItem(STORAGE_KEY); }catch(e){}
+  state.progress = {topic:{}, task:{}};
+}
+/* делегированный клик: карточки модулей и кнопки панели прогресса */
+function onAppClick(e){
+  const card = e.target.closest("a[data-group]");
+  if(card){
+    const group = card.dataset.group, id = Number(card.dataset.id);
+    if(BUILT[group].indexOf(id) === -1){      // страница раздела ещё не опубликована
+      e.preventDefault();
+      showToast("Раздел уже в плане курса и скоро появится.");
+    }
+    return;
+  }
+  const btn = e.target.closest("button[data-action]");
+  if(!btn) return;
+  const scrollY = window.scrollY;             // сохраняем позицию при перерисовке
+  const act = btn.dataset.action;
+  if(act === "reset-toggle"){ state.confirmReset = true; }
+  else if(act === "reset-cancel"){ state.confirmReset = false; }
+  else if(act === "reset-confirm"){
+    clearProgress();
+    state.confirmReset = false;
+    showToast("Прогресс сброшен. Можно начинать заново!");
+  }
+  render();
+  window.scrollTo(0, scrollY);
+}
+
+/* ================= INIT ================= */
+function init(){
+  toastEl = document.createElement("div");
+  toastEl.className = "toast";
+  toastEl.setAttribute("role", "status");
+  toastEl.setAttribute("aria-live", "polite");
+  document.body.appendChild(toastEl);
+  render();
+  app.addEventListener("click", onAppClick);
+}
+init();
+</script>
+</body>
+</html>
