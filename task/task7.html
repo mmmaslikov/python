@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Практика · Глава 7 — Python‑тренажер</title>
+<style>
+:root{
+  --bg:#f5f5f7;
+  --surface:#ffffff;
+  --text:#1d1d1f;
+  --muted:#6e6e73;
+  --accent:#0071e3;
+  --accent-dark:#005bb9;
+  --danger:#c22a1e;
+  --ok:#1c7c3c;
+  --radius:18px;
+  --radius-sm:12px;
+  --shadow:0 8px 24px rgba(0,0,0,.06);
+  --shadow-lift:0 14px 34px rgba(0,0,0,.10);
+  --border:rgba(0,0,0,.07);
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  line-height:1.5;-webkit-font-smoothing:antialiased;
+  overflow-x:clip;
+}
+.container{width:100%;max-width:960px;margin:0 auto;padding-left:20px;padding-right:20px;min-width:0}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:8px}
+.skip{position:absolute;left:-9999px;top:0;z-index:200;background:#fff;color:var(--accent);padding:12px 18px;border-radius:0 0 12px 0;font-weight:600;text-decoration:none}
+.skip:focus{left:0}
+b{font-weight:700}
+.fatal{padding:40px 20px;font-family:var(--mono);font-size:14px;color:var(--danger);white-space:pre-wrap}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 24px;border-radius:999px;border:none;font-size:16px;font-weight:600;cursor:pointer;text-decoration:none;transition:background .15s ease,transform .15s ease}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:var(--accent-dark)}
+.btn-small{min-height:44px;padding:0 18px;border-radius:999px;font-size:14px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--text)}
+.btn-small:hover{background:#f5f5f7}
+
+.start-card{max-width:560px;margin:44px auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px}
+.eyebrow{color:var(--accent);font-weight:700;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase}
+.start-card h1{font-size:clamp(28px,5vw,40px);font-weight:800;letter-spacing:-.02em;margin:10px 0 6px}
+.author{color:var(--muted);margin:0 0 18px;font-size:15px}
+.start-list{margin:0 0 22px;padding-left:20px;color:var(--muted);font-size:14.5px;display:grid;gap:6px}
+.field{display:grid;gap:6px;margin-bottom:14px}
+.field label{font-size:14px;font-weight:600}
+.field input{min-height:48px;border:1px solid var(--border);border-radius:12px;padding:0 14px;font-size:16px;background:#fff;color:var(--text);width:100%}
+.field input:focus{outline:3px solid rgba(0,113,227,.35);border-color:var(--accent)}
+.field input.bad{border-color:var(--danger);box-shadow:0 0 0 3px rgba(194,42,30,.12)}
+.err{color:var(--danger);font-size:13px;margin:0}
+
+.lesson-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:16px 0 10px}
+.lesson-head h1{font-size:20px;margin:0;letter-spacing:-.01em;flex:1 1 auto;min-width:160px}
+.chip-student{min-height:44px;display:inline-flex;align-items:center;gap:8px;border:1px solid var(--border);background:#fff;border-radius:999px;padding:0 16px;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer}
+.chip-student:hover{background:#f5f5f7}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{min-height:44px;padding:0 18px;border-radius:999px;border:1px solid var(--border);background:#fff;font-size:15px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap}
+.tab:hover{background:#f5f5f7}
+.tab[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+.section-note{color:var(--muted);font-size:14.5px;margin:14px 0 18px;max-width:760px}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin:0 0 14px;min-width:0}
+.card h3{margin:0 0 8px;font-size:17px}
+.card p{margin:0 0 10px;font-size:14.5px;line-height:1.6}
+.call{display:flex;gap:12px;align-items:flex-start;border-radius:14px;padding:12px 14px;margin:0 0 12px;border:1px solid}
+.call p{margin:0;font-size:14px;line-height:1.6;min-width:0}
+.call>div{min-width:0}
+.call-ic{font-size:20px;line-height:1.4;flex:none}
+.call.info{background:rgba(0,113,227,.07);border-color:rgba(0,113,227,.25)}
+.call.warn{background:rgba(255,159,10,.1);border-color:rgba(255,159,10,.35)}
+.call.ok{background:rgba(52,199,89,.1);border-color:rgba(52,199,89,.35)}
+.code-window{background:#161617;border-radius:14px;overflow:hidden;margin:0 0 12px;box-shadow:var(--shadow);min-width:0}
+.code-bar{display:flex;align-items:center;gap:7px;padding:10px 14px;background:#1d1d1f}
+.dot{width:11px;height:11px;border-radius:50%;flex:none}
+.dot.r{background:#ff5f57}.dot.y{background:#febc2e}.dot.g{background:#28c840}
+.code-bar .file{margin-left:6px;color:#98989d;font-family:var(--mono);font-size:12px}
+pre.code{margin:0;padding:14px 16px;color:#f5f5f7;font-family:var(--mono);font-size:13px;line-height:1.65;overflow-x:auto;white-space:pre;max-width:100%}
+.tk-c{color:#83838a}.tk-k{color:#ff7ab2}.tk-s{color:#ffa740}.tk-n{color:#d9bf69}.tk-f{color:#6bdfff}
+.screen{background:rgba(52,199,89,.08);border:1px solid rgba(52,199,89,.35);border-radius:12px;padding:10px 14px;margin:0 0 12px;min-width:0}
+.screen-label{display:block;font-size:11.5px;font-weight:700;color:var(--ok);margin-bottom:4px;text-transform:uppercase;letter-spacing:.08em}
+.screen pre{margin:0;font-family:var(--mono);font-size:13px;line-height:1.55;white-space:pre-wrap;color:var(--text)}
+.tbl-wrap{overflow-x:auto;margin:0 0 12px;border:1px solid var(--border);border-radius:12px}
+table{border-collapse:collapse;width:100%;font-size:14px;background:#fff}
+th,td{padding:8px 12px;text-align:left;border-bottom:1px solid var(--border);vertical-align:top}
+th{background:#f5f5f7;font-weight:700}
+tr:last-child td{border-bottom:none}
+
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:0 0 6px}
+.search{min-height:44px;border:1px solid var(--border);border-radius:999px;padding:0 18px;font-size:14.5px;background:#fff;color:var(--text);flex:1 1 200px;min-width:0}
+.search:focus{outline:3px solid rgba(0,113,227,.35);border-color:var(--accent)}
+.fchip{min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--border);background:#fff;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap}
+.fchip[aria-pressed="true"]{background:rgba(0,113,227,.1);border-color:var(--accent);color:var(--accent-dark)}
+.progline{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:14px;color:var(--muted);margin:10px 0 6px}
+.progline b{color:var(--text)}
+.sum-bar{height:8px;background:#e8e8ed;border-radius:999px;overflow:hidden;margin:0 0 16px}
+.sum-bar i{display:block;height:100%;background:linear-gradient(90deg,#37a0ff,var(--accent));border-radius:999px;transition:width .3s ease}
+
+.task-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);margin:0 0 12px;min-width:0;overflow:hidden}
+.task-head-btn{display:flex;width:100%;background:none;border:none;cursor:pointer;gap:10px;align-items:center;padding:16px 18px;text-align:left;min-height:56px}
+.task-head-btn:hover{background:rgba(0,0,0,.03)}
+.task-num{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--accent);background:rgba(0,113,227,.1);border-radius:8px;padding:4px 9px;flex:none}
+.task-title{font-size:15.5px;font-weight:600;flex:1 1 auto;min-width:0;overflow-wrap:break-word}
+.task-tags{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.tag{font-size:12px;color:#48484a;background:#e8e8ed;border-radius:999px;padding:4px 10px;white-space:nowrap}
+.tag.easy{background:rgba(52,199,89,.16);color:#1c7c3c}
+.tag.mid{background:rgba(255,159,10,.16);color:#8a5a00}
+.tag.hard{background:rgba(255,69,58,.14);color:#b3261e}
+.tag.solved{background:rgba(52,199,89,.16);color:#1c7c3c;font-weight:700}
+.chev{color:var(--muted);font-size:14px;flex:none}
+.task-body{padding:4px 18px 18px;border-top:1px solid var(--border)}
+.task-text{margin:0 0 10px;font-size:14.5px;line-height:1.65}
+.formula{background:#f5f5f7;border:1px solid var(--border);border-radius:12px;padding:10px 14px;margin:0 0 12px;font-family:var(--mono);font-size:13.5px;text-align:center;overflow-x:auto;white-space:pre-wrap}
+.task-list{margin:0 0 12px;padding-left:20px;display:grid;gap:4px;font-size:14.5px}
+.task-steps{margin:0 0 12px;padding-left:22px;display:grid;gap:4px;font-size:14px;line-height:1.55}
+.task-steps li::marker{color:var(--accent);font-weight:700}
+.label-sm{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:0 0 6px}
+textarea.code-input{width:100%;min-height:150px;resize:vertical;border:1px solid var(--border);border-radius:12px;padding:12px 14px;font-family:var(--mono);font-size:13px;line-height:1.6;background:#fff;color:var(--text)}
+textarea.code-input:focus{outline:3px solid rgba(0,113,227,.35);border-color:var(--accent)}
+.task-actions{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 4px}
+.btn-small.on{background:rgba(52,199,89,.14);border-color:rgba(52,199,89,.5);color:#1c7c3c}
+.btn-small.warnbtn{color:#8a5a00;border-color:rgba(255,159,10,.5)}
+.hint{display:flex;gap:12px;background:rgba(255,159,10,.09);border:1px solid rgba(255,159,10,.35);border-radius:14px;padding:12px 14px;margin:10px 0 4px}
+.hint>div{min-width:0;flex:1}
+.hint-ic{font-size:20px;flex:none;line-height:1.4}
+.hint p{margin:0;font-size:14px;line-height:1.6}
+.etalon{margin:10px 0 4px}
+.etalon .code-window{margin:0}
+.confirm{background:rgba(194,42,30,.07);border:1px solid rgba(194,42,30,.35);border-radius:14px;padding:12px 14px;margin:10px 0 4px;font-size:14px}
+.confirm p{margin:0 0 10px}
+.empty-list{color:var(--muted);font-size:14.5px;padding:18px;border:1px dashed var(--border);border-radius:var(--radius);text-align:center}
+
+.sum-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px;margin-top:16px;display:grid;gap:18px}
+.sum-row{display:flex;gap:14px;align-items:flex-start}
+.sum-ic{flex:none;width:44px;height:44px;border-radius:12px;background:rgba(0,113,227,.1);display:grid;place-items:center;font-size:20px}
+.sum-body{flex:1;min-width:0}
+.sum-top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:14.5px;margin-bottom:6px}
+.sum-top b{font-size:15px}
+.sum-note{color:var(--muted);font-size:13px;margin:6px 0 0}
+.sum-actions{display:flex;justify-content:center;margin:22px 0 6px}
+
+.report{background:#fff;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px;max-width:820px;margin:16px auto 0;min-width:0}
+.report h2{margin:0 0 4px;font-size:24px}
+.report .meta{display:grid;gap:4px;font-size:14.5px;margin:12px 0 6px}
+.report h3{font-size:16px;margin:18px 0 6px}
+.report pre{background:#f5f5f7;border:1px solid var(--border);border-radius:10px;padding:12px;font-family:var(--mono);font-size:12.5px;line-height:1.55;white-space:pre-wrap;word-break:break-word;margin:0 0 10px}
+.report .rep-note{color:var(--muted);font-size:13px;margin:6px 0}
+.report-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin:18px 0 4px}
+.hint-print{color:var(--muted);font-size:13.5px;text-align:center;margin:0 0 40px}
+
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(16px);background:#1d1d1f;color:#fff;padding:12px 20px;border-radius:999px;font-size:14.5px;opacity:0;pointer-events:none;transition:opacity .25s ease,transform .25s ease;z-index:100;box-shadow:var(--shadow-lift);max-width:calc(100vw - 40px);text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media print{
+  body{background:#fff}
+  .no-print{display:none !important}
+  .container{padding:0;max-width:100%}
+  .report{border:none;box-shadow:none;margin:0;padding:0;max-width:100%}
+  .report pre{white-space:pre-wrap;word-break:break-word}
+}
+@media (max-width:640px){
+  .card{padding:16px}
+  .task-head-btn{padding:14px}
+  .task-body{padding:4px 14px 14px}
+  pre.code{font-size:12px;padding:12px}
+  .sum-card{padding:16px}
+  .task-tags{display:none}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *{transition:none !important}
+}
+</style>
+</head>
+<body>
+<a class="skip no-print" href="#main">Перейти к содержимому</a>
+<div id="app"></div>
+<script>
+/* аварийный экран: если основной скрипт упадёт, покажем текст ошибки вместо пустоты */
+window.addEventListener("error", function(ev){
+  var a = document.getElementById("app");
+  if(a && !a.innerHTML.trim()){
+    a.innerHTML = '<div class="fatal">Ошибка скрипта: ' + (ev.message || "неизвестная") + '</div>';
+  }
+});
+</script>
+<script>
+"use strict";
+/* ================= CONSTANTS ================= */
+var META = { num:7, topic:"Файлы и исключения", author:"Масликов М.М." };
+var DONE_SHARE = 0.6;
+
+/* Краткая справка по главе 7 */
+var REF_CARDS = [
+  { t:"Открытие и закрытие файла",
+    p:"Файл открывает функция open(имя, режим): r — чтение, w — запись (старое содержимое стирается), a — добавление в конец. Она возвращает файловый объект; после работы файл обязательно закрывают методом close.",
+    code:'inf = open("input.txt", "r")\nline = inf.readline()\ninf.close()' },
+  { t:"Чтение: readline, read, readlines",
+    p:"readline читает по одной строке (в конце файла вернёт пустую строку), read — всё содержимое одной строкой, readlines — список строк. Можно также идти по файлу циклом for. Символы конца строки убирают методом rstrip.",
+    code:'line = inf.readline()\nwhile line != "":\n    print(line.rstrip())\n    line = inf.readline()' },
+  { t:"Запись в файл",
+    p:"Метод write записывает строку и, в отличие от print, сам перевод строки не добавляет — его пишут явно как \\n. Данные других типов предварительно преобразуют функцией str.",
+    code:'outf = open("out.txt", "w")\nfor num in range(1, limit + 1):\n    outf.write(str(num) + "\\n")\noutf.close()' },
+  { t:"Аргументы командной строки",
+    p:"Все аргументы запуска хранятся в списке sys.argv: элемент 0 — имя файла программы, остальные — переданные параметры. Их количество проверяют через len(sys.argv), при ошибке завершают программу функцией quit().",
+    code:'import sys\nif len(sys.argv) != 2:\n    print("Передайте имя файла аргументом.")\n    quit()\ninf = open(sys.argv[1], "r")' },
+  { t:"Исключения: try и except",
+    p:"Код, который может аварийно завершиться, помещают в блок try; обработчик — в except с указанием типа (FileNotFoundError, ValueError, IOError…). Без except программа падает, с ним — аккуратно обрабатывает ошибку.",
+    code:'try:\n    inf = open(fname, "r")\nexcept FileNotFoundError:\n    print("Невозможно открыть файл.")\n    quit()' }
+];
+
+/* Задачи главы 7 (упражнения 149–172): условия дословно из сборника,
+   bookHint — подсказки книги, hint — наша подсказка, solution — эталон */
+var TASKS = [
+  { id:149, title:"Отображаем начало файла", diff:"hard",
+    text:"В операционных системах на базе Unix обычно присутствует утилита с названием head. Она выводит первые десять строк содержимого файла, имя которого передается в качестве аргумента командной строки. Напишите программу на Python, имитирующую поведение этой утилиты. Если файла, указанного пользователем, не существует, или не задан аргумент командной строки, необходимо вывести соответствующее сообщение об ошибке.",
+    hint:"Проверьте len(sys.argv) == 2; читайте строки readline в цикле while со счётчиком до 10 или до пустой строки; открытие оберните в try/except.",
+    solution:'# Первые 10 строк файла (утилита head)\nimport sys\nNUM_LINES = 10\nif len(sys.argv) != 2:\n    print("Передайте имя файла в качестве аргумента командной строки.")\n    quit()\ntry:\n    inf = open(sys.argv[1], "r")\n    count = 0\n    line = inf.readline()\n    while count < NUM_LINES and line != "":\n        count = count + 1\n        print(line.rstrip())\n        line = inf.readline()\n    inf.close()\nexcept IOError:\n    print("Ошибка при доступе к файлу.")' },
+  { id:150, title:"Отображаем конец файла", diff:"hard",
+    text:"Продолжая тему предыдущего упражнения, в тех же операционных системах на базе Unix обычно есть и утилита с названием tail, которая отображает последние десять строк содержимого файла, имя которого передается в качестве аргумента командной строки. Реализуйте программу, которая будет делать то же самое. Так же, как и в упражнении 149, в случае отсутствия файла, указанного пользователем, или аргумента командной строки вам нужно вывести соответствующее сообщение.\n\nДанную задачу можно решить сразу несколькими способами. Например, можно все содержимое файла целиком загрузить в список и затем выбрать из него последние десять элементов. А можно дважды прочитать содержимое файла. При этом оба перечисленных подхода нежелательны, если речь идет о файлах достаточного объема. Существует решение, требующее единственного чтения файла и сохранения всех десяти строк за раз. В качестве дополнительного задания разработайте такой алгоритм.",
+    hint:"Одно чтение: держите список последних 10 строк — добавляйте прочитанную строку и делайте pop(0), как только список стал длиннее 10.",
+    solution:'# Последние 10 строк файла (утилита tail) за одно чтение\nimport sys\nNUM_LINES = 10\nif len(sys.argv) != 2:\n    print("Передайте имя файла в качестве аргумента командной строки.")\n    quit()\ntry:\n    inf = open(sys.argv[1], "r")\n    lines = []\n    for line in inf:\n        lines.append(line)\n        if len(lines) > NUM_LINES:\n            lines.pop(0)\n    inf.close()\nexcept:\n    print("Ошибка при доступе к файлу.")\n    quit()\nfor line in lines:\n    print(line, end="")' },
+  { id:151, title:"Сцепляем файлы", diff:"mid",
+    text:"Продолжаем тему операционных систем на базе Unix, в которых обычно также есть утилита с названием cat, что является сокращением от concatenate (сцепить). Эта утилита выводит на экран объединенное содержимое нескольких файлов, имена которых передаются ей в качестве аргументов командной строки. При этом файлы сцепляются в том порядке, в котором указаны в аргументах.\n\nНапишите программу на Python, имитирующую работу этой утилиты. В процессе работы программа должна выдавать сообщения о том, какие файлы открыть не удается, и переходить к следующим файлам. Если программа была запущена без аргументов командной строки, на экран должно быть выведено соответствующее сообщение об ошибке.",
+    hint:"Цикл for i in range(1, len(sys.argv)): открывайте и печатайте каждый файл внутри try/except, при ошибке — предупреждение и переход к следующему.",
+    solution:'# Сцепляем два или более файлов и отображаем результат (утилита cat)\nimport sys\nif len(sys.argv) == 1:\n    print("Нужно передать программе хотя бы один аргумент.")\n    quit()\nfor i in range(1, len(sys.argv)):\n    fname = sys.argv[i]\n    try:\n        inf = open(fname, "r")\n        for line in inf:\n            print(line, end="")\n        inf.close()\n    except:\n        print("Невозможно открыть/отобразить файл", fname)' },
+  { id:152, title:"Нумеруем строки в файле", diff:"mid",
+    text:"Напишите программу, которая будет считывать содержимое файла, добавлять к считанным строкам порядковый номер и сохранять их в таком виде в новом файле. Имя исходного файла необходимо запросить у пользователя, так же, как и имя целевого файла. Каждая строка в созданном файле должна начинаться с ее номера, двоеточия и пробела, после чего должен идти текст строки из исходного файла.",
+    hint:"Читайте строки readline; в новый файл пишите str(num) + \": \" + line.rstrip() + \"\\n\", увеличивая счётчик.",
+    solution:'# Нумеруем строки исходного файла и сохраняем в новый файл\nin_name = input("Введите имя исходного файла: ")\nout_name = input("Введите имя целевого файла: ")\ninf = open(in_name, "r")\noutf = open(out_name, "w")\nnum = 1\nline = inf.readline()\nwhile line != "":\n    outf.write(str(num) + ": " + line.rstrip() + "\\n")\n    num = num + 1\n    line = inf.readline()\ninf.close()\noutf.close()\nprint("Пронумеровано строк:", num - 1)' },
+  { id:153, title:"Самое длинное слово в файле", diff:"hard",
+    text:"В данном упражнении вы должны написать программу, которая будет находить самое длинное слово в файле. В качестве результата программа должна выводить на экран длину самого длинного слова и все слова такой длины. Для простоты принимайте за значимые буквы любые непробельные символы, включая цифры и знаки препинания.",
+    hint:"Соберите все слова через split() в список; найдите максимум по len; затем выведите все слова этой длины.",
+    solution:'# Самое длинное слово в файле\nname = input("Введите имя файла: ")\ninf = open(name, "r")\nwords = []\nfor line in inf:\n    for word in line.split():\n        words.append(word)\ninf.close()\nmax_len = 0\nfor word in words:\n    if len(word) > max_len:\n        max_len = len(word)\nprint("Длина самого длинного слова:", max_len)\nprint("Слова такой длины:")\nfor word in words:\n    if len(word) == max_len:\n        print(word)' },
+  { id:154, title:"Частота букв в файле", diff:"hard",
+    text:"Одна из техник декодирования простейших алгоритмов шифрования заключается в применении частотного анализа. Иными словами, вы просто анализируете зашифрованный текст, подсчитывая частоту употребления всех букв. Затем можно использовать операции подстановки для замены наиболее популярных символов на часто используемые в языке буквы (в английском это, например, буквы E и T).\n\nНапишите программу, которая будет способствовать дешифрации текста путем вывода на экран частоты появления разных букв. При этом пробелы, знаки препинания и цифры должны быть проигнорированы. Также не должен учитываться регистр, то есть символы a и A должны восприниматься как одна буква. Имя файла для анализа пользователь должен передавать программе посредством аргумента командной строки. Если программе не удастся открыть файл для анализа или аргументов командной строки будет слишком много, на экране должно быть отображено соответствующее сообщение об ошибке.",
+    hint:"Проверьте len(sys.argv) == 2; считайте буквы в словарь через line.upper(); процент = счётчик / всего букв × 100.",
+    solution:'# Частота появления букв в файле\nimport sys\nif len(sys.argv) != 2:\n    print("Имя файла необходимо передать одним аргументом командной строки.")\n    quit()\ntry:\n    inf = open(sys.argv[1], "r")\nexcept:\n    print("Не удалось открыть файл для анализа.")\n    quit()\ncounts = {}\ntotal = 0\nfor line in inf:\n    for ch in line.upper():\n        if ch >= "A" and ch <= "Z":\n            if ch in counts:\n                counts[ch] = counts[ch] + 1\n            else:\n                counts[ch] = 1\n            total = total + 1\ninf.close()\nfor ch in sorted(counts):\n    print("%s: %.2f%%" % (ch, counts[ch] / total * 100))' },
+  { id:155, title:"Частота слов в файле", diff:"hard",
+    text:"Разработайте программу, которая будет показывать слово (или слова), чаще остальных встречающееся в текстовом файле. Сначала пользователь должен ввести имя файла для обработки. После этого вы должны открыть файл и проанализировать его построчно, разделив при этом строки по словам и исключив из них пробелы и знаки препинания. Также при подсчете частоты появления слов в файле вам стоит игнорировать регистры.",
+    bookHint:"Возможно, при решении этого задания вам поможет код, реализованный вами в упражнении 117.",
+    hint:"Приводите строку к нижнему регистру и собирайте слово из букв; на непробельном разделителе учитывайте слово в словаре-счётчике; в конце выведите слова с максимумом.",
+    solution:'# Самое частое слово в текстовом файле\nname = input("Введите имя файла для обработки: ")\ninf = open(name, "r")\ncounts = {}\nfor line in inf:\n    word = ""\n    for ch in line.lower():\n        if ch >= "a" and ch <= "z":\n            word = word + ch\n        else:\n            if word != "":\n                if word in counts:\n                    counts[word] = counts[word] + 1\n                else:\n                    counts[word] = 1\n                word = ""\n    if word != "":\n        if word in counts:\n            counts[word] = counts[word] + 1\n        else:\n            counts[word] = 1\ninf.close()\nmax_count = 0\nfor w in counts:\n    if counts[w] > max_count:\n        max_count = counts[w]\nprint("Чаще остальных встречаются слова:")\nfor w in counts:\n    if counts[w] == max_count:\n        print(w, "-", max_count, "раз")' },
+  { id:156, title:"Сумма чисел", diff:"mid",
+    text:"Напишите программу, которая будет суммировать все числа, введенные пользователем, игнорируя при этом нечисловой ввод. Выводите на экран текущую сумму чисел после каждого очередного ввода. Ввод пользователем значения, не являющегося числовым, должен приводить к появлению соответствующего предупреждения, после чего пользователю должно быть предложено ввести следующее число. Выход из программы будет осуществляться путем пропуска ввода. Удостоверьтесь, что ваша программа корректно обрабатывает целочисленные значения и числа с плавающей запятой.",
+    bookHint:"В данном упражнении вам придется поработать не с файлами, а с исключениями.",
+    hint:"Цикл while до пустой строки; внутри try: float(line) и прибавление к сумме; except ValueError: предупреждение.",
+    solution:'# Подсчитаем сумму переданных пользователем чисел, не считая нечислового ввода\ntotal = 0\nline = input("Введите число: ")\nwhile line != "":\n    try:\n        num = float(line)\n        total = total + num\n        print("Сумма сейчас составляет", total)\n    except ValueError:\n        print("Это было не число")\n    line = input("Введите число: ")\nprint("Общая сумма:", total)' },
+  { id:157, title:"Буквенные и числовые оценки", diff:"hard",
+    text:"Напишите программу, выполняющую перевод из буквенных оценок в числовые и обратно. Программа должна позволять пользователю вводить несколько значений для перевода – по одному в каждой строке. Для начала предпримите попытку сконвертировать введенное пользователем значение из числового в буквенное. Если возникнет исключение, попробуйте выполнить обратное преобразование – из буквенного в числовое. Если и эта попытка окончится неудачей, выведите предупреждение о том, что введенное значение не является допустимым. Пусть ваша программа конвертирует оценки до тех пор, пока пользователь не оставит ввод пустым. При решении данного задания вам могут помочь наработки из упражнений 52 и 53.",
+    hint:"try: float(line) — число→буква (ближайшая оценка не выше значения); except ValueError: line.upper() в словаре — буква→число; иначе предупреждение.",
+    solution:'# Перевод оценок из буквенных в числовые и обратно\nGRADES = {"A+": 4.0, "A": 4.0, "A-": 3.7, "B+": 3.3, "B": 3.0, "B-": 2.7,\n          "C+": 2.3, "C": 2.0, "C-": 1.7, "D+": 1.3, "D": 1.0, "F": 0}\nline = input("Введите оценку (пустая строка для выхода): ")\nwhile line != "":\n    try:\n        value = float(line)\n        if value < 0 or value > 4.0:\n            print("Значение вне диапазона от 0 до 4.0.")\n        else:\n            best = "F"\n            for letter in GRADES:\n                if GRADES[letter] <= value and GRADES[letter] > GRADES[best]:\n                    best = letter\n            print("Числовая оценка", value, "соответствует буквенной", best)\n    except ValueError:\n        upper = line.upper()\n        if upper in GRADES:\n            print("Буквенная оценка", upper, "соответствует", GRADES[upper], "баллам.")\n        else:\n            print("Введенное значение не является допустимой оценкой.")\n    line = input("Введите оценку (пустая строка для выхода): ")' },
+  { id:158, title:"Удаляем комментарии", diff:"hard",
+    text:"Как вы знаете, в языке Python для создания комментариев в коде используется символ #. Комментарий начинается с этого символа и продолжается до конца строки – без возможности остановить его раньше.\n\nВ данном упражнении вам предстоит написать программу, которая будет удалять все комментарии из исходного файла с кодом на языке Python. Пройдите по всем строкам в файле на предмет поиска символа #. Обнаружив его, программа должна удалить все содержимое, начиная с этого символа и до конца строки. Для простоты не будем рассматривать ситуации, когда знак решетки встречается в середине строки. Сохраните новое содержимое в созданном файле. Имена файла источника и файла назначения должны быть запрошены у пользователя. Удостоверьтесь в том, что программа корректно обрабатывает возможные ошибки при работе с обоими файлами.",
+    hint:"pos = line.find(\"#\"): если pos > -1, обрезайте строку срезом line[0:pos] и добавляйте \"\\n\"; открытие обоих файлов оберните в try/except.",
+    solution:'# Удаляем все комментарии из файла Python\ntry:\n    in_name = input("Введите имя файла Python: ")\n    inf = open(in_name, "r")\nexcept:\n    print("При открытии файла возникла проблема.")\n    print("Завершение работы программы...")\n    quit()\ntry:\n    out_name = input("Введите имя нового файла: ")\n    outf = open(out_name, "w")\nexcept:\n    inf.close()\n    print("С создаваемым файлом возникла проблема.")\n    print("Завершение работы программы...")\n    quit()\ntry:\n    for line in inf:\n        pos = line.find("#")\n        if pos > -1:\n            line = line[0:pos] + "\\n"\n        outf.write(line)\n    inf.close()\n    outf.close()\nexcept:\n    print("При обработке файла возникла проблема.")\n    print("Завершаем программу...")' },
+  { id:159, title:"Случайный пароль из двух слов", diff:"hard",
+    text:"Создание пароля посредством генерирования случайных символов может обернуться сложностью в запоминании полученной относительно надежной последовательности. Некоторые системы создания паролей рекомендуют сцеплять вместе два слова на английском языке, тем самым упрощая запоминание заветного ряда символов – правда, в ущерб его надежности.\n\nНапишите программу, которая будет открывать файл со списком слов, случайным образом выбирать два из них и сцеплять вместе для получения итогового пароля. При создании пароля исходите из следующего требования: он должен состоять минимум из восьми символов и максимум из десяти, а каждое из используемых слов должно быть длиной хотя бы в три буквы. Кроме того, сделайте заглавными первые буквы обоих слов, чтобы легко можно было понять, где заканчивается одно и начинается другое. По завершении процесса полученный пароль должен быть отображен на экране.",
+    hint:"Отберите из файла слова длиной 3–7; первое слово выберите randrange и capitalize; второе добирайте в цикле while, пока длина пароля не попадёт в 8–10.",
+    solution:'# Генерируем пароль путем сцепления двух случайных слов\nfrom random import randrange\nWORD_FILE = "words.txt"\n# Читаем слова длиной от 3 до 7 символов\nwords = []\ninf = open(WORD_FILE, "r")\nfor line in inf:\n    line = line.rstrip()\n    if len(line) >= 3 and len(line) <= 7:\n        words.append(line)\ninf.close()\n# Первое слово пароля\nfirst = words[randrange(0, len(words))]\nfirst = first.capitalize()\n# Подбираем второе слово, пока длина пароля не попадет в диапазон 8-10\npassword = first\nwhile len(password) < 8 or len(password) > 10:\n    second = words[randrange(0, len(words))]\n    second = second.capitalize()\n    password = first + second\nprint("Случайный пароль:", password)' },
+  { id:160, title:"Странные слова", diff:"hard",
+    text:"Ученикам, желающим запомнить правила написания слов в английском языке, часто напоминают следующее рифмованное одностишие: «I before E except after C» (I перед E, если не после C). Это правило позволяет запомнить, в какой последовательности писать буквы I и E, идущие в слове одна за другой, а именно: буква I должна предшествовать букве E, если непосредственно перед ними не стоит буква C. Если стоит – порядок гласных будет обратным. Примеры слов, на которые действует это правило: believe, chief, fierce, friend, ceiling и receipt. Но есть и исключения из этого правила, и одним из них является слово weird (странный).\n\nНапишите программу, которая будет построчно обрабатывать текстовый файл. В каждой строке может присутствовать много слов, а может и не быть ни одного. Слова, в которых буквы E и I не соседствуют друг с другом, обработке подвергать не следует. Если же такое соседство присутствует, необходимо проверить, соответствует ли написание анализируемого слова указанному выше правилу. Создайте и выведите на экран два списка. В первом должны располагаться слова, следующие правилу, а во втором – нарушающие его. При этом списки не должны содержать повторяющиеся слова. Также отобразите на экране длину каждого списка, чтобы пользователю было понятно, сколько слов в файле не отвечает правилу.",
+    hint:"Для слова в нижнем регистре пройдите по парам символов: «ie» после «c» — нарушение, «ei» не после «c» — нарушение; слова раскладывайте по двум спискам без дубликатов.",
+    solution:'# Проверка правила "I before E except after C" по файлу\nname = input("Введите имя файла: ")\ninf = open(name, "r")\nfollow = []\nviolate = []\nfor line in inf:\n    for word in line.split():\n        w = word.lower()\n        if "ie" in w or "ei" in w:\n            bad = False\n            i = 0\n            while i < len(w) - 1:\n                after_c = i > 0 and w[i - 1] == "c"\n                if w[i] == "i" and w[i + 1] == "e" and after_c:\n                    bad = True\n                if w[i] == "e" and w[i + 1] == "i" and not after_c:\n                    bad = True\n                i = i + 1\n            if bad:\n                if word not in violate:\n                    violate.append(word)\n            else:\n                if word not in follow:\n                    follow.append(word)\ninf.close()\nprint("Следуют правилу (", len(follow), "):", follow)\nprint("Нарушают правило (", len(violate), "):", violate)' },
+  { id:161, title:"Что за химический элемент?", diff:"hard",
+    text:"Напишите программу, которая будет считывать файл, содержащий информацию о химических элементах, и сохранять ее в более подходящей для этого структуре данных. После этого пользователь должен ввести значение. Если введенное значение окажется целочисленным, программа должна вывести на экран обозначение и название химического элемента с введенным количеством протонов. При вводе пользователем строки необходимо отобразить количество протонов элемента с введенным пользователем обозначением или названием. Если введенное пользователем значение не соответствует ни одному из элементов в файле, необходимо вывести соответствующее сообщение об ошибке. Позвольте пользователю вводить значения до тех пор, пока он не оставит ввод пустым.",
+    hint:"Читайте CSV в три параллельных списка (номер, название, обозначение); ввод: isdigit() — поиск по номеру через index, иначе сравнение названия/обозначения без регистра.",
+    solution:'# Справочник химических элементов по файлу Elements.csv\nnumbers = []\nnames = []\nsymbols = []\ninf = open("Elements.csv", "r")\nfor line in inf:\n    parts = line.rstrip().split(",")\n    numbers.append(int(parts[0]))\n    names.append(parts[1])\n    symbols.append(parts[2])\ninf.close()\nline = input("Введите номер, обозначение или название (пусто для выхода): ")\nwhile line != "":\n    found = -1\n    if line.isdigit():\n        n = int(line)\n        if n in numbers:\n            found = numbers.index(n)\n    else:\n        low = line.lower()\n        for i in range(len(names)):\n            if names[i].lower() == low or symbols[i].lower() == low:\n                found = i\n                break\n    if found == -1:\n        print("Элемент не найден.")\n    else:\n        print(numbers[found], names[found], "(", symbols[found], ")")\n    line = input("Введите номер, обозначение или название (пусто для выхода): ")' },
+  { id:162, title:"Книги без буквы E", diff:"hard",
+    text:"Истории литературы известен случай написания романа объемом около 50 тыс. слов, в котором ни разу не была употреблена самая популярная в английском алфавите буква E. Название его – «Gadsby».\n\nНапишите программу, которая будет считывать список слов из файла и собирать статистику о том, в каком проценте слов используется каждая буква алфавита. Выведите результат для всех 26 букв английского алфавита и отдельно отметьте букву, которая встречалась в словах наиболее редко. В вашей программе должны игнорироваться знаки препинания и регистр символов.",
+    note:"Липограмма представляет собой литературный прием, состоящий в написании текста без использования одной из букв (или группы букв). Часто отвергнутой буквой является одна из распространенных гласных, хотя это условие и не обязательно.",
+    hint:"Для каждого слова стройте список уникальных букв и увеличивайте счётчики; процент = счётчик / число слов; редчайшую найдите через min(counts.values()).",
+    solution:'# Процент слов, использующих каждую букву алфавита\nWORD_FILE = "words.txt"\ncounts = {}\nfor ch in "ABCDEFGHIJKLMNOPQRSTUVWXYZ":\n    counts[ch] = 0\nnum_words = 0\ninf = open(WORD_FILE, "r")\nfor word in inf:\n    word = word.upper().rstrip()\n    unique = []\n    for ch in word:\n        if ch not in unique and ch >= "A" and ch <= "Z":\n            unique.append(ch)\n    for ch in unique:\n        counts[ch] = counts[ch] + 1\n    num_words = num_words + 1\ninf.close()\nsmallest_count = min(counts.values())\nfor ch in sorted(counts):\n    if counts[ch] == smallest_count:\n        smallest_letter = ch\n    print(ch, "встречается в %.2f процентах слов" % (counts[ch] / num_words * 100))\nprint()\nprint("Буква, от которой легче всего будет избавиться:", smallest_letter)' },
+  { id:163, title:"Популярные детские имена", diff:"hard",
+    text:"Набор данных, содержащий детские имена, состоит более чем из 200 файлов, в каждом из которых, помимо сотни имен, указано количество названных тем или иным именем детей. При этом файлы отсортированы по убыванию популярности имен. Для каждого года присутствует по два файла: в одном перечислены мужские имена, в другом – женские. Совокупный набор данных содержит информацию для всех лет, начиная с 1900-го и заканчивая 2012-м.\n\nНапишите программу, которая будет считывать по одному все файлы из набора данных и выделять имена, которые были лидерами по частоте использования как минимум в одном году. На выходе должно получиться два списка: в одном из них будут присутствовать наиболее популярные имена для мальчиков, во втором – для девочек. При этом списки не должны содержать повторяющиеся имена.",
+    hint:"Файлы отсортированы по популярности, поэтому лидер года — первая строка файла: читайте только readline() и добавляйте имя в список, если его там ещё нет.",
+    solution:'# Имена, бывшие самыми популярными хотя бы в одном году (1900-2012)\nFIRST_YEAR = 1900\nLAST_YEAR = 2012\n\n## Загружаем первую строку файла и добавляем имя в список, если его там нет\n# @param fname - имя файла с данными\n# @param names - список для пополнения\ndef loadAndAdd(fname, names):\n    inf = open(fname, "r")\n    line = inf.readline()\n    inf.close()\n    name = line.split()[0]\n    if name not in names:\n        names.append(name)\n\ngirls = []\nboys = []\nfor year in range(FIRST_YEAR, LAST_YEAR + 1):\n    loadAndAdd("BabyNames/" + str(year) + "_GirlsNames.txt", girls)\n    loadAndAdd("BabyNames/" + str(year) + "_BoysNames.txt", boys)\nprint("Самые популярные имена девочек:")\nfor name in girls:\n    print(" ", name)\nprint("Самые популярные имена мальчиков:")\nfor name in boys:\n    print(" ", name)' },
+  { id:164, title:"Универсальные имена", diff:"hard",
+    text:"Некоторые имена, такие как Бен, Джонатан и Эндрю, подходят только для мальчиков, другие – Ребекка или Флора – только для девочек. Но есть и универсальные имена наподобие Крис или Алекс, которые могут носить и мальчики, и девочки.\n\nНапишите программу, которая будет выводить на экран имена, использованные для мальчиков и девочек в указанном пользователем году. Если в этом году универсальных имен не было, нужно известить об этом пользователя. Кроме того, если за указанный пользователем год не было данных по именам, выведите соответствующее сообщение об ошибке. Дополнительные детали по хранению имен в файлах – в упражнении 163.",
+    hint:"Загрузите списки имён девочек и мальчиков за год из двух файлов (try/except на отсутствие данных); универсальные — имена, входящие в оба списка.",
+    solution:'# Универсальные имена для указанного года\nyear = input("Введите год (например, 2000): ")\ntry:\n    girls = []\n    boys = []\n    inf = open("BabyNames/" + year + "_GirlsNames.txt", "r")\n    for line in inf:\n        girls.append(line.split()[0])\n    inf.close()\n    inf = open("BabyNames/" + year + "_BoysNames.txt", "r")\n    for line in inf:\n        boys.append(line.split()[0])\n    inf.close()\n    universal = []\n    for name in girls:\n        if name in boys and name not in universal:\n            universal.append(name)\n    if len(universal) == 0:\n        print("В", year, "году универсальных имен не было.")\n    else:\n        print("Универсальные имена", year, "года:", universal)\nexcept:\n    print("За указанный год данных по именам нет.")' },
+  { id:165, title:"Самые популярные имена за период", diff:"hard",
+    text:"Напишите программу, которая будет определять самые популярные имена для детей в выбранном пользователем периоде. Используйте базу данных из упражнения 163. Позвольте пользователю выбрать первый и последний год анализируемого диапазона. В результате программа должна вывести на экран мужское и женское имена, которые были чаще остальных даны детям в заданный период времени.",
+    hint:"Суммируйте количества (второе поле строки) по каждому имени за все годы диапазона в словари; ответ — ключ с максимальной суммой.",
+    solution:'# Самые популярные имена за выбранный период\nfirst = int(input("Введите первый год диапазона: "))\nlast = int(input("Введите последний год диапазона: "))\ngirl_totals = {}\nboy_totals = {}\nfor year in range(first, last + 1):\n    inf = open("BabyNames/" + str(year) + "_GirlsNames.txt", "r")\n    for line in inf:\n        parts = line.split()\n        girl_totals[parts[0]] = girl_totals.get(parts[0], 0) + int(parts[1])\n    inf.close()\n    inf = open("BabyNames/" + str(year) + "_BoysNames.txt", "r")\n    for line in inf:\n        parts = line.split()\n        boy_totals[parts[0]] = boy_totals.get(parts[0], 0) + int(parts[1])\n    inf.close()\nbest_girl = ""\nbest_boy = ""\nfor name in girl_totals:\n    if best_girl == "" or girl_totals[name] > girl_totals[best_girl]:\n        best_girl = name\nfor name in boy_totals:\n    if best_boy == "" or boy_totals[name] > boy_totals[best_boy]:\n        best_boy = name\nprint("Самое популярное имя девочек за период:", best_girl)\nprint("Самое популярное имя мальчиков за период:", best_boy)' },
+  { id:166, title:"Имена без повторов", diff:"hard",
+    text:"Продолжаем использовать базу имен из упражнения 163. Проходя по файлам, выберите имена без дублирования отдельно для мальчиков и для девочек и выведите их на экран. Разумеется, повторяющихся имен в этих списках быть не должно.",
+    hint:"Проходите по всем файлам годов и добавляйте имя в список только при условии if name not in список.",
+    solution:'# Все имена базы без дублирования\ngirls = []\nboys = []\nfor year in range(1900, 2013):\n    inf = open("BabyNames/" + str(year) + "_GirlsNames.txt", "r")\n    for line in inf:\n        name = line.split()[0]\n        if name not in girls:\n            girls.append(name)\n    inf.close()\n    inf = open("BabyNames/" + str(year) + "_BoysNames.txt", "r")\n    for line in inf:\n        name = line.split()[0]\n        if name not in boys:\n            boys.append(name)\n    inf.close()\nprint("Имен девочек без повторов:", len(girls))\nprint(girls)\nprint("Имен мальчиков без повторов:", len(boys))\nprint(boys)' },
+  { id:167, title:"Проверяем правильность написания", diff:"hard",
+    text:"Автоматическая проверка орфографии не помешала бы многим из нас. В данном упражнении мы напишем простую программу, сверяющую слова из текстового файла со словарем. Неправильно написанными будем считать все слова, которых не нашлось в словаре.\n\nИмя файла, в котором требуется выполнить орфографическую проверку, пользователь должен передать при помощи аргумента командной строки. В случае отсутствия аргумента должна выдаваться соответствующая ошибка. Сообщение об ошибке также должно появляться, если не удается открыть указанный пользователем файл. Используйте свои наработки из упражнения 117 при решении данной задачи, чтобы знаки препинания не мешали вам проводить орфографический анализ текста. Также вам следует игнорировать регистр символов при выполнении проверки.",
+    bookHint:"Конечно, вы могли бы загрузить все слова из текста в список и анализировать их при помощи функции оператора in. Но эта операция будет выполняться довольно долго. Гораздо быстрее в Python выполняется проверка на наличие определенного ключа в словаре или значения в наборе. Если вы остановитесь на варианте со словарем, ключами должны стать слова, а значениями – ноль или любое другое число, поскольку их мы в данном случае использовать не будем.",
+    hint:"Слова словаря храните ключами словаря со значением 0; каждое слово анализируемого файла (нижний регистр, без пунктуации) проверяйте через in; промахи копите без дубликатов.",
+    solution:'# Орфографическая проверка файла по словарю\nimport sys\nfrom only_words import onlyTheWords\nWORDS_FILE = "words.txt"\nif len(sys.argv) != 2:\n    print("При вызове программы должен быть указан один аргумент.")\n    print("Завершаем программу...")\n    quit()\ntry:\n    inf = open(sys.argv[1], "r")\nexcept:\n    print("Ошибка при открытии файла на чтение. Завершаем программу...")\n    quit()\nvalid = {}\nwords_file = open(WORDS_FILE, "r")\nfor word in words_file:\n    valid[word.lower().rstrip()] = 0\nwords_file.close()\nmisspelled = []\nfor line in inf:\n    for word in onlyTheWords(line):\n        if word.lower() not in valid and word not in misspelled:\n            misspelled.append(word)\ninf.close()\nif len(misspelled) == 0:\n    print("Все слова написаны правильно.")\nelse:\n    print("Следующие слова написаны неправильно:")\n    for word in misspelled:\n        print(" ", word)' },
+  { id:168, title:"Повторяющиеся слова", diff:"hard",
+    text:"Проверка орфографии – лишь составная часть расширенного текстового анализа на предмет наличия ошибок. Одной из самых распространенных ошибок в текстах является повторение слов. Например, автор может по ошибке дважды подряд написать одно слово.\n\nВ данном упражнении вам предстоит написать программу для определения наличия дублей слов в тексте. При нахождении повтора на экран должен выводиться номер строки и дублирующееся слово. Удостоверьтесь, что программа корректно обрабатывает случаи, когда повторяющиеся слова находятся на разных строках. Имя файла для анализа должно быть передано программе в качестве единственного аргумента командной строки. При отсутствии аргумента или невозможности открыть указанный файл на экране должно появляться соответствующее сообщение об ошибке.",
+    hint:"Храните предыдущее слово в переменной prev вне цикла по строкам: сравнивайте word.lower() с prev — совпало значит дубль (в том числе через границу строк).",
+    solution:'# Поиск дублей слов в тексте, включая переход через строку\nimport sys\nif len(sys.argv) != 2:\n    print("Имя файла должно быть передано единственным аргументом.")\n    quit()\ntry:\n    inf = open(sys.argv[1], "r")\nexcept:\n    print("Невозможно открыть указанный файл.")\n    quit()\nprev = ""\nlnum = 1\nfor line in inf:\n    for word in line.split():\n        if prev != "" and word.lower() == prev:\n            print("Строка", lnum, ": повторяющееся слово", word)\n        prev = word.lower()\n    lnum = lnum + 1\ninf.close()' },
+  { id:169, title:"Редактирование текста в файле", diff:"hard",
+    text:"Перед публикацией текста или документа обычно принято удалять или изменять в них служебную информацию.\n\nВ данном упражнении вам необходимо написать программу, которая будет заменять все служебные слова в тексте на символы звездочек (по количеству символов в словах). Вы должны осуществлять регистрозависимый поиск служебных слов в тексте, даже если эти слова входят в состав других слов. Список служебных слов должен храниться в отдельном файле.\n\nСохраните отредактированную версию исходного файла в новом файле. Имена исходного файла, файла со служебными словами и нового файла должны быть введены пользователем.",
+    note:"Вам может пригодиться метод replace для работы со строками при решении этого задания.",
+    hint:"Служебные слова читайте в список; для каждой строки исходного файла применяйте line.replace(word, \"*\" * len(word)) по всем словам и пишите результат в новый файл.",
+    solution:'# Редактируем файл, заменяя служебные слова звездочками\ninf = open(input("Введите имя файла для редактирования: "), "r")\nsen = open(input("Введите имя файла со служебными словами: "), "r")\nwords = []\nline = sen.readline()\nwhile line != "":\n    words.append(line.rstrip())\n    line = sen.readline()\nsen.close()\noutf = open(input("Введите имя нового файла: "), "w")\nline = inf.readline()\nwhile line != "":\n    for word in words:\n        line = line.replace(word, "*" * len(word))\n    outf.write(line)\n    line = inf.readline()\ninf.close()\noutf.close()' },
+  { id:170, title:"Пропущенные комментарии", diff:"hard",
+    text:"При написании функций хорошей практикой считается предварение ее блоком комментариев с описанием назначения функции, ее входных параметров и возвращаемого значения. Но некоторые разработчики просто не пишут комментарии к своим функциям. Другие честно собираются написать их когда-нибудь в будущем, но руки так и не доходят.\n\nНапишите программу, которая будет проходить по файлу с исходным кодом на Python и искать функции, не снабженные блоком комментариев. Можно принять за аксиому, что строка, начинающаяся со слова def, следом за которым идет пробел, будет считаться началом функции. И если функция документирована, предшествующая строчка должна начинаться со знака #. Перечислите названия всех функций, не снабженных комментариями, вместе с именем файла и номером строки, с которой начинается объявление функции.\n\nОдно или несколько имен файлов с кодом на языке Python пользователь должен передать в качестве аргументов командной строки. Для файлов, которые не существуют или не могут быть открыты, должны выдаваться соответствующие предупреждения, после чего должна быть продолжена обработка остальных файлов.",
+    hint:"Держите предыдущую строку в prev (инициализируйте пробелом); если line.startswith(\"def \") и prev[0] != \"#\" — имя функции берите срезом от 4 до line.index(\"(\").",
+    solution:'# Функции без предваряющего комментария\nfrom sys import argv\nif len(argv) == 1:\n    print("По крайней мере одно имя файла должно присутствовать")\n    print("в качестве аргумента командной строки.")\n    print("Завершаем программу...")\n    quit()\nfor fname in argv[1:len(argv)]:\n    try:\n        inf = open(fname, "r")\n        prev = " "\n        lnum = 1\n        for line in inf:\n            if line.startswith("def ") and prev[0] != "#":\n                bracket_pos = line.index("(")\n                name = line[4:bracket_pos]\n                print("%s строка %d: %s" % (fname, lnum, name))\n            prev = line\n            lnum = lnum + 1\n        inf.close()\n    except:\n        print("Возникла проблема с файлом", fname, "- идем дальше.")' },
+  { id:171, title:"Строки фиксированной длины", diff:"hard",
+    text:"Ширина окна терминала обычно составляет 80 символов, хотя есть более широкие и узкие терминалы. Это затрудняет отображение текстов, разбитых на абзацы. Бывает, что строки в исходном файле оказываются слишком длинными и автоматически переносятся, тем самым затрудняя чтение, или слишком короткими, что приводит к недостаточному заполнению свободного места на экране.\n\nНапишите программу, которая будет открывать файл и выводить его на экран с постоянной длиной строк. Если в исходном файле строка оказывается слишком длинной, «лишние» слова должны быть перенесены на следующую строку, а если слишком короткой, слова со следующей строки должны перекочевать в конец текущей до полного ее заполнения.\n\nУбедитесь, что ваша программа корректно обрабатывает тексты, в которых присутствуют абзацы. Идентифицировать конец одного абзаца и начало другого можно по наличию пустой строки в тексте после удаления символа конца строки.",
+    bookHint:"Используйте константу для задания максимальной ширины строк. Это позволит вам легко адаптировать программу под любые окна.",
+    hint:"Читайте весь файл через read(), разбивайте на абзацы по \"\\n\\n\"; внутри абзаца набирайте строку словами, пока длина с пробелом не превысит WIDTH.",
+    solution:'# Вывод файла строками фиксированной длины\nWIDTH = 50\nname = input("Введите имя файла: ")\ninf = open(name, "r")\ntext = inf.read()\ninf.close()\nfor paragraph in text.split("\\n\\n"):\n    line = ""\n    for word in paragraph.split():\n        if line == "":\n            line = word\n        elif len(line) + 1 + len(word) <= WIDTH:\n            line = line + " " + word\n        else:\n            print(line)\n            line = word\n    if line != "":\n        print(line)\n    print()' },
+  { id:172, title:"Слова с шестью гласными в ряд", diff:"hard",
+    text:"Существует как минимум одно слово в английском языке, содержащее все гласные буквы в том порядке, в котором они расположены в алфавите, а именно A, E, I, O, U и Y. Напишите программу, которая будет просматривать текстовый файл на предмет поиска и отображения таких слов. Имя исходного файла должно быть запрошено у пользователя. Если имя файла окажется неверным или возникнут иные ошибки при чтении файла, выведите соответствующее сообщение об ошибке.",
+    hint:"Для каждого слова проверяйте, идут ли A, E, I, O, U, Y подпоследовательностью: идите по символам слова, сдвигая индекс искомой гласной при совпадении.",
+    solution:'# Слова, содержащие A, E, I, O, U, Y в алфавитном порядке\nVOWELS = "AEIOUY"\nname = input("Введите имя исходного файла: ")\ntry:\n    inf = open(name, "r")\nexcept:\n    print("Имя файла неверно или возникла ошибка при чтении.")\n    quit()\nfor line in inf:\n    for word in line.split():\n        w = word.upper()\n        i = 0\n        for ch in w:\n            if i < len(VOWELS) and ch == VOWELS[i]:\n                i = i + 1\n        if i == len(VOWELS):\n            print(word)\ninf.close()' }
+];
+var DIFF_LABEL = { easy:"легкая", mid:"средняя", hard:"сложная" };
+
+var LS_STATE = "python-task7-state-v1";
+var LS_PROGRESS = "python-trainer-progress-v1";
+
+/* ================= STATE ================= */
+var state = {
+  screen:"start",
+  tab:"ref",               // ref | tasks | report
+  student:{last:"", first:"", cls:""},
+  startErrors:null,
+  codes:{},
+  hintShown:{}, hintUsed:{},
+  etalonShown:{}, etalonViewed:{}, etalonNoAttempt:{}, etalonConfirm:{},
+  solved:{},
+  open:{},
+  filter:"all",            // all | todo | done
+  query:"",
+  reportOpen:false
+};
+function loadSaved(){
+  try{
+    var raw = localStorage.getItem(LS_STATE);
+    if(!raw) return;
+    var s = JSON.parse(raw);
+    if(s.student) state.student = s.student;
+    if(s.codes) state.codes = Object.assign(state.codes, s.codes);
+    if(s.hintUsed) state.hintUsed = Object.assign(state.hintUsed, s.hintUsed);
+    if(s.etalonViewed) state.etalonViewed = Object.assign(state.etalonViewed, s.etalonViewed);
+    if(s.etalonNoAttempt) state.etalonNoAttempt = Object.assign(state.etalonNoAttempt, s.etalonNoAttempt);
+    if(s.solved) state.solved = Object.assign(state.solved, s.solved);
+    if(s.reportOpen) state.reportOpen = true;
+  }catch(e){}
+}
+function persist(){
+  try{
+    localStorage.setItem(LS_STATE, JSON.stringify({
+      student:state.student, codes:state.codes,
+      hintUsed:state.hintUsed, etalonViewed:state.etalonViewed,
+      etalonNoAttempt:state.etalonNoAttempt, solved:state.solved,
+      reportOpen:state.reportOpen
+    }));
+  }catch(e){}
+}
+function setProgress(status){
+  try{
+    var raw = localStorage.getItem(LS_PROGRESS);
+    var p = raw ? JSON.parse(raw) : {topic:{}, task:{}};
+    p.task = p.task || {};
+    p.task[String(META.num)] = status;
+    localStorage.setItem(LS_PROGRESS, JSON.stringify(p));
+  }catch(e){}
+}
+function esc(s){
+  return String(s).replace(/[&<>"']/g, function(ch){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch];
+  });
+}
+function hlPy(src){
+  return esc(src).replace(
+    /(#.*$)|(&quot;(?:[^&\\]|\\.)*?&quot;|&#39;(?:[^&\\]|\\.)*?&#39;)|\b(from|import|def|return|if|elif|else|for|while|in|and|or|not|True|False|pass|break|continue|try|except|with|as|lambda|global|None)\b|\b(\d+(?:\.\d+)?)\b|([A-Za-z_][A-Za-z0-9_]*)(?=\s*\()/gm,
+    function(m, com, str, kw, num, fn){
+      if(com) return '<span class="tk-c">' + com + '</span>';
+      if(str) return '<span class="tk-s">' + str + '</span>';
+      if(kw)  return '<span class="tk-k">' + kw + '</span>';
+      if(num) return '<span class="tk-n">' + num + '</span>';
+      if(fn)  return '<span class="tk-f">' + fn + '</span>';
+      return m;
+    });
+}
+function codeWindow(src, file){
+  return '<div class="code-window"><div class="code-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="file">' + (file || "program.py") + '</span></div><pre class="code">' + hlPy(src) + '</pre></div>';
+}
+/* счётчики */
+function solvedCount(){ return TASKS.filter(function(t){ return state.solved[t.id]; }).length; }
+function codeCount(){ return TASKS.filter(function(t){ return (state.codes[t.id] || "").trim(); }).length; }
+function hintCount(){ return TASKS.filter(function(t){ return state.hintUsed[t.id]; }).length; }
+function etalonCount(){ return TASKS.filter(function(t){ return state.etalonViewed[t.id]; }).length; }
+function touched(t){
+  return (state.codes[t.id] || "").trim() || state.hintUsed[t.id] || state.etalonViewed[t.id] || state.solved[t.id];
+}
+function doneThreshold(){ return Math.ceil(TASKS.length * DONE_SHARE); }
+
+/* ================= RENDER ================= */
+var app = document.getElementById("app");
+
+function parasHTML(s){
+  return s.split("\n\n").map(function(p){ return '<p class="task-text">' + esc(p) + '</p>'; }).join("");
+}
+function renderStart(){
+  var e = state.startErrors || {};
+  var st = state.student;
+  return '<div class="container"><div class="start-card">' +
+    '<span class="eyebrow">Python · Практика, глава ' + META.num + '</span>' +
+    '<h1>' + META.topic + '</h1>' +
+    '<p class="author">Автор курса: ' + META.author + '</p>' +
+    '<ul class="start-list"><li>Краткая справка: 5 карточек о файлах и исключениях.</li><li>' + TASKS.length + ' задачи главы из сборника Б. Стивенсона: условия как в книге, подсказка и эталон у каждой.</li><li>Прогресс, фильтры и поиск по задачам.</li><li>В конце — сводка «Итоги» и отчёт для сохранения в PDF (с эталонами решений).</li></ul>' +
+    '<form id="startForm" novalidate>' +
+      '<div class="field"><label for="fLast">Фамилия</label><input id="fLast" name="last" autocomplete="family-name" value="' + esc(st.last) + '" class="' + (e.last ? "bad" : "") + '" placeholder="Иванов">' + (e.last ? '<p class="err">' + e.last + '</p>' : '') + '</div>' +
+      '<div class="field"><label for="fFirst">Имя</label><input id="fFirst" name="first" autocomplete="given-name" value="' + esc(st.first) + '" class="' + (e.first ? "bad" : "") + '" placeholder="Иван">' + (e.first ? '<p class="err">' + e.first + '</p>' : '') + '</div>' +
+      '<div class="field"><label for="fCls">Класс</label><input id="fCls" name="cls" value="' + esc(st.cls) + '" class="' + (e.cls ? "bad" : "") + '" placeholder="9А">' + (e.cls ? '<p class="err">' + e.cls + '</p>' : '') + '</div>' +
+      '<button class="btn btn-primary" type="submit">Начать практику</button>' +
+    '</form></div></div>';
+}
+function renderRef(){
+  var cards = REF_CARDS.map(function(c){
+    return '<div class="card"><h3>' + esc(c.t) + '</h3><p>' + esc(c.p) + '</p>' + codeWindow(c.code, "spravka.py") + '</div>';
+  }).join("");
+  return '<div class="container"><p class="section-note">Только то, что нужно для задач главы: open/close, чтение и запись, аргументы командной строки и обработка исключений. Полная теория — в конспекте главы 7 книги.</p>' + cards +
+    '<div class="call info"><span class="call-ic" aria-hidden="true">💡</span><div><p>Часть задач главы работает с внешними файлами (words.txt, Elements.csv, BabyNames). В тренажёре такие файлы достаточно представить мысленно или создать локально при проверке кода: главное — верная структура программы. Код автосохраняется в этом браузере.</p></div></div></div>';
+}
+function taskCard(t){
+  var open = !!state.open[t.id];
+  var solved = !!state.solved[t.id];
+  var tags = '<span class="tag ' + t.diff + '">' + DIFF_LABEL[t.diff] + '</span>' +
+    (solved ? '<span class="tag solved">решено</span>' : '');
+  var body = "";
+  if(open){
+    body = '<div class="task-body">' +
+      parasHTML(t.text) +
+      (t.bullets ? '<ul class="task-list">' + t.bullets.map(function(b){ return '<li>' + esc(b) + '</li>'; }).join("") + '</ul>' : '') +
+      (t.table ? '<div class="tbl-wrap"><table><thead><tr>' + t.table.head.map(function(h){ return '<th>' + esc(h) + '</th>'; }).join("") + '</tr></thead><tbody>' + t.table.rows.map(function(r){ return '<tr>' + r.map(function(c){ return '<td>' + esc(c) + '</td>'; }).join("") + '</tr>'; }).join("") + '</tbody></table></div>' : '') +
+      (t.formula ? '<div class="formula">' + esc(t.formula) + '</div>' : '') +
+      (t.text2 ? parasHTML(t.text2) : '') +
+      (t.steps ? '<ol class="task-steps">' + t.steps.map(function(s){ return '<li>' + esc(s) + '</li>'; }).join("") + '</ol>' : '') +
+      (t.after ? parasHTML(t.after) : '') +
+      (t.note ? '<div class="call warn"><span class="call-ic" aria-hidden="true">⚠️</span><div><p><b>Примечание.</b> ' + esc(t.note) + '</p></div></div>' : '') +
+      (t.bookHint ? '<div class="call info"><span class="call-ic" aria-hidden="true">📌</span><div><p><b>Подсказка.</b> ' + esc(t.bookHint) + '</p></div></div>' : '') +
+      (t.example ? '<div class="screen"><span class="screen-label">Пример</span><pre>' + esc(t.example) + '</pre></div>' : '') +
+      '<p class="label-sm" id="codeLbl' + t.id + '">Мой код</p>' +
+      '<textarea class="code-input" data-code="' + t.id + '" rows="7" spellcheck="false" aria-labelledby="codeLbl' + t.id + '" placeholder="Введите здесь свой код на Python">' + esc(state.codes[t.id] || "") + '</textarea>' +
+      '<div class="task-actions">' +
+        '<button class="btn-small' + (state.hintShown[t.id] ? " on" : "") + '" type="button" data-act="toggle-hint" data-id="' + t.id + '">💡 Подсказка</button>' +
+        '<button class="btn-small' + (state.etalonShown[t.id] ? " on" : "") + '" type="button" data-act="etalon" data-id="' + t.id + '">Эталон решения</button>' +
+        '<button class="btn-small' + (solved ? " on" : "") + '" type="button" data-act="toggle-solved" data-id="' + t.id + '">' + (solved ? "✓ Решено" : "Отметить решённой") + '</button>' +
+      '</div>' +
+      (state.hintShown[t.id] ? '<div class="hint"><span class="hint-ic" aria-hidden="true">💡</span><div><p><b>Подсказка.</b> ' + esc(t.hint) + '</p></div></div>' : '') +
+      (state.etalonConfirm[t.id] ? '<div class="confirm"><p>В поле «Мой код» пока пусто. Показать эталон без своей попытки? Это попадёт в отчёт.</p><div class="task-actions" style="margin:0"><button class="btn-small warnbtn" type="button" data-act="etalon-yes" data-id="' + t.id + '">Да, показать</button><button class="btn-small" type="button" data-act="etalon-no" data-id="' + t.id + '">Отмена</button></div></div>' : '') +
+      (state.etalonShown[t.id] && state.etalonViewed[t.id] ? '<div class="etalon"><p class="label-sm">Эталон решения</p>' + codeWindow(t.solution, "task" + t.id + ".py") + '</div>' : '') +
+    '</div>';
+  }
+  return '<div class="task-card">' +
+    '<button class="task-head-btn" type="button" data-act="toggle-open" data-id="' + t.id + '" aria-expanded="' + open + '">' +
+      '<span class="task-num">' + t.id + '</span>' +
+      '<span class="task-title">' + esc(t.title) + '</span>' +
+      '<span class="task-tags">' + tags + '</span>' +
+      '<span class="chev" aria-hidden="true">' + (open ? "▴" : "▾") + '</span>' +
+    '</button>' + body + '</div>';
+}
+function renderTasks(){
+  var q = state.query.trim().toLowerCase();
+  var list = TASKS.filter(function(t){
+    if(state.filter === "todo" && state.solved[t.id]) return false;
+    if(state.filter === "done" && !state.solved[t.id]) return false;
+    if(q && String(t.id) !== q && t.title.toLowerCase().indexOf(q) === -1) return false;
+    return true;
+  });
+  var solved = solvedCount();
+  var pct = Math.round(solved / TASKS.length * 100);
+  var first = TASKS[0].id, lastN = TASKS[TASKS.length - 1].id;
+  var toolbar =
+    '<div class="progline"><span>Решено: <b>' + solved + ' из ' + TASKS.length + '</b></span><span><b>' + pct + '%</b> главы</span></div>' +
+    '<div class="sum-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pct + '"><i style="width:' + pct + '%"></i></div>' +
+    '<div class="toolbar">' +
+      '<input class="search" id="taskSearch" type="search" value="' + esc(state.query) + '" placeholder="Поиск: номер или название задачи" aria-label="Поиск задач">' +
+      '<button class="fchip" type="button" data-filter="all" aria-pressed="' + (state.filter === "all") + '">Все</button>' +
+      '<button class="fchip" type="button" data-filter="todo" aria-pressed="' + (state.filter === "todo") + '">Нерешённые</button>' +
+      '<button class="fchip" type="button" data-filter="done" aria-pressed="' + (state.filter === "done") + '">Решённые</button>' +
+    '</div>';
+  var cards = list.length
+    ? list.map(taskCard).join("")
+    : '<div class="empty-list">По вашему запросу ничего не нашлось. Сбросьте поиск или выберите фильтр «Все».</div>';
+  return '<div class="container"><p class="section-note">Упражнения ' + first + '–' + lastN + ' главы ' + META.num + ' сборника Б. Стивенсона: условия приведены по книге, включая подсказки и примечания автора. Раскройте задачу, напишите код, при необходимости возьмите подсказку. Эталон откроется после своей попытки кода — либо с отметкой в отчёте.</p>' + toolbar + cards + '</div>';
+}
+function sumRow(icon, label, value, pct, note){
+  return '<div class="sum-row"><span class="sum-ic" aria-hidden="true">' + icon + '</span><div class="sum-body">' +
+    '<div class="sum-top"><b>' + label + '</b><span>' + value + '</span></div>' +
+    '<div class="sum-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + pct + '"><i style="width:' + pct + '%"></i></div>' +
+    (note ? '<p class="sum-note">' + note + '</p>' : '') +
+    '</div></div>';
+}
+function renderSummary(){
+  var solved = solvedCount(), code = codeCount(), hints = hintCount(), etal = etalonCount();
+  var th = doneThreshold();
+  var warns = [];
+  if(code === 0) warns.push("Пока нет кода ни к одной задаче.");
+  if(solved < th) warns.push("До зачёта главы не хватает решённых задач: нужно " + th + " из " + TASKS.length + " (сейчас " + solved + ").");
+  return '<div class="container">' +
+    '<p class="section-note">Сводка работы за главу. Глава считается пройденной, когда отмечено решёнными не менее ' + Math.round(DONE_SHARE * 100) + '% задач (' + th + ' из ' + TASKS.length + ') и нажата кнопка завершения.</p>' +
+    '<div class="sum-card">' +
+      sumRow("💻", "Код написан", code + " из " + TASKS.length + " задач", Math.round(code / TASKS.length * 100), "Поле «Мой код» непустое.") +
+      sumRow("✅", "Отмечено решёнными", solved + " из " + TASKS.length, Math.round(solved / TASKS.length * 100), "Порог зачёта главы: " + th + " задач.") +
+      sumRow("💡", "Подсказки", "использовано " + hints, Math.round(hints / TASKS.length * 100), "Подсказка фиксируется в отчёте.") +
+      sumRow("📖", "Эталоны", "просмотрено " + etal, Math.round(etal / TASKS.length * 100), "Просмотр без своей попытки помечается отдельно.") +
+    '</div>' +
+    (warns.length
+      ? '<div class="call warn" style="margin-top:16px"><span class="call-ic" aria-hidden="true">⚠️</span><div><p><b>Обратите внимание:</b></p><ul style="margin:6px 0 0;padding-left:20px;display:grid;gap:4px;font-size:14px;">' + warns.map(function(w){ return "<li>" + w + "</li>"; }).join("") + '</ul></div></div>'
+      : '<div class="call ok" style="margin-top:16px"><span class="call-ic" aria-hidden="true">🎉</span><div><p>Порог главы достигнут — можно завершать урок и сохранять отчёт!</p></div></div>') +
+    '<div class="sum-actions"><button class="btn btn-primary" type="button" data-act="finish">Завершить урок и открыть отчёт</button></div>' +
+    '<p class="hint-print" style="margin:10px 0 40px">В отчёт попадут только задачи, с которыми вы работали: ваш код и эталонные решения.</p>' +
+  '</div>';
+}
+function renderReport(){
+  var st = state.student;
+  var date = new Date().toLocaleDateString("ru-RU");
+  var solved = solvedCount();
+  var passed = solved >= doneThreshold();
+  var touchedList = TASKS.filter(touched);
+  var tasks = touchedList.length
+    ? touchedList.map(function(t){
+        return '<h3>Задача ' + t.id + '. ' + esc(t.title) + '</h3>' +
+          '<p class="rep-note">Решена: <b>' + (state.solved[t.id] ? "да" : "нет") + '</b> · Подсказка: <b>' + (state.hintUsed[t.id] ? "да" : "нет") + '</b> · Эталон: <b>' + (state.etalonViewed[t.id] ? (state.etalonNoAttempt[t.id] ? "да, без своей попытки" : "да") : "нет") + '</b></p>' +
+          '<p class="label-sm">Мой код</p><pre>' + ((state.codes[t.id] || "").trim() ? esc(state.codes[t.id]) : "— код не предоставлен —") + '</pre>' +
+          '<p class="label-sm">Эталон решения</p><pre>' + esc(t.solution) + '</pre>';
+      }).join("")
+    : '<p class="rep-note">Работ с задачами не зафиксировано.</p>';
+  return '<div class="container"><div class="report" id="reportSheet">' +
+    '<h2>Отчёт по практике</h2>' +
+    '<div class="meta">' +
+      '<span><b>Глава:</b> ' + META.num + '. ' + META.topic + ' (сборник Б. Стивенсона)</span>' +
+      '<span><b>Автор курса:</b> ' + META.author + '</span>' +
+      '<span><b>Ученик:</b> ' + esc(st.last) + ' ' + esc(st.first) + '</span>' +
+      '<span><b>Класс:</b> ' + esc(st.cls) + '</span>' +
+      '<span><b>Дата:</b> ' + date + '</span>' +
+      '<span><b>Решено задач:</b> ' + solved + ' из ' + TASKS.length + ' · глава зачтена: ' + (passed ? "да" : "нет") + '</span>' +
+      '<span><b>Подсказок:</b> ' + hintCount() + ' · <b>эталонов:</b> ' + etalonCount() + ' · задач с кодом: ' + codeCount() + '</span>' +
+    '</div>' +
+    '<h3>Выполненные работы</h3>' + tasks +
+    '</div>' +
+    '<div class="report-actions no-print"><button class="btn btn-primary" type="button" data-act="print">Сохранить отчёт в PDF</button></div>' +
+    '<p class="hint-print no-print">Откроется окно печати — выберите «Сохранить как PDF». В отчёт входят только задачи, с которыми была работа: ваш код и эталонные решения.</p>' +
+    '</div>';
+}
+function renderLesson(){
+  var st = state.student;
+  var tabs = [
+    ["ref", "Справка"],
+    ["tasks", "Задачи"],
+    ["report", state.reportOpen ? "Отчёт" : "Итоги"]
+  ];
+  var body = state.tab === "ref" ? renderRef()
+    : state.tab === "tasks" ? renderTasks()
+    : (state.reportOpen ? renderReport() : renderSummary());
+  return '<div class="container no-print"><div class="lesson-head">' +
+    '<h1>Глава ' + META.num + '. ' + META.topic + '</h1>' +
+    '<button class="chip-student" type="button" data-act="edit-student" title="Изменить данные ученика">' + esc(st.last) + ' ' + esc(st.first) + ' · ' + esc(st.cls) + ' ✎</button>' +
+    '</div>' +
+    '<div class="tabs" role="tablist" aria-label="Разделы практики">' +
+    tabs.map(function(t){
+      return '<button class="tab" role="tab" type="button" aria-selected="' + (state.tab === t[0]) + '" data-tab="' + t[0] + '">' + t[1] + '</button>';
+    }).join("") +
+    '</div></div>' + body;
+}
+function render(){
+  app.innerHTML = state.screen === "start" ? renderStart() : renderLesson();
+}
+
+/* ================= HANDLERS ================= */
+var toastEl = null, toastTimer = null;
+function showToast(msg){
+  toastEl.textContent = msg;
+  toastEl.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ toastEl.classList.remove("show"); }, 2600);
+}
+function onStartSubmit(e){
+  e.preventDefault();
+  var f = e.target;
+  var last = f.last.value.trim(), first = f.first.value.trim(), cls = f.cls.value.trim();
+  var errs = {};
+  if(last.length < 2) errs.last = "Введите фамилию (минимум 2 символа).";
+  if(first.length < 2) errs.first = "Введите имя (минимум 2 символа).";
+  if(!cls) errs.cls = "Введите класс, например 9А.";
+  state.student = {last:last, first:first, cls:cls};
+  if(Object.keys(errs).length){
+    state.startErrors = errs;
+    render();
+    var bad = app.querySelector("input.bad");
+    if(bad) bad.focus();
+    return;
+  }
+  state.startErrors = null;
+  state.screen = "lesson";
+  state.tab = "ref";
+  setProgress("progress");
+  persist();
+  render();
+  showToast("Практика начата: " + TASKS.length + " задачи впереди!");
+}
+function onAppClick(e){
+  var tabBtn = e.target.closest("[data-tab]");
+  if(tabBtn){
+    state.tab = tabBtn.dataset.tab;
+    render();
+    window.scrollTo(0, 0);
+    return;
+  }
+  var fBtn = e.target.closest("[data-filter]");
+  if(fBtn){
+    state.filter = fBtn.dataset.filter;
+    render();
+    return;
+  }
+  var btn = e.target.closest("[data-act]");
+  if(!btn) return;
+  var act = btn.dataset.act;
+  var id = Number(btn.dataset.id || 0);
+  if(act === "toggle-open"){
+    state.open[id] = !state.open[id];
+    render();
+  }
+  else if(act === "toggle-hint"){
+    var nowH = !state.hintShown[id];
+    state.hintShown[id] = nowH;
+    if(nowH) state.hintUsed[id] = true;
+    persist();
+    render();
+  }
+  else if(act === "toggle-solved"){
+    state.solved[id] = !state.solved[id];
+    persist();
+    setProgress(solvedCount() >= doneThreshold() ? "done" : "progress");
+    render();
+    showToast(state.solved[id] ? "Задача " + id + " отмечена решённой." : "Отметка снята с задачи " + id + ".");
+  }
+  else if(act === "etalon"){
+    if(state.etalonViewed[id]){
+      state.etalonShown[id] = !state.etalonShown[id];
+    }else if((state.codes[id] || "").trim()){
+      state.etalonViewed[id] = true;
+      state.etalonShown[id] = true;
+      persist();
+    }else{
+      state.etalonConfirm[id] = true;
+    }
+    render();
+  }
+  else if(act === "etalon-yes"){
+    state.etalonViewed[id] = true;
+    state.etalonNoAttempt[id] = true;
+    state.etalonShown[id] = true;
+    state.etalonConfirm[id] = false;
+    persist();
+    render();
+  }
+  else if(act === "etalon-no"){
+    state.etalonConfirm[id] = false;
+    render();
+  }
+  else if(act === "finish"){
+    state.reportOpen = true;
+    state.tab = "report";
+    setProgress(solvedCount() >= doneThreshold() ? "done" : "progress");
+    persist();
+    render();
+    window.scrollTo(0, 0);
+    showToast("Урок завершён! Отчёт готов к сохранению в PDF.");
+  }
+  else if(act === "edit-student"){ state.screen = "start"; render(); window.scrollTo(0, 0); }
+  else if(act === "print"){ window.print(); }
+}
+function onAppInput(e){
+  var ta = e.target.closest("textarea[data-code]");
+  if(ta){
+    state.codes[Number(ta.dataset.code)] = ta.value;
+    persist();
+    return;
+  }
+  if(e.target.id === "taskSearch"){
+    state.query = e.target.value;
+    render();
+    var el = document.getElementById("taskSearch");
+    if(el){
+      el.focus();
+      el.setSelectionRange(el.value.length, el.value.length);
+    }
+  }
+}
+
+/* ================= INIT ================= */
+function init(){
+  loadSaved();
+  /* если глава уже начата, сразу синхронизируем статус с главной страницей */
+  if(state.student.last){
+    setProgress(solvedCount() >= doneThreshold() ? "done" : "progress");
+  }
+  toastEl = document.createElement("div");
+  toastEl.className = "toast";
+  toastEl.setAttribute("role", "status");
+  toastEl.setAttribute("aria-live", "polite");
+  document.body.appendChild(toastEl);
+  render();
+  app.addEventListener("click", onAppClick);
+  app.addEventListener("input", onAppInput);
+  app.addEventListener("submit", onStartSubmit);
+}
+try{
+  init();
+}catch(err){
+  app.innerHTML = '<div class="fatal">Ошибка при запуске: ' + err.message + '</div>';
+}
+</script>
+</body>
+</html>
