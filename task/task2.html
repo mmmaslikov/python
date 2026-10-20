@@ -569,7 +569,7 @@ function taskCard(t){
       (t.after ? parasHTML(t.after) : '') +
       (t.note ? '<div class="call warn"><span class="call-ic" aria-hidden="true">⚠️</span><div><p><b>Примечание.</b> ' + esc(t.note) + '</p></div></div>' : '') +
       (t.bookHint ? '<div class="call info"><span class="call-ic" aria-hidden="true">📌</span><div>' +
-        (Array.isArray(t.bookHint) ? t.bookHint : [t.bookHint]).map(function(h){ return '<p><b>Подсказка из учебника.</b> ' + esc(h) + '</p>'; }).join("") +
+        (Array.isArray(t.bookHint) ? t.bookHint : [t.bookHint]).map(function(h){ return '<p><b>Подсказка.</b> ' + esc(h) + '</p>'; }).join("") +
         '</div></div>' : '') +
       (t.example ? '<div class="screen"><span class="screen-label">Пример</span><pre>' + esc(t.example) + '</pre></div>' : '') +
       '<p class="label-sm" id="codeLbl' + t.id + '">Мой код</p>' +
