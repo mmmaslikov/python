@@ -731,6 +731,7 @@ function onAppClick(e){
   else if(act === "toggle-solved"){
     state.solved[id] = !state.solved[id];
     persist();
+    setProgress(solvedCount() >= doneThreshold() ? "done" : "progress");
     render();
     showToast(state.solved[id] ? "Задача " + id + " отмечена решённой." : "Отметка снята с задачи " + id + ".");
   }
